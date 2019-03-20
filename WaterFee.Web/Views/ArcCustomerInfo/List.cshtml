@@ -785,15 +785,11 @@
                 onClick: function (node) {
 
                     loadDataByOu(node.id);
-                    //var roos = $("#treeDept1").tree("getParent", node.target);
-                    //if (roos.iconCls == "icon-organ") {
-                    //    queryData = { "WHC_IntID": node.id };
-
-                    //  } else {
+                  
                     var Text = $("#treeDept1").tree("getParent", node.target);
 
                     queryData = { "WHC_Fuji": Text.text, "WHC_Text": node.text };
-                    // }
+                 
                     InitGrid(queryData);
 
                 }

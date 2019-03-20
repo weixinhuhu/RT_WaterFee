@@ -15,6 +15,33 @@
     <script src="~/Scripts/dbjs.js"></script>
 
     <script type="text/javascript">
+        $(function () {
+            initDeptTreeview();
+        });
+
+        function initDeptTreeview() {
+            $("#loading").show();          
+            $('#treeDept1').tree({
+                url: '/ArcCustomerInfo/TreeCommunity',
+                onBeforeSelect: function (node) {
+                    fujiText = node.text;
+
+                },
+                onClick: function (node) {
+                  
+                    var Text = $("#treeDept1").tree("getParent", node.target);               
+             
+                    var queryData = {
+                        "IntCustNO": $("#IntCustNO").val(),
+                        "NvcVillage": Text.text,
+                        "VcBuilding": node.text
+                    };
+                    submits(queryData);
+                }
+            });
+            $("#loading").fadeOut(500);
+        }
+       
 
         function getSelectVcAddr() {
             var rows = $('#gridSettingInfo').datagrid('getChecked');
@@ -131,6 +158,13 @@
         <img alt="数据正在加载中..." src="~/Content/images/loading02.gif" />
     </div>
     <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
+        <div data-options="region:'west',split:true,title:'',iconCls:'icon-book'" style="width: 200px; padding: 1px;">
+            <div class="easyui-tabs" style="width:200px;">              
+                <div title="小区" style="padding:10px;">
+                    <ul id="treeDept1"></ul>
+                </div>
+            </div>
+        </div>
         <div id="tbEdit" data-options="region:'center',split:true,title:'参数管理',iconCls:'icon-setting'" style="padding: 5px; height: auto">
             <fieldset id="condition">
                 <legend>信息查询</legend>

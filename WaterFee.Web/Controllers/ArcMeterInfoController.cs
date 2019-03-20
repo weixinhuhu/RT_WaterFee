@@ -145,13 +145,26 @@ namespace WHC.WaterFeeWeb.Controllers
 
         public ActionResult ListByIntConID_Submit()
         {
-
             string IntCustNO = Request["IntCustNO"];
             string NvcName = Request["NvcName"];
             string NvcAddr = Request["NvcAddr"];
             string VcAddr = Request["VcAddr"];
-            string vcFlag = Request["flag"]; 
+            string vcFlag = Request["flag"];
+            string NvcVillage = Request["NvcVillage"];
+            string VcBuilding = Request["VcBuilding"];
+
             string where = " (1=1) ";
+
+            if (NvcVillage != "")
+            {
+                where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
+            }
+
+            if (VcBuilding != "")
+            {
+                where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
+            }
+
             if (IntCustNO != "")
             {
                 where += " and IntCustNO=" + Convert.ToInt32(IntCustNO);
@@ -195,16 +208,29 @@ namespace WHC.WaterFeeWeb.Controllers
             string pageSizeNum = Request["pageNum"];
             string pageSize = Request["pageSize"];        
             string WHC_IntCustNo = Request["IntCustNO"];
+            string NvcVillage = Request["NvcVillage"];
+            string VcBuilding = Request["VcBuilding"];
 
-            if (WHC_IntCustNo !="") {
-                where = @"  AND A.NvcName LIKE  " +"'%"+WHC_IntCustNo+"%'";
-                where += "  OR NvcVillage LIKE  " + "'%"+WHC_IntCustNo+"%'";
-                where += "  OR IntUnitNum LIKE  " + "'%"+WHC_IntCustNo+ "%'";
-                where += "  OR IntRoomNum LIKE  " + "'%"+WHC_IntCustNo+ "%'";
-                where += "  OR C.VcAddr LIKE  " + "'%"+WHC_IntCustNo+"%'";
-                where += "  OR VcMobile LIKE " + "'%"+WHC_IntCustNo+"%'";
-                where += "  OR A.IntNo LIKE  " + "'%"+WHC_IntCustNo+"%'";
+            if (NvcVillage != "") {
+                where += @"  AND A.NvcVillage =  "+  "'" + NvcVillage + "'" ;
             }
+
+            if (VcBuilding != "")
+            {
+                where += @"  AND A.VcBuilding =  " + "'" + VcBuilding + "'";
+            }
+
+            if (WHC_IntCustNo != "")
+            {
+                where += @"  AND A.NvcName LIKE  " + "'%" + WHC_IntCustNo + "%'";
+                where += "  OR NvcVillage LIKE  " + "'%" + WHC_IntCustNo + "%'";
+                where += "  OR IntUnitNum LIKE  " + "'%" + WHC_IntCustNo + "%'";
+                where += "  OR IntRoomNum LIKE  " + "'%" + WHC_IntCustNo + "%'";
+                where += "  OR C.VcAddr LIKE  " + "'%" + WHC_IntCustNo + "%'";
+                where += "  OR VcMobile LIKE " + "'%" + WHC_IntCustNo + "%'";
+                where += "  OR A.IntNo LIKE  " + "'%" + WHC_IntCustNo + "%'";
+            }
+
             //20190312
             sql = @"  SELECT 
                         A.intId ,
@@ -232,6 +258,8 @@ namespace WHC.WaterFeeWeb.Controllers
                  WHERE  1 = 1";
 
             sql += where;
+
+           
 
 
             var dts = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.SqlTable(sql);
