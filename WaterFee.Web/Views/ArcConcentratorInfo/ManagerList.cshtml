@@ -18,7 +18,8 @@
         $(function () {
             initDeptTreeview();
         });
-
+        var sNvcVillage = "";
+        var sVcBuilding = "";
         function initDeptTreeview() {
             $("#loading").show();          
             $('#treeDept1').tree({
@@ -30,11 +31,12 @@
                 onClick: function (node) {
                   
                     var Text = $("#treeDept1").tree("getParent", node.target);               
-             
+                    sNvcVillage = Text.text;
+                    sVcBuilding = node.text;
                     var queryData = {
                         "IntCustNO": $("#IntCustNO").val(),
-                        "NvcVillage": Text.text,
-                        "VcBuilding": node.text
+                        "NvcVillage": sNvcVillage,
+                        "VcBuilding": sVcBuilding
                     };
                     submits(queryData);
                 }
@@ -135,7 +137,9 @@
 
         function submit() {
             var queryData = {
-                "IntCustNO": $("#IntCustNO").val()
+                "IntCustNO": $("#IntCustNO").val(),
+                "NvcVillage": sNvcVillage,
+                "VcBuilding": sVcBuilding
             };
             submits(queryData);
             return false;
