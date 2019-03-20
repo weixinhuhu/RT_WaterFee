@@ -1,0 +1,317 @@
+﻿@{
+    ViewBag.Title = "Province-Excel数据导入";
+}
+
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>全国省份-Excel数据导入</title>
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+    
+    <!--常用的一些组件业务脚本函数-->
+    <script type="text/javascript" src="~/Scripts/ComponentUtil.js"></script>    
+    <!--处理Json数据脚本-->
+    <script src="~/Content/JQueryTools/JSON-js/json2.js"></script>
+
+    <script type="text/javascript">
+        
+        $(function () {            
+            InitDictItem();   //初始化字典信息
+            
+            InitGrid();//初始化Datagrid表格数据 
+
+            InitUpFile();//初始化上传操作  
+        });
+
+        function InitUpFile() {
+            //新增的时候，绑定附件显示
+            var guid = newGuid();
+            $("#AttachGUID").val(guid);
+            attachguid = guid;
+            ViewUpFiles(attachguid, "div_files");//更新列表
+        }
+
+        //初始化字典信息
+        function InitDictItem() {
+            //BindDictItem("Titles", "职称");
+            //BindDictItem("Rank", "职务");
+        }
+
+        //实现对DataGird控件的绑定操作
+        function InitGrid() {
+            var guid = $("#AttachGUID").val();
+            $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/Province/GetExcelData?guid=' + guid,   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                title: '全国省份-Excel数据导入',
+                iconCls: 'icon-view',
+                height: 650,
+                width: function () { return document.body.clientWidth * 0.9 },//自动宽度
+                nowrap: true,
+                autoRowHeight: false,
+                striped: true,
+                collapsible: true,
+                pagination: false,
+                pageSize: 100,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                singleSelect: true, //只能单选
+                sortName: 'Seq',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                idField: 'ID',
+                queryParams: '',  //异步查询的参数
+                columns: [[
+	                  { field: 'ck', checkbox: true },   //选择
+                      { title: '省份名称', field: 'ProvinceName', width: 80, sortable: true },
+                  ]],
+                toolbar: [{
+                    id: 'btnSaveToDb',
+                    text: '保存列表到数据库',
+                    iconCls: 'icon-save',
+                    handler: function () {
+                        ShowSaveDialog();
+                    }
+                }, '-', {
+                    id: 'btnDelete',
+                    text: '删除选定',
+                    iconCls: 'icon-remove',
+                    handler: function () {
+                        //移除数据
+                        Delete();
+                    }
+                }, '-', {
+                    id: 'btnReload',
+                    text: '刷新',
+                    iconCls: 'icon-reload',
+                    handler: function () {
+                        //实现刷新栏目中的数据
+                        $("#grid").datagrid("reload");
+                    }
+                }],
+                customAttr: {
+                    rowediting: true,
+                    onConfirmEdit: function (rowIndex) {
+                        return confirm('提交修改？');
+                    }
+                },
+                onClickRow: function (index) {
+                    //var editingRow = $('#grid').datagrid('getEditingRow');
+                    //var editingRowIndex = $('#grid').datagrid('getRowIndex', editingRow);
+                    //if (!editingRow) {
+                    //    $('#grid').datagrid('selectRow', index)
+                    //    $('#grid').datagrid('beginEdit', index);
+                    //} else {
+                    //    $('#grid').datagrid('selectRow', editingRowIndex);
+                    //}
+                }
+            }).datagrid('followCustomHandle');
+        };
+        
+        //实现删除数据的方法
+        function Delete() {
+            //得到用户选择
+            var row = $("#grid").datagrid("getSelected");
+            if (row) {
+                //然后确认删除数据
+                $.messager.confirm("删除确认", "您确认删除选定的记录吗？", function (action) {
+                    if (action) {
+                        var index = $('#grid').datagrid('getRowIndex', row);
+                        $('#grid').datagrid('deleteRow', index);
+                    }
+                });
+            }
+            else {
+                $.messager.alert("提示", "请选择你要删除的数据");
+            }
+        }
+
+        //弹出保存对话框
+        function ShowSaveDialog() {
+            var rows = $("#grid").datagrid("getRows");
+            //首先取出来值判断用户只能选择一个
+            if (rows.length == 0) {
+                $.messager.alert("提示", "表格没有记录，无法执行", "error");
+                return;
+            }
+
+        	url = '/Province/Insert';        	
+            //通过后台获取GUID并绑定
+        	$.getJSON("/Province/NewGuid?r=" + Math.random(), function (result) {
+        	    $("#ID").val(result);
+        	    ID = result;
+        	});
+
+            $("#DivAdd").dialog('open').dialog('setTitle', '保存信息到数据库');
+        }
+
+        //绑定添加按钮的事件
+        function SaveEntity() {
+            //判断表单的信息是否通过验证
+            var validate = $("#ffAdd").form('validate');
+            if (validate == false) {
+                return false;
+            }
+
+            //构造集合对象
+            var list = [];
+            var rows = $("#grid").datagrid("getRows");
+            for (var i = 0; i < rows.length; i++) {
+                list.push({
+ 'ProvinceName': rows[i].ProvinceName,                  });
+            }
+
+            var postData = { 'list': list };//可以增加其他参数，如{ 'list': list, 'Rucanghao': $("#Rucanghao").val() };
+            postData = JSON.stringify(postData);
+
+            $.ajax({
+                url: '/Province/SaveExcelData',
+                type: 'post',
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                traditional: true,
+                success: function (data) {
+                    if (data.Success) {
+                        //保存成功  1.关闭弹出层，2.刷新DataGird
+                        $.messager.alert("提示", "保存成功");
+                        $("#DivAdd").dialog("close");
+                        //$("#grid").datagrid("reload");
+                        $('#grid').datagrid('loadData', { total: 0, rows: [] });
+                        $("#ffAdd").form("clear");
+                    }
+                    else {
+                        $.messager.alert("提示", "保存失败:" + data.ErrorMessage);
+                    }
+                },
+                data: postData
+            });
+        }            
+    </script>
+
+    @*添加对uploadify控件的支持*@
+    <script type="text/javascript">
+        $(function () {
+            //添加界面的附件管理
+            $('#file_upload').uploadify({
+                'swf': '/Content/JQueryTools/uploadify/uploadify.swf',  //FLash文件路径
+                'buttonText': '浏  览',                                 //按钮文本
+                'uploader': '/FileUpload/Upload',                       //处理ASHX页面
+                'queueID': 'fileQueue',                        //队列的ID
+                'queueSizeLimit': 1,                          //队列最多可上传文件数量，默认为999
+                'auto': false,                                 //选择文件后是否自动上传，默认为true
+                'multi': false,                                 //是否为多选，默认为true
+                'removeCompleted': true,                       //是否完成后移除序列，默认为true
+                'fileSizeLimit': '10MB',                       //单个文件大小，0为无限制，可接受KB,MB,GB等单位的字符串值
+                'fileTypeDesc': 'Excel Files',                 //文件描述
+                'fileTypeExts': '*.xls',  //上传的文件后缀过滤器
+                'onQueueComplete': function (event, data) {    //所有队列完成后事件
+
+                    var guid = $("#AttachGUID").val();
+                    ViewUpFiles(guid, "div_files");
+
+                    //提示用户Excel格式是否正常，如果正常加载数据
+                    $.ajax({
+                        url: '/Province/CheckExcelColumns?guid=' + guid,
+                        type: 'get',
+                        dataType:'json',
+                        success: function (data) {
+                            if (data.Success) {                                
+                                InitGrid(); //重新刷新表格数据
+                                $.messager.alert("提示", "文件已上传，数据加载完毕！");
+                            }
+                            else {
+                                $.messager.alert("提示", "上传的Excel文件检查不通过。请根据页面右上角的Excel模板格式进行数据录入。");
+                            }
+                        }
+                    });                    
+                },
+                'onUploadStart': function (file) {
+                    InitUpFile();//上传文件前 ，重置GUID，每次不同
+                    $("#file_upload").uploadify("settings", 'formData', { 'folder': '数据导入文件', 'guid': $("#AttachGUID").val() }); //动态传参数
+                },
+                'onUploadError': function (event, queueId, fileObj, errorObj) {
+                    //alert(errorObj.type + "：" + errorObj.info);
+                }
+            });
+        });
+
+        var attachguid = "";//用来记录附件组的ID，方便更新
+
+        //删除指定的附件后，对附件组进行更新
+        function deleteAttach(id) {
+            DeleteAndRefreshAttach(id, attachguid, "div_files");
+        }
+    </script>
+
+    <style>
+        table.view {border:1px solid #A8CFEB;border-collapse: collapse;margin-bottom:5px;width:99%;height:99%}
+        .view th{ padding-left:10px;padding-right:5px;padding-top:5px;padding-bottom:5px;width: 100px;border: 1px solid silver;background-color:#F1F6FF;}
+        .view td{ padding-left:10px;padding-right:5px;padding-top:5px;padding-bottom:5px;width: 150px;border: 1px solid silver;background-color:#FAFCFF;}
+    </style>
+    </head>
+<body>
+    <div id="loading" style="display: none;"><img alt="数据正在加载中..." src="~/Content/images/loading02.gif" /></div>
+        <div style="text-align:right;padding:5px">
+            <a href="~/Content/Template/Province-模板.xls" onclick="javascript:Preview();">
+                <img alt="全国省份-模板" src="~/Content/images/ico_excel.png" /><span style="font-size:larger;font-weight:200;color:red">Province-模板.xls</span>
+            </a>       
+        </div>
+        <div class="easyui-layout" id="tb" style="padding:5px;height:auto">
+        <!-------------------------------搜索框----------------------------------->
+        <fieldset>
+            <legend>Excel导入操作</legend>
+            <form id="ffSearch" method="post">
+                <div title="Excel导入操作" style="padding: 5px" data-options="iconCls:'icon-key'">
+                    <input class="easyui-validatebox" type="hidden" id="AttachGUID" name="AttachGUID" />
+                    <br />
+                    <input id="file_upload" name="file_upload" type="file" multiple="multiple">
+                    <a href="javascript:void(0)" class="easyui-linkbutton" id="btnUpload" data-options="plain:true,iconCls:'icon-save'"
+                        onclick="javascript: $('#file_upload').uploadify('upload', '*')">上传</a>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" id="btnCancelUpload" data-options="plain:true,iconCls:'icon-cancel'"
+                        onclick="javascript: $('#file_upload').uploadify('cancel', '*')">取消</a>
+
+                    <div id="fileQueue" class="fileQueue"></div>
+                    <br /><hr style="width:98%"/>
+                    <div id="div_files"></div>
+                    <br />
+                </div>    
+            </form>
+        </fieldset>
+                
+        <!-------------------------------详细信息展示表格----------------------------------->
+        <table id="grid" style="width: 940px" title="用户操作" data-options="iconCls:'icon-view'">            
+        </table>
+    </div>
+
+    <!--------------------------添加/修改信息的弹出层---------------------------->
+    <div id="DivAdd" class="easyui-dialog" style="width: 480px; height: 150px; padding: 10px 20px"
+        closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-add',buttons: '#dlg-buttons'">
+        <form id="ffAdd" method="post" novalidate="novalidate">
+    		<!--------------------------根据需要添加一些附属信息，可一并上传---------------------------->
+            <div title="其他信息" data-options="iconCls:'icon-view'" style="padding: 5px 5px">
+@*                <table id="tblAdd1" class="view">
+                    <tr>
+                        <th>
+                            <label for="Rucanghao">入仓号：</label>
+                        </th>
+                        <td>
+                            <input class="easyui-validatebox" type="text" id="Rucanghao" name="Rucanghao" data-options="required:true,validType:'length[1,50]'"/>
+                        </td>
+                    </tr>
+                </table>*@
+            </div>
+            <div style="text-align: right; padding-top: 10px">
+                <input type="hidden" id="ID" name="ID" />
+                <a href="javascript:void(0)" class="easyui-linkbutton" id="btnAddOK" iconcls="icon-ok" onclick="SaveEntity()">确定</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#DivAdd').dialog('close')">关闭</a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

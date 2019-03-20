@@ -1,0 +1,466 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>结清欠款销户</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+
+    <style>
+        table.view {
+            border: 1px solid #A8CFEB;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+            vertical-align: top;
+            height: 98%;
+            width: 98%;
+            font-size: 16px;
+        }
+
+        .view th {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #F1F6FF;
+            font-size: 16px;
+            height: 35px;
+            line-height: 33px;
+        }
+
+        .view td {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #FAFCFF;
+            font-size: 16px;
+            height: 35px;
+            line-height: 33px;
+        }
+
+        .view input {
+            width: 99%;
+        }
+
+        #btnAddOK span {
+            line-height: 33px;
+        }
+    </style>
+
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+    <script src="~/Scripts/ComponentUtil.js"></script>
+    <script src="~/Scripts/dbjs.js"></script>
+
+    <script type="text/javascript">
+
+        $(function () {
+            $(document).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    $("#btnSearch").click();
+                    return;
+                }
+            });
+            var queryData = {
+
+            };//可添加一些预设条件
+            InitGrid(queryData);
+            BindSearchEvent();
+        });
+
+
+        //实现对DataGird控件的绑定操作
+        function InitGrid(queryData) {
+            $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
+                //url: '/Fee/GetAccDebt',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                title: '欠费记录',
+                iconCls: 'icon-view',
+                height: document.body.clientHeight * 0.9 - 80,
+                width: function () { return document.body.clientWidth * 0.9 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                //idField: 'ID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+	                 //{ field: 'ck', checkbox: true },   //选择
+                     //{ title: 'ID', field: 'IntFeeID', width: 80, sortable: true, hidden: true },
+                     //费用编号 费用日期 计算水量 欠费 违约金
+                     { title: '费用编号', field: '费用编号', width: 100, sortable: true, align: 'center' },
+                     {
+                         title: '费用日期', field: '费用日期', width: 100, sortable: true, align: 'center',
+                         formatter: function (val, rowObj, index) {
+                             return new Date(val.replace("-", "/").replace("T", " ")).Format();
+                         }
+                     },
+                     { title: '计算水量', field: '计算水量', width: 100, sortable: true, align: 'center' },
+                     { title: '欠费', field: '欠费', width: 100, sortable: true, align: 'center' },
+                     { title: '违约金', field: '违约金', width: 100, sortable: true, align: 'center' }
+
+                ]],
+                onLoadSuccess: function () {
+                },
+                //toolbar: [{
+                //    id: 'btnFee',
+                //    text: '结清欠款并销户',
+                //    iconCls: 'icon-add',
+                //    handler: function () {
+                //        Fee();
+                //    }
+                //}, '-', {
+                //    id: 'btnReload',
+                //    text: '刷新',
+                //    iconCls: 'icon-reload',
+                //    handler: function () {
+                //        //实现刷新栏目中的数据
+                //        $("#grid").datagrid("reload");
+                //    }
+                //}],
+
+
+                //onDblClickRow: function (rowIndex, rowData) {
+                //    $('#grid').datagrid('uncheckAll');
+                //    $('#grid').datagrid('checkRow', rowIndex);
+                //    Fee();
+                //}
+            });
+            //var heightMargin = $("#toolbar").height() + 60;
+            //var widthMargin = $(document.body).width() - $("#tb").width();
+            //// 第一次加载时和当窗口大小发生变化时，自动变化大小
+            //$('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            //$(window).resize(function () {
+            //    $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            //});
+        };
+
+        var TotalMoney;
+
+        function FeeOK() {
+            var validate = $("#ffAdd").form('validate');
+            if (validate == false) {
+                return false;
+            }
+
+            var rows = $("#grid").datagrid("getSelections");
+            if (rows.length < 1) {
+                $.messager.alert("温馨提示", "请至少选择一条财务记录进行缴费!");
+                return;
+            }
+            var retMoney = parseFloat($("#lblRetMoney").html());
+            if (retMoney < 0) {
+                $.messager.alert("温馨提示", "本次实收不能小于费用总额!");
+                return false;
+            }
+            $.messager.progress({
+                //title: '温馨提示',
+                text: '正在处理中,请稍后......'
+            });
+
+            setTimeout("$.messager.progress('close')", 3000);
+
+            for (var i = 0; i < rows.length; i++) {
+            }
+        }
+
+        function countFee(value) {
+            if (value != null) {
+                var retMoney = value - TotalMoney;
+                $("#lblRetMoney").html(retMoney.toFixed(2));
+            }
+        }
+
+        var isOwn = true;
+        function queryFee() {
+            isOwn = true;
+            var custNo = $("#txtIntNo").val();
+            if (custNo == "") {
+                showError("请输入客户编号!", 1500);
+                return;
+            }
+            $.messager.progress({ text: '正在处理中,请稍后......' });
+
+            $.ajax({
+                url: '/Fee/CloseAccount_Query?custNo=' + custNo,
+                type: 'post',
+                dataType: 'json',
+                data: {},
+                //async: false,
+                success: function (json) {
+                    console.log(json);
+                    $.messager.progress('close');
+                    if (json.Success && json.Data1) {
+                        var data = JSON.parse(json.Data1);
+                        console.log(data);
+                        if (data.length > 0) {
+                            $("#txtCustNo").html(custNo);
+                            $("#txtName").html(data[0].户名);
+                            $("#txtArea").html(data[0].小区);
+                            $("#txtBuilding").html(data[0].楼栋);
+                            $("#txtAddress").html(data[0].地址);
+                            $("#txtMode").html(data[0].账务模式);
+                        }
+                        $("#grid").datagrid("loadData", json.Obj1);
+                        if (json.Obj1) {
+                            isOwn = json.Obj1.total > 0;
+                            if (isOwn)
+                                $.messager.alert("温馨提示", "当前客户有欠款,请先把欠款结清再进行销户操作!");
+                        }
+                    }
+                    else {
+                        $.messager.alert("温馨提示", json.ErrorMessage);
+                    }
+                },
+                error: function () {
+                    showError("网络错误!");
+                    $.messager.progress('close');
+                }
+            });
+        }
+
+        //绑定搜索按钮的的点击事件
+        function BindSearchEvent() {
+            //按条件进行查询数据，首先我们得到数据的值
+            $("#btnSearch").click(function () {
+                queryFee();
+                //得到用户输入的参数
+                //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
+                //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
+                var queryData = {
+                    WHC_IntCustNo: $("#txtIntNo").val(),
+                }
+                //将值传递给
+                //InitGrid(queryData);
+                return false;
+            });
+
+            $("#btnClose").click(closeAccount);
+
+            $.extend($.fn.validatebox.defaults.rules, {
+                //校验正整数，并计算码洋
+                oninputMY: {
+                    validator: function (value) {
+                        var reg = /^[0-9]+([.]{1}[0-9]+){0,1}$/;
+                        if (reg.test(value)) {
+                            countFee(value);
+                            return true;
+                        }
+                        return false;
+                    },
+                    message: '请输入正确数字'
+                }
+            });
+        }
+        function closeAccount() { 
+            var custNo = $("#txtCustNo").html();
+            if (custNo == "") {
+                showError("请输入客户编号!", 1500);
+                return;
+            }
+            if (isOwn) {
+                $.messager.alert("温馨提示", "当前客户有欠款,请先把欠款结清再进行销户操作!");
+                return false;
+            }
+            $.messager.progress({ text: '正在处理中,请稍后......' });
+
+            $.ajax({
+                url: '/Fee/CloseAccount_Close?custNo=' + custNo,
+                type: 'post',
+                dataType: 'json',
+                data: {},
+                //async: false,
+                success: function (json) {
+                    $.messager.progress('close');
+                    if (json.Success) {
+                        showTips("销户成功!");
+                    }
+                    else {
+                        $.messager.alert("温馨提示", json.ErrorMessage);
+                    }
+                },
+                error: function () {
+                    showError("网络错误!");
+                    $.messager.progress('close');
+                }
+            });
+        }
+
+    </script>
+
+
+</head>
+<body>
+
+    <div id="loading" style="display: none;">
+        <img alt="数据正在加载中..." src="~/Content/images/loading02.gif" />
+    </div>
+    <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
+
+        <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding: 5px; height: auto">
+            <!-------------------------------搜索框----------------------------------->
+            <fieldset>
+                <legend>信息查询</legend>
+                <div id="ffSearch" method="post">
+                    <div id="toolbar">
+                        <table cellspacing="0" cellpadding="0">
+                            <tr>
+                                <th style='padding: 3px;'>
+                                    <label for="txtIntNo">客户编号：</label></th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="txtIntNo" class="text-info" style="width: 100px" /></td>
+                                @*<th style='padding: 3px;'>
+                                    <label for="txtNvcName">客户姓名：</label></th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="txtNvcName" style="width: 100px" /></td>
+                                <th style='padding: 3px;'>
+                                    <label for="txtNvcAddr">客户地址：</label></th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="txtNvcAddr" style="width: 100px" /></td>
+                                <th style='padding: 3px;'>
+                                    <label for="txtVcMobile">移动号码：</label></th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="txtVcMobile" style="width: 100px" /></td>
+                                *@
+                                <td style='padding: 3px; text-align: right'>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询欠费</a>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td style='padding: 3px; text-align: right'>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls: 'icon-edit'" id="btnClose">销户</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset style="margin: 3px;">
+                <legend>客户基本信息</legend>
+                <div id="toolbar">
+                    <table cellspacing="0" cellpadding="0">
+                        <tr>
+                            <th style='padding: 3px; width: 7%; text-align: center;'>客户编号：</th>
+                            <td style='padding: 3px; width: 7%'>
+                                <label id="txtCustNo"></label>
+                            </td>
+                            <th style='padding: 3px; width: 7%; text-align: center;'>户名：</th>
+                            <td style='padding: 3px; width: 6%'>
+                                <label id="txtName"></label>
+                            </td>
+                            <th style='padding: 3px; width: 7%; text-align: center;'>小区：</th>
+                            <td style='padding: 3px; width: 10%'>
+                                <label id="txtArea"></label>
+                            </td>
+                            <th style='padding: 3px; width: 7%; text-align: center;'>楼栋：</th>
+                            <td style='padding: 3px; width: 7%'>
+                                <label id="txtBuilding"></label>
+                            </td>
+                            <th style='padding: 3px; width: 7%; text-align: center;'>地址：</th>
+                            <td style='padding: 3px; width: 15%'>
+                                <label id="txtAddress"></label>
+                            </td>
+                            <th style='padding: 3px; width: 7%; text-align: center;'>账务模式：</th>
+                            <td style='padding: 3px; width: 5%'>
+                                <label id="txtMode"></label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </fieldset>
+
+            <!-------------------------------详细信息展示表格----------------------------------->
+            <table id="grid" style="width: 940px" title="用户操作" data-options="iconCls:'icon-view'"></table>
+        </div>
+    </div>
+
+    <div style="display: none;">
+        <!--------------------------添加信息的弹出层---------------------------->
+        <div id="DivAdd" class="easyui-dialog" style="width: 750px; height: 99%; padding: 5px 5px; font-size: 16px;"
+            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-add'">
+            <form id="ffAdd" method="post" novalidate="novalidate">
+                <table id="tblAdd" class="view">
+                    <tr>
+                        <th>
+                            <label for="addIntNo">客户编号：</label>
+                        </th>
+                        <td id="lblIntCustNo"></td>
+                        <th>
+                            <label for="addNvcName">客户名称：</label>
+                        </th>
+                        <td id="lblNvcName"></td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="addNvcAddr">费用年月：</label>
+                        </th>
+
+                        <td id="lblIntYearMon" colspan="3"></td>
+
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="addVcBuilding">费用总额¥：</label>
+                        </th>
+                        <td id="lblTotalMoney" colspan="3" style="color: red; font-size: 30px; height: 35px; line-height: 33px;"></td>
+
+                    </tr>
+
+                    <tr>
+                        <th>
+                            <label for="addVcBuilding">本次实收¥：</label>
+                        </th>
+                        <td colspan="3">
+                            <input class="easyui-validatebox" type="text" id="addPayMoney" autocomplete="off" style="color: red; font-size: 28px; width: 99%; height: 35px; line-height: 33px;" name="PayMoney"
+                                data-options="validType:'oninputMY',required:true" min="0" max="100000000" precision="2" />
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="addVcBuilding">本次找回¥：</label>
+                        </th>
+                        <td id="lblRetMoney" colspan="3" style="color: red; font-size: 30px; height: 35px; line-height: 33px;"></td>
+
+                    </tr>
+
+                    <tr>
+                        <td colspan="4" style="text-align: right; padding-top: 10px">@*<a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#DivAdd').dialog('close')">关闭</a>*@
+                            <a href="javascript:void(0)" class="easyui-linkbutton" id="btnAddOK" iconcls="icon-ok" style="padding-left: 10px; padding-right: 20px; height: 35px; line-height: 33px; font-size: 16px;">结清欠款并销户</a>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
+        <!--------------------------编辑信息的弹出层---------------------------->
+        <div id="DivEdit" class="easyui-dialog" style="width: 850px; height: 630px; padding: 5px 5px"
+            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-edit'">
+            <div id="tabEditUser" class="easyui-tabs">
+            </div>
+        </div>
+
+        <!--------------------------查看详细信息的弹出层---------------------------->
+        <div id="DivView" class="easyui-dialog" style="width: 840px; height: 650px; padding: 5px 5px"
+            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-view'">
+            <div id="tabViewUser" class="easyui-tabs">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

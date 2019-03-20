@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BAFBD6D0-E90D-412E-A010-AB4A1BA6537D}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TestControlUtil</RootNamespace>
+    <AssemblyName>TestControlUtil</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Icons\Christmas bells.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Aspose.Cells, Version=7.7.2.0, Culture=neutral, PublicKeyToken=00725b1ceb58d0a9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Reference\Aspose.Cells.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Words, Version=14.2.0.0, Culture=neutral, PublicKeyToken=00725b1ceb58d0a9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Reference\Aspose.Words.dll</HintPath>
+    </Reference>
+    <Reference Include="DotRas">
+      <HintPath>..\..\Reference\DotRas.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\..\Reference\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\..\Reference\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\Reference\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="LumiSoft.Net">
+      <HintPath>..\..\Reference\LumiSoft.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Reference\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI">
+      <HintPath>..\..\Reference\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="org.in2bits.MyXls">
+      <HintPath>..\..\Reference\org.in2bits.MyXls.dll</HintPath>
+    </Reference>
+    <Reference Include="SmartThreadPool">
+      <HintPath>..\..\Reference\SmartThreadPool.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WHC.OrderWater.ShortCut">
+      <HintPath>..\..\Reference\WHC.OrderWater.ShortCut.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmADSLDialer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmADSLDialer.Designer.cs">
+      <DependentUpon>FrmADSLDialer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmZipUtil.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmZipUtil.Designer.cs">
+      <DependentUpon>FrmZipUtil.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Office\FrmAsposeWords.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Office\FrmAsposeWords.Designer.cs">
+      <DependentUpon>FrmAsposeWords.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Office\FrmAsposeCell.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Office\FrmAsposeCell.Designer.cs">
+      <DependentUpon>FrmAsposeCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Office\FrmMyXls.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Office\FrmMyXls.Designer.cs">
+      <DependentUpon>FrmMyXls.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Office\FrmNPOI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Office\FrmNPOI.Designer.cs">
+      <DependentUpon>FrmNPOI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmADSLDialer.resx">
+      <DependentUpon>FrmADSLDialer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmZipUtil.resx">
+      <DependentUpon>FrmZipUtil.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Office\FrmAsposeWords.resx">
+      <DependentUpon>FrmAsposeWords.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Office\FrmAsposeCell.resx">
+      <DependentUpon>FrmAsposeCell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Office\FrmMyXls.resx">
+      <DependentUpon>FrmMyXls.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Office\FrmNPOI.resx">
+      <DependentUpon>FrmNPOI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="Templates\Advice.doc" />
+    <None Include="Templates\Advice.xls" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WHC.Framework.Commons\WHC.Framework.Commons.csproj">
+      <Project>{53AC195E-DCFF-47C4-BC02-7E0241FF520C}</Project>
+      <Name>WHC.Framework.Commons</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WHC.Framework.ControlUtil\WHC.Framework.ControlUtil.csproj">
+      <Project>{D1D3850B-206F-49A9-BA9F-EAC0C39DE3DD}</Project>
+      <Name>WHC.Framework.ControlUtil</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Icons\Button Help.ico" />
+    <Content Include="Icons\Button Refresh.ico" />
+    <Content Include="Icons\Button Rewind.ico" />
+    <Content Include="Icons\Christmas bells.ico" />
+    <Content Include="Icons\Christmas tree.ico" />
+    <Content Include="Icons\Santa claus.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

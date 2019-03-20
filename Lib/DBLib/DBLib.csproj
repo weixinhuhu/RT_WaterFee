@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{409DF61D-B383-435E-9A48-600123DAA5A0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DBLib</RootNamespace>
+    <AssemblyName>DBLib</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Aspose.Cells, Version=8.4.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dll\Aspose.Cells\Aspose.Cells.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dll\NPOI.2.0.6\lib\net40\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>dll\Office\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.PowerPoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>dll\Office\Microsoft.Office.Interop.PowerPoint.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>dll\Office\Microsoft.Office.Interop.Word.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dll\Json.Net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI, Version=2.0.6.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dll\NPOI.2.0.6\lib\net40\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.0.6.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dll\NPOI.2.0.6\lib\net40\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.0.6.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dll\NPOI.2.0.6\lib\net40\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.0.6.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dll\NPOI.2.0.6\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="Office, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>dll\Office\Office.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\CacheHelper.cs" />
+    <Compile Include="Common\ConfigHelper.cs" />
+    <Compile Include="Common\DESEncrypt.cs" />
+    <Compile Include="ConstValues.cs" />
+    <Compile Include="Net\HttpHelper.cs" />
+    <Compile Include="IO\FileHelper.cs" />
+    <Compile Include="IO\Path.cs" />
+    <Compile Include="Net\NetHelper.cs" />
+    <Compile Include="Office\AsposeHelper.cs" />
+    <Compile Include="Office\CsvHelper.cs" />
+    <Compile Include="Office\ExcelHelper.cs" />
+    <Compile Include="Common\FileHelper.cs" />
+    <Compile Include="Common\Json\Newtonsoft.Json.cs" />
+    <Compile Include="Common\Logs.cs" />
+    <Compile Include="Office\FormDemo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Office\FormDemo.Designer.cs">
+      <DependentUpon>FormDemo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Office\MyExcelUtls.cs" />
+    <Compile Include="Office\NPOIext.cs" />
+    <Compile Include="Office\NPOIHelper.cs" />
+    <Compile Include="Common\SiteEnums.cs" />
+    <Compile Include="Common\SiteKeys.cs" />
+    <Compile Include="Common\SiteRequest.cs" />
+    <Compile Include="Common\SiteMail.cs" />
+    <Compile Include="Common\PageTemplate.cs" />
+    <Compile Include="Common\PagingHelper.cs" />
+    <Compile Include="Office\PdfHelper.cs" />
+    <Compile Include="Office\WordHelper.cs" />
+    <Compile Include="PinYinHelper.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Common\SerializationHelper.cs" />
+    <Compile Include="Common\Thumbnail.cs" />
+    <Compile Include="Types\EnumExtension.cs" />
+    <Compile Include="Types\RegexExt.cs" />
+    <Compile Include="Types\Tobject.cs" />
+    <Compile Include="Types\ValueTypes\DateTimeExtension.cs" />
+    <Compile Include="Types\ValueTypes\DecimalExtension.cs" />
+    <Compile Include="Types\ValueTypes\DoubleExtension.cs" />
+    <Compile Include="Types\EncodingExtension.cs" />
+    <Compile Include="Types\ValueTypes\FloatExtension.cs" />
+    <Compile Include="Types\ValueTypes\Int64Extension.cs" />
+    <Compile Include="Types\ValueTypes\BoolExtension.cs" />
+    <Compile Include="Types\ValueTypes\IntExtension.cs" />
+    <Compile Include="Types\ExtensionMethods.cs" />
+    <Compile Include="Types\ReferenceTypes\StringExtension.cs" />
+    <Compile Include="Common\Utils.cs" />
+    <Compile Include="Common\WaterMark.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="Validate.cs" />
+    <Compile Include="Web\BC.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Web\jqGrid.cs" />
+    <Compile Include="Common\XmlHelper.cs" />
+    <Compile Include="Common\ExtensionWebControls.cs" />
+    <Compile Include="Web\ResponseHelper.cs" />
+    <Compile Include="Windows\WinHelper.cs" />
+    <Compile Include="WinForm\RichTextBoxExtension.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Types\PointerTypes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="dll\Aspose.Cells\Aspose.Cells.dll" />
+    <Content Include="dll\Aspose.Cells\Aspose.Cells.xml" />
+    <Content Include="dll\Json.Net40\Newtonsoft.Json.dll" />
+    <Content Include="dll\Json.Net40\Newtonsoft.Json.xml" />
+    <Content Include="dll\NPOI.2.0.6\lib\net20\ICSharpCode.SharpZipLib.dll" />
+    <Content Include="dll\NPOI.2.0.6\lib\net20\NPOI.dll" />
+    <Content Include="dll\NPOI.2.0.6\lib\net20\NPOI.OOXML.dll" />
+    <Content Include="dll\NPOI.2.0.6\lib\net20\NPOI.OOXML.XML" />
+    <Content Include="dll\NPOI.2.0.6\lib\net20\NPOI.OpenXml4Net.dll" />
+    <Content Include="dll\NPOI.2.0.6\lib\net20\NPOI.OpenXml4Net.XML" />
+    <Content Include="dll\NPOI.2.0.6\lib\net20\NPOI.OpenXmlFormats.dll" />
+    <Content Include="dll\NPOI.2.0.6\lib\net20\NPOI.XML" />
+    <Content Include="dll\NPOI.2.0.6\lib\net40\ICSharpCode.SharpZipLib.dll" />
+    <Content Include="dll\NPOI.2.0.6\lib\net40\NPOI.dll" />
+    <Content Include="dll\NPOI.2.0.6\lib\net40\NPOI.OOXML.dll" />
+    <Content Include="dll\NPOI.2.0.6\lib\net40\NPOI.OOXML.XML" />
+    <Content Include="dll\NPOI.2.0.6\lib\net40\NPOI.OpenXml4Net.dll" />
+    <Content Include="dll\NPOI.2.0.6\lib\net40\NPOI.OpenXml4Net.XML" />
+    <Content Include="dll\NPOI.2.0.6\lib\net40\NPOI.OpenXmlFormats.dll" />
+    <Content Include="dll\NPOI.2.0.6\lib\net40\NPOI.XML" />
+    <Content Include="dll\NPOI.2.0.6\License.txt" />
+    <Content Include="dll\NPOI.2.0.6\logo\120_120.jpg" />
+    <Content Include="dll\NPOI.2.0.6\logo\240_240.png" />
+    <Content Include="dll\NPOI.2.0.6\logo\32_32.jpg" />
+    <Content Include="dll\NPOI.2.0.6\logo\60_60.jpg" />
+    <Content Include="dll\NPOI.2.0.6\Read Me.txt" />
+    <Content Include="dll\NPOI.2.0.6\Release Notes.txt" />
+    <Content Include="dll\Office\Microsoft.Office.Interop.Excel.dll" />
+    <Content Include="dll\Office\Microsoft.Office.Interop.PowerPoint.dll" />
+    <Content Include="dll\Office\Microsoft.Office.Interop.Word.dll" />
+    <Content Include="dll\Office\Office.dll" />
+    <Content Include="dll\SharpZipLib.0.86.0\lib\11\ICSharpCode.SharpZipLib.dll" />
+    <Content Include="dll\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll" />
+    <Content Include="dll\SharpZipLib.0.86.0\lib\SL3\SharpZipLib.Silverlight3.dll" />
+    <Content Include="dll\SharpZipLib.0.86.0\lib\SL4\SharpZipLib.Silverlight4.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dll\Aspose.Cells\Aspose.Cells.tlb" />
+    <None Include="dll\NPOI.2.0.6\NPOI.2.0.6.nupkg" />
+    <None Include="dll\SharpZipLib.0.86.0\SharpZipLib.0.86.0.nupkg" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Office\FormDemo.resx">
+      <DependentUpon>FormDemo.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

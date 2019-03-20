@@ -1,0 +1,1544 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>用户管理</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+    <script src="~/Scripts/ComponentUtil.js"></script>
+
+    <script type="text/javascript">
+        //初始化组织机构列表
+        function initDeptTreeview() {
+            $("#loading").show();
+
+            $('#treeDept').tree({
+                url: '/Access/GetDepartmentJson',
+                onClick: function (node) {
+                    loadDataByOu(node.id);
+                }
+            });
+
+            $("#loading").fadeOut(500);
+        }
+
+        //根据机构加载指定列表
+        function loadDataByOu(id) {
+            $("#loading").show();
+
+            //赋值给特殊字段，公司和部门查询的时候选择其中一个
+            var queryParams = $('#grid').datagrid('options').queryParams;
+            queryParams.Role_ID = ""; //必须清空
+            queryParams.Dept_ID = id; //设置值
+
+            $("#grid").datagrid("reload");
+            $('#grid').datagrid('uncheckAll');
+
+            $("#loading").fadeOut(500);
+        }
+
+        //初始化对象
+        $(function () {
+            initDeptTreeview();
+            $("#deptExpand").bind("click", function () {
+                expandAll("treeDept");
+            });
+            $("#deptcollapse").bind("click", function () {
+                collapseAll("treeDept");
+            });
+
+            $("#loading").center(); //loading的图片显示居中
+        });
+        //-->
+    </script>
+
+    <script type="text/javascript">
+        var isAddOrEdit = 'add';//标识是新增还是编辑对话框弹出，用于删除附件的操作
+
+        $(function () {
+            var queryData = {
+                WHC_Deleted: "0"
+            };//可添加一些预设条件
+            InitGrid(queryData);//初始化Datagrid表格数据 
+            InitDictItem();   //初始化字典信息
+
+            BindSearchEvent();//绑定查询按钮事件
+            //BindSearchDeletedEvent();//查看已删除记录
+            BindAddEvent();   //绑定添加按钮的事件
+            BindEditEvent();  //绑定修改按钮的事件
+        });
+
+        //初始化字典信息
+        function InitDictItem() {
+
+            //初始化新增状态公司信息，默认公司为当前用户公司
+            //InitAddCompany();
+            //$('#Company_ID').combotree('setValue', '@Session["Company_ID"]');
+
+            InitAddDeptTree();
+            //$('#Dept_ID').combotree('setValue', '@Session["Dept_ID"]');
+            //InitAddUserManager();
+
+            //编辑状态下仅仅初始化公司
+            //InitEditCompany();
+        }
+
+        //初始化公司
+        function InitAddCompany() {
+            $('#Company_ID').combotree({
+                url: '/User/GetMyCompanyTreeJson?userId=@Session["UserId"]',
+                valueField: 'id',
+                textField: 'text',
+                required: true,
+                onClick: function (node) {
+                    InitAddDeptTree();
+                }, //全部打开
+                onLoadSuccess: function (node, data) {
+                    $('#Company_ID').combotree('tree').tree("expandAll");
+                }
+            });
+        }
+        //初始化所在部门
+        function InitAddDeptTree() {
+            $('#Dept_ID').combotree({
+                url: '/Access/GetDepartmentJson?isAddRoot=false',
+                required: true,
+                onClick: function (node) {
+                    InitAddUserManager();
+                }
+            });
+        }
+        //初始化部门用户
+        function InitAddUserManager() {
+            $('#PID').combotree({
+                url: '/User/GetUserTreeJson?deptId=' + $('#Dept_ID').combobox('getValue')
+            });
+        }
+
+        //编辑状态下的初始化
+        function InitEditCompany() {
+            $('#Company_ID1').combotree({
+                url: '/User/GetMyCompanyTreeJson?userId=@Session["UserId"]',
+                required: true,
+                onClick: function (node) {
+                    InitEditDeptTree();
+                }, //全部打开
+                onLoadSuccess: function (node, data) {
+                    $('#Company_ID1').combotree('tree').tree("expandAll");
+                }
+            });
+        }
+        function InitEditDeptTree() {
+            $('#Dept_ID1').combotree({
+                url: '/Access/GetDepartmentJson?isAddRoot=false',
+                required: true,
+                onClick: function (node) {
+                    //InitEditUserManager();
+                }
+            });
+        }
+        function InitEditUserManager() {
+            $('#PID1').combotree({
+                url: '/User/GetUserTreeJson?deptId=' + $('#Dept_ID1').combobox('getValue')
+            });
+        }
+
+        //实现对DataGird控件的绑定操作
+        function InitGrid(queryData) {
+            $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/User/FindWithPager',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                title: '系统用户信息',
+                iconCls: 'icon-view',
+                height: 650,
+                width: function () { return document.body.clientWidth * 0.9 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                //idField: 'ID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+	                { field: 'ck', checkbox: true },   //选择
+                     { title: 'ID', field: 'ID', width: 80, sortable: true },
+                     { title: '用户编码', field: 'HandNo', width: 80, sortable: true,hidden:true },
+                     { title: '用户名/登录名', field: 'Name', width: 120, sortable: true },
+                     { title: '真实姓名', field: 'FullName', width: 80, sortable: true },
+                     {
+                         title: '是否过期', field: 'IsExpire', width: 80, formatter: function (val, rowdata, index) {
+                             if (val) {
+                                 return '<a class="grid_unvisible" href="javascript:void(0)" >' + val + '</a>';
+                             } else {
+                                 return '<a class="grid_visible" href="javascript:void(0)" >' + val + '</a>';
+                             }
+                         }
+                     },
+                     {
+                         title: '是否删除', field: 'Deleted', width: 80, formatter: function (val, rowdata, index) {
+                             if (val) {
+                                 return '<a class="grid_deleted" href="javascript:void(0)" >' + val + '</a>';
+                             } else {
+                                 return '<a class="grid_normal" href="javascript:void(0)" >' + val + '</a>';
+                             }
+                         }
+                     },
+                     { title: '职务头衔', field: 'Title', width: 80, sortable: true },
+                     { title: '移动电话', field: 'MobilePhone', width: 120, sortable: true },
+                     { title: '办公电话', field: 'OfficePhone', width: 120, sortable: true },
+                     { title: '邮件地址', field: 'Email', width: 150, sortable: true },
+                     { title: '性别', field: 'Gender', width: 80, sortable: true },
+                     { title: 'QQ号码', field: 'QQ', width: 80, sortable: true },
+                     { title: '个性签名', field: 'Signature', width: 80, sortable: true },
+                     { title: '审核状态', field: 'AuditStatus', width: 80, sortable: true },
+                     { title: '备注', field: 'Note', width: 150, sortable: true }
+                ]],
+                onLoadSuccess: function () {
+                    $(".grid_visible").linkbutton({ text: '可用', plain: true, iconCls: 'icon-ok' });
+                    $(".grid_unvisible").linkbutton({ text: '过期', plain: true, iconCls: 'icon-stop' });
+
+                    $(".grid_normal").linkbutton({ text: '正常', plain: true, iconCls: 'icon-ok' });
+                    $(".grid_deleted").linkbutton({ text: '已删除', plain: true, iconCls: 'icon-stop' });
+                },
+
+                toolbar: [{
+                    id: 'btnAdd',
+                    text: '添加',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        ShowAddDialog();//实现添加记录的页面
+                    }
+                }, '-', {
+                    id: 'btnEdit',
+                    text: '修改',
+                    iconCls: 'icon-edit',
+                    handler: function () {
+                        ShowEditOrViewDialog();//实现修改记录的方法
+                    }
+                }, '-', {
+                    id: 'btnDelete',
+                    text: '删除',
+                    iconCls: 'icon-remove',
+                    handler: function () {
+                        Delete();//实现直接删除数据的方法
+                    }
+                }, '-', {
+                    id: 'btnView',
+                    text: '查看',
+                    iconCls: 'icon-table',
+                    handler: function () {
+                        ShowEditOrViewDialog("view");//实现查看记录详细信息的方法
+                    }
+                }, '-', {
+                    id: 'btnReload',
+                    text: '刷新',
+                    iconCls: 'icon-reload',
+                    handler: function () {
+                        //实现刷新栏目中的数据
+                        $("#grid").datagrid("reload");
+                    }
+                }, '-', {
+                    id: 'btnDeleteList',
+                    text: '已删除记录',
+                    iconCls: 'icon-cancel',
+                    handler: function () {
+                        ShowDeletedList();
+                    }
+                }],
+                onDblClickRow: function (rowIndex, rowData) {
+                    $('#grid').datagrid('uncheckAll');
+                    $('#grid').datagrid('checkRow', rowIndex);
+                    ShowEditOrViewDialog();
+                }
+            });
+            var heightMargin = $("#toolbar").height() + 60;
+            var widthMargin = $(document.body).width() - $("#tb").width();
+            // 第一次加载时和当窗口大小发生变化时，自动变化大小
+            $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            $(window).resize(function () {
+                $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            });
+        };
+
+        //绑定搜索按钮的的点击事件
+        function BindSearchEvent() {
+            //按条件进行查询数据，首先我们得到数据的值
+            $("#btnSearch").click(function () {
+                //得到用户输入的参数
+                //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
+                //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
+                var queryData = {
+                    WHC_HandNo: $("#txtHandNo").val(),
+                    WHC_Name: $("#txtName").val(),
+                    WHC_FullName: $("#txtFullName").val(),
+                    WHC_Nickname: $("#txtNickname").val(),
+                    WHC_Gender: $("#txtGender").val(),
+                    WHC_MobilePhone: $("#txtMobilePhone").val(),
+                    WHC_OfficePhone: $("#txtOfficePhone").val(),
+                    WHC_Email: $("#txtEmail").val(),
+                    WHC_QQ: $("#txtQQ").val(),
+                    WHC_Deleted: "0"
+                }
+                //将值传递给
+                InitGrid(queryData);
+                return false;
+            });
+        }
+        //绑定搜索按钮的的点击事件
+        function BindSearchDeletedEvent() {
+            //按条件进行查询数据，首先我们得到数据的值
+            $("#btnSearchDeleted").click(function () {
+                var queryData = {
+                    WHC_Deleted: "1"
+                }
+                //将值传递给
+                InitGrid(queryData);
+                return false;
+            });
+        }
+
+        //绑定选择按钮的事件
+        function ShowDeletedList() {
+            $.showWindow({
+                title: '用户删除记录',
+                useiframe: true,
+                width: 1024,
+                height: 600,
+                content: 'url:/User/DeletedList',
+                data: { datagrid: $('#grid') },
+                buttons: [{
+                    text: '关闭',
+                    iconCls: 'icon-ok',
+                    handler: 'doOK' //此方法在弹出页面中
+                }, {
+                    text: '取消',
+                    iconCls: 'icon-cancel',
+                    handler: function (win) {
+                        win.close();
+                    }
+                }]
+            });
+        }
+
+        //实现删除数据的方法
+        function Delete() {
+            //得到用户选择的数据的ID
+            var rows = $("#grid").datagrid("getSelections");
+            if (rows.length >= 1) {
+                //遍历出用户选择的数据的信息，这就是用户用户选择删除的用户ID的信息
+                var ids = "";   //1,2,3,4,5
+                for (var i = 0; i < rows.length; i++) {
+                    ids += rows[i].ID + ",";
+                }
+                //最后去掉最后的那一个,
+                ids = ids.substring(0, ids.length - 1);
+                var postData = { Ids: ids };
+
+                //然后确认发送异步请求的信息到后台删除数据
+                $.messager.confirm("删除确认", "您确认删除选定的记录吗？", function (action) {
+                    if (action) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/User/DeletebyIds',
+                            dataType: 'json',
+                            data: postData,
+                            success: function (data) {
+                                if (data.Success) {
+                                    showTips("删除选定的记录成功");
+
+                                    $("#grid").datagrid("reload");
+                                    //当删除完成之后，第二次删除的时候还记得上次的信息，这样是不可以的，所以我们需要清除第一次的信息                                
+                                    rows.length = "";//第一种方法                                
+                                    $("#grid").datagrid("clearSelections");//第二种方法
+                                }
+                                else {
+                                    showError("操作失败：" + data.ErrorMessage, 3000);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            else {
+                $.messager.alert("提示", "请选择你要删除的数据");
+            }
+        }
+
+        //弹出新增对话框
+        function ShowAddDialog() {
+            isAddOrEdit = 'add';//新增对话框标识
+            //CKEDITOR.instances.Content.setData('');  //清空编辑器的数据
+
+            $("#DivAdd").dialog('open').dialog('setTitle', '添加信息');
+        }
+
+        //绑定添加按钮的事件
+        function BindAddEvent() {
+            $("#btnAddOK").click(function () {
+                //判断表单的信息是否通过验证
+                var validate = $("#ffAdd").form('validate');
+                if (validate == false) {
+                    return false;
+                }
+
+                //修改控件的值为复选框的值
+                $("#hIsExpire").val($("#IsExpire").is(':checked'))
+                $("#hDeleted").val($("#Deleted").is(':checked'))
+
+                var postData = $("#ffAdd").serializeArray();
+                $.post("/User/Insert", postData, function (json) {
+                    var data = $.parseJSON(json);
+                    if (data.Success) {
+                        //添加成功  1.关闭弹出层，2.刷新DataGird
+                        showTips("添加成功");
+                        $("#DivAdd").dialog("close");
+                        $("#grid").datagrid("reload");
+                        $("#ffAdd").form("clear");
+                    }
+                    else {
+                        showError("添加失败:" + data.ErrorMessage, 3000);
+                    }
+                }).error(function () {
+                    $.messager.alert("提示", "您未被授权使用该功能，请联系管理员进行处理。", 'warning');
+                });
+            });
+        }
+
+        //修改或查看明细信息（绑定显示数据）
+        function ShowEditOrViewDialog(view) {
+            //首先取出来用户选择的数据的ID
+            var rows = $("#grid").datagrid("getSelections");
+            //首先取出来值判断用户只能选择一个
+            if (rows.length == 0) {
+                $.messager.alert("提示", "请选择一条记录", "error");
+                return;
+            }
+            else if (rows.length > 1) {
+                $.messager.alert("提示", "每次只能修改/查看一条记录，你已经选择了<font color='red'  size='6'>" + rows.length + "</font>条", "error");
+                return;
+            }
+            if (view == null) {
+                //处理修改的信息
+                $("#DivEdit").dialog('open').dialog('setTitle', '修改信息');
+                //绑定修改详细信息的方法
+                BindEditInfo();
+            }
+            else {
+                //处理查看详细
+                $("#DivView").dialog('open').dialog('setTitle', '查看详细信息');
+                //绑定查看详细信息方法
+                BindViewInfo();
+            }
+        }
+
+        //绑定编辑详细信息的方法
+        function BindEditInfo() {
+            //首先用户发送一个异步请求去后台实现方法
+            var ID = $("#grid").datagrid("getSelections")[0].ID;  //获取到了用用户选择的ID
+            $.ajaxSettings.async = false;
+            $.getJSON("/User/FindByID?r=" + Math.random() + "&id=" + ID, function (info) {
+                //赋值有几种方式：.datebox('setValue', info.Birthday);.combobox('setValue', info.Status);.val(info.Name);
+                $("#ID1").val(info.ID);
+                $("#HandNo1").val(info.HandNo);
+                $("#Name1").val(info.Name);
+                $("#FullName1").val(info.FullName);
+                $("#Nickname1").val(info.Nickname);
+                $("#Title1").val(info.Title);
+                $("#IdentityCard1").val(info.IdentityCard);
+                $("#MobilePhone1").val(info.MobilePhone);
+                $("#OfficePhone1").val(info.OfficePhone);
+                $("#HomePhone1").val(info.HomePhone);
+                $("#Email1").val(info.Email);
+                $("#Address1").val(info.Address);
+                $("#WorkAddr1").val(info.WorkAddr);
+                $("#Gender1").val(info.Gender);
+                $("#Birthday1").datebox('setValue', info.Birthday);
+                $("#QQ1").val(info.QQ);
+                $("#Signature1").val(info.Signature);
+                $("#Note1").val(info.Note);
+                $("#CustomField1").val(info.CustomField);
+                $("#SortCode1").val(info.SortCode);
+
+                $("#Deleted1").prop('checked', info.Deleted);
+                $("#hDeleted1").val(info.Deleted);
+                $("#IsExpire1").prop('checked', info.IsExpire);
+                $("#hIsExpire1").val(info.IsExpire);
+                $("#AuditStatus1").combobox('setValue', info.AuditStatus);
+
+                //特殊的赋值操作
+                //$('#Company_ID1').combotree('setValue', info.Company_ID);
+                //公司信息变化后，及时初始化部门信息，并赋值
+                InitEditDeptTree();
+                $("#Dept_ID1").combotree('setValue', info.Dept_ID);
+                //部门信息变化后，及时初始化部门管理人员，并赋值
+                //InitEditUserManager();
+                //$("#PID1").combotree('setValue', info.PID);
+
+                //$('#lbxRoles').empty();
+                //$.getJSON("/Role/GetRolesByUser?r=" + Math.random() + "&userid=" + info.ID, function (json) {
+                //    $.each(json, function (i, item) {
+                //        $('#lbxRoles').append('<option value="' + item.ID + '">' + item.Name + '</option>');
+                //    });
+                //});
+
+                //$('#lbxOUs').empty();
+                //$.getJSON("/Ou/GetOUsByUser?r=" + Math.random() + "&userid=" + info.ID, function (json) {
+                //    $.each(json, function (i, item) {
+                //        $('#lbxOUs').append('<option value="' + item.ID + '">' + item.Name + '</option>');
+                //    });
+                //});
+
+                //$('#treeFunctionEdit').tree({
+                //    checkbox: false,
+                //    url: '/Function/GetFunctionTreeJsonByUser?userId=' + info.ID,
+                //});
+
+                isAddOrEdit = 'edit';//新增对话框标识    
+            });
+        }
+
+        //绑定查看详细信息的方法
+        function BindViewInfo() {
+            var ID = $("#grid").datagrid('getSelections')[0].ID;
+            //发送请求
+            $.getJSON("/User/FindByID?r=" + Math.random() + "&id=" + ID, function (info) {
+                $("#ID2").text(info.ID);
+                $("#HandNo2").text(info.HandNo);
+                $("#Name2").text(info.Name);
+                $("#FullName2").text(info.FullName);
+                $("#Nickname2").text(info.Nickname);
+                $("#Title2").text(info.Title);
+                $("#IdentityCard2").text(info.IdentityCard);
+                $("#MobilePhone2").text(info.MobilePhone);
+                $("#OfficePhone2").text(info.OfficePhone);
+                $("#HomePhone2").text(info.HomePhone);
+                $("#Email2").text(info.Email);
+                $("#Address2").text(info.Address);
+                $("#WorkAddr2").text(info.WorkAddr);
+                $("#Gender2").text(info.Gender);
+                $("#Birthday2").text(info.Birthday);
+                $("#QQ2").text(info.QQ);
+                $("#Signature2").text(info.Signature);
+                $("#Note2").text(info.Note);
+                $("#CustomField2").text(info.CustomField);
+                $("#SortCode2").text(info.SortCode);
+
+                $("#DeptName2").text(info.DeptName);
+                $("#CompanyName2").text(info.CompanyName);
+                $("#Editor2").text(info.Editor);
+                $("#EditTime2").text(info.EditTime);
+                $("#Creator2").text(info.Creator);
+                $("#CreateTime2").text(info.CreateTime);
+                $("#Deleted2").prop('checked', info.Deleted);
+                $("#IsExpire2").prop('checked', info.IsExpire);
+                $("#AuditStatus2").prop('checked', info.AuditStatus);
+
+                $('#lbxRoles_view').empty();
+                $.getJSON("/Role/GetRolesByUser?r=" + Math.random() + "&userid=" + info.ID, function (json) {
+                    $.each(json, function (i, item) {
+                        $('#lbxRoles_view').append('<option value="' + item.ID + '">' + item.Name + '</option>');
+                    });
+                });
+
+                $('#lbxOUs_view').empty();
+                $.getJSON("/Ou/GetOUsByUser?r=" + Math.random() + "&userid=" + info.ID, function (json) {
+                    $.each(json, function (i, item) {
+                        $('#lbxOUs_view').append('<option value="' + item.ID + '">' + item.Name + '</option>');
+                    });
+                });
+
+                $('#PID2').text("无");
+                $.getJSON("/User/FindByID?r=" + Math.random() + "&id=" + info.PID, function (parentInfo) {
+                    if (parentInfo != undefined) {
+                        $('#PID2').val(parentInfo.Name);
+                    }
+                });
+
+                $('#treeFunctionView').tree({
+                    checkbox: false,
+                    url: '/Function/GetFunctionTreeJsonByUser?userId=' + info.ID,
+                });
+            });
+        }
+
+        //绑定修改按钮的事件
+        function BindEditEvent() {
+            $("#btnEditOK").click(function () {
+                //判断表单的信息是否通过验证
+                var validate = $("#ffEdit").form("validate");
+                if (validate == false) {
+                    return false;
+                }
+
+                //修改控件的值为复选框的值
+                $("#hIsExpire1").val($("#IsExpire1").is(':checked'))
+                $("#hDeleted1").val($("#Deleted1").is(':checked'))
+
+                //构造参数发送给后台
+                var ID = $("#ID1").val();
+                var postData = $("#ffEdit").serializeArray();
+
+                $.post("/User/Update?ID=" + ID, postData, function (json) {
+                    var data = $.parseJSON(json);
+                    if (data.Success) {
+                        //修改成功，关闭弹出层，刷新DataGird
+                        showTips("修改成功");
+                        $("#DivEdit").dialog('close');
+                        $("#grid").datagrid("reload");
+                    }
+                    else {
+                        showError("修改失败:" + data.ErrorMessage);
+                    }
+                }).error(function () {
+                    $.messager.alert("提示", "您未被授权使用该功能，请重新登录测试或联系管理员进行处理。", 'warning');
+                });
+            });
+        }
+        //初始化用户密码
+        function resetPassword(id) {
+            if (id != 'undefined' && id != '') {
+                $.messager.confirm("确认信息", "您要确定重置该用户密码为12345678吗？", function (resetPasswordAction) {
+                    if (resetPasswordAction) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/User/ResetPassword?r=' + Math.random(),
+                            async: false,
+                            data: { ID: id },
+                            dataType: 'json',
+                            success: function (data) {
+                                if (data.Success) {
+                                    //修改成功，关闭弹出层，刷新DataGird
+                                    showTips("修改成功");
+                                    $("#DivEdit").dialog('close');
+                                    $("#grid").datagrid("reload");
+                                }
+                                else {
+                                    showError("修改失败:" + data.ErrorMessage);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                $.messager.alert("提示", "操作失败");
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+
+    <style>
+        table.view {
+            border: 1px solid #A8CFEB;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+            vertical-align: top;
+            height: 98%;
+            width: 98%;
+        }
+
+        .view th {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #F1F6FF;
+        }
+
+        .view td {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #FAFCFF;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading" style="display: none;">
+        <img alt="数据正在加载中..." src="~/Content/images/loading02.gif" />
+    </div>
+    <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
+        <div data-options="region:'west',split:true,title:'用户部门',iconCls:'icon-book'" style="width: 200px; padding: 1px;">
+
+            <div style="margin: 2px; padding: 5px;">
+                <ul id="treeDept"></ul>
+            </div>
+        </div>
+
+        <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding: 5px; height: auto">
+            <!-------------------------------搜索框----------------------------------->
+            <fieldset>
+                <legend>信息查询</legend>
+                <form id="ffSearch" method="post">
+                    <div id="toolbar">
+                        <table cellspacing="0" cellpadding="0">
+                            <tr>
+                                <th>
+                                    <label for="txtHandNo">用户编码：</label></th>
+                                <td>
+                                    <input type="text" id="txtHandNo" name="txtHandNo" style="width: 100px" /></td>
+                                <th>
+                                    <label for="txtName">用户名/登录名：</label></th>
+                                <td>
+                                    <input type="text" id="txtName" name="txtName" style="width: 100px" /></td>
+                                <th>
+                                    <label for="txtFullName">真实姓名：</label></th>
+                                <td>
+                                    <input type="text" id="txtFullName" name="txtFullName" style="width: 100px" /></td>
+                                <th>
+                                    <label for="txtNickname">用户呢称：</label></th>
+                                <td>
+                                    <input type="text" id="txtNickname" name="txtNickname" style="width: 100px" /></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <label for="txtGender">性别：</label></th>
+                                <td>
+                                    <input type="text" id="txtGender" name="txtGender" style="width: 100px" /></td>
+                                <th>
+                                    <label for="txtMobilePhone">移动电话：</label></th>
+                                <td>
+                                    <input type="text" id="txtMobilePhone" name="txtMobilePhone" style="width: 100px" /></td>
+                                <th>
+                                    <label for="txtEmail">邮件地址：</label></th>
+                                <td>
+                                    <input type="text" id="txtEmail" name="txtEmail" style="width: 100px" /></td>
+                                <th>
+                                    <label for="txtQQ">QQ号码：</label></th>
+                                <td>
+                                    <input type="text" id="txtQQ" name="txtQQ" style="width: 100px" /></td>
+                                <td style="padding: 10px">
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="8" style="text-align: right; display: none;">
+                                    <a href="/User/RDLCReport" class="easyui-linkbutton" data-options="iconCls:'icon-view'" id="btnReport">RDLC报表</a>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" id="btnSearchDeleted" onclick="ShowDeletedList()">已删除记录</a>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </form>
+            </fieldset>
+
+            <!-------------------------------详细信息展示表格----------------------------------->
+            <table id="grid" style="width: 940px" title="用户操作" data-options="iconCls:'icon-view'"></table>
+        </div>
+    </div>
+
+    <!--------------------------添加信息的弹出层---------------------------->
+    <div id="DivAdd" class="easyui-dialog" style="width: 750px; height: 100%; padding: 5px 5px"
+        closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-add'">
+        <form id="ffAdd" method="post" novalidate="novalidate">
+            <table id="tblAdd" class="view">
+                <tr>
+                    <th>
+                        <label for="Name">用户名/登录名(*)：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="Name" name="Name" data-options="required:true,validType:'length[1,50]'" />
+                    </td>
+                    <th>
+                        <label for="FullName">真实姓名(*)：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="FullName" name="FullName" data-options="required:true,validType:'length[1,50]'" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Dept_ID">默认部门(*)：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-combobox" type="text" id="Dept_ID" name="Dept_ID" style="width: 150px" data-options="required:true,validType:'length[1,50]'" />
+                    </td>
+                    <th>
+                        <label for="Title">职务头衔：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="Title" name="Title" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                </tr>
+                <tr style="display: none;">
+                    <th>
+                        <label for="Company_ID">所属公司(*)：</label>
+                    </th>
+
+                    <td>
+                        <input class="easyui-combobox" type="text" id="Company_ID" name="Company_ID" style="width: 200px" />
+                    </td>
+
+                    <th>
+                        <label for="PID">所属经理：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-combobox" type="text" id="PID" name="PID" style="width: 200px" />
+                        <!-- data-options="required:true,validType:'length[1,5]'" -->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="HandNo">用户编码：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="HandNo" name="HandNo" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                    <th>
+                        <label for="SortCode">排序码：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="SortCode" name="SortCode" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Nickname">用户呢称：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="Nickname" name="Nickname" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                    <th>
+                        <label for="QQ">QQ号码：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="QQ" name="QQ" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Email">邮件地址：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="Email" name="Email" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                    <th>
+                        <label for="MobilePhone">移动电话：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="MobilePhone" name="MobilePhone" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="IdentityCard">身份证号码：</label>
+                    </th>
+                    <td colspan="3">
+                        <input class="easyui-validatebox" type="text" style="width: 200px" id="IdentityCard" name="IdentityCard" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Gender">性别：</label>
+                    </th>
+                    <td>
+                        <select id="Gender" class="easyui-combobox" name="Gender" style="width: 100px;">
+                            <option>男</option>
+                            <option>女</option>
+                        </select>
+                    </td>
+                    <th>
+                        <label for="Birthday">出生日期：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-datebox" type="text" id="Birthday" name="Birthday" />
+                        <!-- data-options="required:true" -->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="OfficePhone">办公电话：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="OfficePhone" name="OfficePhone" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                    <th>
+                        <label for="HomePhone">家庭电话：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="HomePhone" name="HomePhone" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Address">家庭住址：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" style="width: 200px" id="Address" name="Address" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                    <th>
+                        <label for="WorkAddr">办公地址：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" style="width: 200px" id="WorkAddr" name="WorkAddr" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Signature">个性签名：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" style="width: 200px" id="Signature" name="Signature" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                    <th>
+                        <label for="CustomField">自定义字段：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" style="width: 200px" id="CustomField" name="CustomField" />
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Note">备注：</label>
+                    </th>
+                    <td colspan="3">
+                        <textarea class="easyui-validatebox" style="width: 400px" id="Note" name="Note"></textarea>
+                        <!-- data-options="required:true,validType:'length[1,50]'" -->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="AuditStatus">审核状态：</label>
+                    </th>
+                    <td>
+                        <select id="AuditStatus" class="easyui-combobox" name="AuditStatus" style="width: 100px;">
+                            <option>未审核</option>
+                            <option>已审核</option>
+                        </select>
+                    </td>
+                    <th colspan="2">
+                        <lable for="Deleted"><input type="checkbox" id="Deleted" />账号删除</lable>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <lable for="IsExpire"><input type="checkbox" id="IsExpire" />账号过期</lable>
+                        <input type="hidden" id="hDeleted" name="Deleted" />
+                        <input type="hidden" id="hIsExpire" name="IsExpire" />
+                    </th>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: right; padding-top: 10px">
+                        <a href="javascript:void(0)" class="easyui-linkbutton" id="btnAddOK" iconcls="icon-ok">确定</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#DivAdd').dialog('close')">关闭</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+    <!--------------------------编辑信息的弹出层---------------------------->
+    <div id="DivEdit" class="easyui-dialog" style="width: 750px; height: 100%; padding: 5px 5px"
+        closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-edit'">
+        <form id="ffEdit" method="post" novalidate="novalidate">
+            <table id="tblEdit" class="view">
+                <tr>
+                    <th>
+                        <label for="Name1">用户名/登录名：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="Name1" name="Name" readonly="readonly" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                    <th>
+                        <label for="FullName1">真实姓名：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="FullName1" name="FullName" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                </tr>
+                <tr style="display: none;">
+                    <th>
+                        <label for="Company_ID1">所属公司：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="Company_ID1" name="Company_ID" value="0" style="width: 200px" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                    <th>
+                        <label for="PID1">直属经理：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-combobox" type="text" id="PID1" name="PID" style="width: 200px" />
+                        <!-- data-options="required:true,validType:'length[1,5]'" -->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Dept_ID1">默认部门：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-combobox" type="text" id="Dept_ID1" name="Dept_ID" style="width: 150px" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+
+                    <th>
+                        <label for="Title1">职务头衔：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="Title1" name="Title" style="width: 150px" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="HandNo1">用户编码：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="HandNo1" name="HandNo" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                    <th>
+                        <label for="SortCode1">排序码：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="SortCode1" name="SortCode" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Nickname1">用户呢称：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="Nickname1" name="Nickname" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                    <th>
+                        <label for="QQ1">QQ号码：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="QQ1" name="QQ" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Email1">邮件地址：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="Email1" name="Email" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                    <th>
+                        <label for="MobilePhone1">移动电话：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="MobilePhone1" name="MobilePhone" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="IdentityCard1">身份证号码：</label>
+                    </th>
+                    <td colspan="3">
+                        <input class="easyui-validatebox" type="text" id="IdentityCard1" name="IdentityCard" style="width: 300px" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Gender1">性别：</label>
+                    </th>
+                    <td>
+                        <select id="Gender1" class="easyui-combobox" name="Gender" style="width: 100px;">
+                            <option>男</option>
+                            <option>女</option>
+                        </select>
+                    </td>
+                    <th>
+                        <label for="Birthday1">出生日期：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-datebox" type="text" id="Birthday1" name="Birthday" />
+                        <!-- data-options="required:true" -->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="OfficePhone1">办公电话：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="OfficePhone1" name="OfficePhone" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+
+                    <th>
+                        <label for="HomePhone1">家庭电话：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="HomePhone1" name="HomePhone" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Address1">家庭住址：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="Address1" name="Address" style="width: 200px" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                    <th>
+                        <label for="WorkAddr1">办公地址：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="WorkAddr1" name="WorkAddr" style="width: 200px" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Signature1">个性签名：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="Signature1" name="Signature" style="width: 200px" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                    <th>
+                        <label for="CustomField1">自定义字段：</label>
+                    </th>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="CustomField1" name="CustomField" style="width: 200px" />
+                        <!--data-options="required:true,validType:'length[1,50]'"-->
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Note1">备注：</label>
+                    </th>
+                    <td colspan="3">
+                        <textarea class="easyui-validatebox" style="width: 300px" id="Note1" name="Note"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="AuditStatus1">审核状态：</label>
+                    </th>
+                    <td colspan="3">
+                        <select id="AuditStatus1" class="easyui-combobox" name="AuditStatus" style="width: 100px;">
+                            <option>未审核</option>
+                            <option>审核</option>
+                        </select>
+
+                        <input type="checkbox" id="Deleted1" />是否已删除  &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="checkbox" id="IsExpire1" />是否过期                                         
+                                        <input type="hidden" id="hDeleted1" name="Deleted" />
+                        <input type="hidden" id="hIsExpire1" name="IsExpire" />
+
+                        <a href="#" class="easyui-linkbutton" iconcls="icon-ok" id="btnResetPassword" onclick="resetPassword($('#ID1').val())">重置密码</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: right; padding-top: 10px">
+                        <input type="hidden" id="ID1" name="ID" />
+                        <a href="javascript:void(0)" class="easyui-linkbutton" id="btnEditOK" data-options="iconCls: 'icon-ok'">确定</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls: 'icon-cancel'" onclick="javascript:$('#DivEdit').dialog('close')">关闭</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div id="tabEditUser" class="easyui-tabs" style="display: none;">
+            <div title="用户基础信息" data-options="iconCls:'icon-view'">
+                <table>
+                    <tr>
+                        <td></td>
+                        <td valign="top">
+                            <table style="padding: 5px; height: 300px; width: 200px">
+                                <tr>
+                                    <td>
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td width="17%" align="left" background="~/Content/Themes/Default/droit-42.jpg">
+                                                    <img src="~/Content/Themes/Default/droit-41.jpg" width="50" height="31">
+                                                </td>
+                                                <td width="69%" background="~/Content/Themes/Default/droit-42.jpg">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                        <tr>
+                                                            <td width="5%">
+                                                                <img src="~/Content/Themes/Default/droit-42.jpg" width="11" height="31">
+                                                            </td>
+                                                            <td width="95%" align="center">
+                                                                <span>所属机构</span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td width="14%" align="right" background="~/Content/Themes/Default/droit-42.jpg">
+                                                    <img src="~/Content/Themes/Default/droit-43.jpg" width="42" height="31">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <select id="lbxOUs" multiple style="height: 200px; width: 180px" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td width="17%" align="left" background="~/Content/Themes/Default/droit-42.jpg">
+                                                    <img src="~/Content/Themes/Default/droit-41.jpg" width="50" height="31">
+                                                </td>
+                                                <td width="69%" background="~/Content/Themes/Default/droit-42.jpg">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                        <tr>
+                                                            <td width="5%">
+                                                                <img src="~/Content/Themes/Default/droit-42.jpg" width="11" height="31">
+                                                            </td>
+                                                            <td width="95%" align="center">
+                                                                <span>所属角色</span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td width="14%" align="right" background="~/Content/Themes/Default/droit-42.jpg">
+                                                    <img src="~/Content/Themes/Default/droit-43.jpg" width="42" height="31">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <select id="lbxRoles" multiple style="height: 200px; width: 180px" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div title="用户可操作功能" style="padding: 5px; height: auto" data-options="iconCls:'icon-key'">
+                <ul id="treeFunctionEdit"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!--------------------------查看详细信息的弹出层---------------------------->
+    <div id="DivView" class="easyui-dialog" style="width: 750px; height: 100%; padding: 5px 5px"
+        closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-view'">
+        <form id="ffView" method="post" novalidate="novalidate">
+            <table id="tblView" class="view" style="padding: 5px; height: auto; width: 600px">
+                <tr>
+                    <th>
+                        <label for="Name2">用户名/登录名：</label>
+                    </th>
+                    <td>
+                        <label id="Name2" />
+                    </td>
+                    <th>
+                        <label for="FullName2">真实姓名：</label>
+                    </th>
+                    <td>
+                        <label id="FullName2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="CompanyName2">所属公司名称：</label>
+                    </th>
+                    <td>
+                        <label id="CompanyName2" />
+                    </td>
+                    <th>
+                        <label for="DeptName2">默认部门名称：</label>
+                    </th>
+                    <td>
+                        <label id="DeptName2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="PID2">直属经理：</label>
+                    </th>
+                    <td>
+                        <label id="PID2" />
+                    </td>
+                    <th>
+                        <label for="Title2">职务头衔：</label>
+                    </th>
+                    <td>
+                        <label id="Title2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="HandNo2">用户编码：</label>
+                    </th>
+                    <td>
+                        <label id="HandNo2" />
+                    </td>
+                    <th>
+                        <label for="SortCode2">排序码：</label>
+                    </th>
+                    <td>
+                        <label id="SortCode2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Nickname2">用户呢称：</label>
+                    </th>
+                    <td>
+                        <label id="Nickname2" />
+                    </td>
+                    <th>
+                        <label for="QQ2">QQ号码：</label>
+                    </th>
+                    <td>
+                        <label id="QQ2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Email2">邮件地址：</label>
+                    </th>
+                    <td>
+                        <label id="Email2" />
+                    </td>
+                    <th>
+                        <label for="MobilePhone2">移动电话：</label>
+                    </th>
+                    <td>
+                        <label id="MobilePhone2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="IdentityCard2">身份证号码：</label>
+                    </th>
+                    <td colspan="3">
+                        <label id="IdentityCard2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Gender2">性别：</label>
+                    </th>
+                    <td>
+                        <label id="Gender2" />
+                    </td>
+                    <th>
+                        <label for="Birthday2">出生日期：</label>
+                    </th>
+                    <td>
+                        <label id="Birthday2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="OfficePhone2">办公电话：</label>
+                    </th>
+                    <td>
+                        <label id="OfficePhone2" />
+                    </td>
+                    <th>
+                        <label for="HomePhone2">家庭电话：</label>
+                    </th>
+                    <td>
+                        <label id="HomePhone2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Address2">家庭住址：</label>
+                    </th>
+                    <td>
+                        <label id="Address2" />
+                    </td>
+                    <th>
+                        <label for="WorkAddr2">办公地址：</label>
+                    </th>
+                    <td>
+                        <label id="WorkAddr2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Signature2">个性签名：</label>
+                    </th>
+                    <td>
+                        <label id="Signature2" />
+                    </td>
+                    <th>
+                        <label for="CustomField2">自定义字段：</label>
+                    </th>
+                    <td>
+                        <label id="CustomField2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Note2">备注：</label>
+                    </th>
+                    <td colspan="3">
+                        <label id="Note2" />
+                    </td>
+                </tr>
+                <tr>
+
+                    <th>
+                        <label for="Creator2">创建人：</label>
+                    </th>
+                    <td>
+                        <label id="Creator2" />
+                    </td>
+                    <th>
+                        <label for="CreateTime2">创建时间：</label>
+                    </th>
+                    <td>
+                        <label id="CreateTime2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="Editor2">编辑人：</label>
+                    </th>
+                    <td>
+                        <label id="Editor2" />
+                    </td>
+                    <th>
+                        <label for="EditTime2">编辑时间：</label>
+                    </th>
+                    <td>
+                        <label id="EditTime2" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label for="AuditStatus2">审核状态：</label>
+                    </th>
+                    <td>
+                        <input type="checkbox" id="AuditStatus2" style="color: red" />
+                    </td>
+                    <td colspan="2">是否已删除：<input type="checkbox" id="Deleted2" />
+                        &nbsp;&nbsp; 是否过期：<input type="checkbox" id="IsExpire2" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: right; padding-top: 10px">
+                        <input type="hidden" id="ID2" />
+                        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls: 'icon-cancel'" onclick="javascript:$('#DivView').dialog('close')">关闭</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+        <div id="tabViewUser" class="easyui-tabs" style="display: none">
+            <table>
+                <tr>
+                    <td style="vertical-align: top"></td>
+                    <td style="vertical-align: top">
+                        <table style="padding: 5px; height: 300px; width: 200px">
+                            <tr>
+                                <td>
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td width="17%" align="left" background="~/Content/Themes/Default/droit-42.jpg">
+                                                <img src="~/Content/Themes/Default/droit-41.jpg" width="50" height="31">
+                                            </td>
+                                            <td width="69%" background="~/Content/Themes/Default/droit-42.jpg">
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                    <tr>
+                                                        <td width="5%">
+                                                            <img src="~/Content/Themes/Default/droit-42.jpg" width="11" height="31">
+                                                        </td>
+                                                        <td width="95%;" align="center">
+                                                            <span>所属机构</span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td width="14%" align="right" background="~/Content/Themes/Default/droit-42.jpg">
+                                                <img src="~/Content/Themes/Default/droit-43.jpg" width="42" height="31">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select id="lbxOUs_view" multiple style="height: 220px; width: 180px" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="vertical-align: top">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td width="17%" align="left" background="~/Content/Themes/Default/droit-42.jpg">
+                                                <img src="~/Content/Themes/Default/droit-41.jpg" width="50" height="31">
+                                            </td>
+                                            <td width="69%" background="~/Content/Themes/Default/droit-42.jpg">
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                    <tr>
+                                                        <td width="5%">
+                                                            <img src="~/Content/Themes/Default/droit-42.jpg" width="11" height="31">
+                                                        </td>
+                                                        <td width="95%" align="center">
+                                                            <span>所属角色</span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td width="14%" align="right" background="~/Content/Themes/Default/droit-42.jpg">
+                                                <img src="~/Content/Themes/Default/droit-43.jpg" width="42" height="31">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select id="lbxRoles_view" multiple style="height: 220px; width: 180px" />
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <div title="用户基础信息" data-options="iconCls:'icon-view'">
+            </div>
+            <div title="用户可操作功能" style="padding: 5px; height: auto" data-options="iconCls:'icon-key'">
+                <ul id="treeFunctionView"></ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

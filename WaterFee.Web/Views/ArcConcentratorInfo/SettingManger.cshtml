@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>终端参数管理</title>
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+    <script src="~/Scripts/ComponentUtil.js"></script>
+
+    <script src="../../Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/dbjs.js"></script>
+
+    <script type="text/javascript">
+
+        //调用webserver
+        function setControler() {
+            var sendDate = {
+                '_sAddr': "100000001",
+                'iCmdType': 1
+            };
+            try {
+                $.ajax({
+                    type: "POST",  //访问WebService使用post方式请求
+                    contentType: "application/json",   //WebService会返回json类型
+                    url: "http://localhost:9009/FrontService/FrontService.asmx/HelloWorld", //调用WebService的地址和方法名称组合
+                    //data: sendDate,  //这里是要传递的参数，格式为data:"{paraName:paraValue}"
+                    data: "{}",
+                    dataType: "json",
+                    success: function (result) {
+                        alert("成功");
+                    },
+                    error: function () {
+                        alert("发送ajax请求失败");
+                    }
+                })
+            }
+            catch (ex) {
+                alert(ex);
+            };
+        }
+
+
+        var IDgridOpenClose = '#gridOpenClose';
+        function getSelectVcAddr() {
+            var rows = $(IDgridOpenClose).datagrid('getSelections');
+            if (rows.length == 0) {
+                showError("请先勾选水表!");
+                return null;
+            }
+            for (var i = 0; i < rows.length; i++) {
+                VcAddr = rows[i].VcAddr;
+                OrderType = $("#ddlOpenClose").combobox("getValue");
+                setControler(VcAddr, OrderType);
+            }
+        };
+
+
+
+
+        //信息查询
+        function submits(queryData) {
+            $(IDgridOpenClose).datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/ArcMeterInfo/ListByIntConID_Submit',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                // title: '水表列表',
+                // iconCls: 'icon-view',
+                height: document.body.clientHeight - 163,
+                width: function () { return document.body.clientWidth * 0.8 - 20 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                //singleSelect: true,
+                idField: 'IntID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+                    { field: 'ck', checkbox: true },   //选择
+                    { title: '编号', field: 'IntID', width: 60, sortable: true, hidden: true },
+                    { title: '通信地址', field: 'VcAddr', width: 100, sortable: true },
+                    { title: '客户编号', field: 'IntCustNO', width: 100, align: 'center', sortable: true },
+                    { title: '客户名称', field: 'VcCustName', width: 100, align: 'center', sortable: true },
+                    { title: '用户姓名', field: 'NvcName', width: 80, sortable: true },
+                    { title: '用户小区', field: 'NvcVillage', width: 80, sortable: true },
+                    { title: '用户楼栋', field: 'VcBuilding', width: 80, sortable: true },
+                    { title: '用户单元', field: 'IntUnitNum', width: 80, sortable: true },
+                    { title: '用户门牌号', field: 'IntRoomNum', width: 80, sortable: true },
+                    { title: '账户余额', field: 'MonSum', width: 80, sortable: true },
+                    { title: '安装地址', field: 'NvcAddr', width: 120, sortable: true },
+                    { title: '条形码', field: 'VcBarCode', width: 100, align: 'center', sortable: true },
+                    //{ title: '计量点', field: 'IntMP', width: 80, align: 'center', sortable: true },
+                    //{ title: '状态', field: 'Status', width: 100, align: 'center', sortable: true }
+                ]],
+                onLoadSuccess: function () {
+                },
+                onDblClickRow: function (rowIndex, rowData) {
+
+                }
+            });
+        };
+        function submit() {
+            var queryData = {
+                "IntCustNO": $("#IntCustNO").val(),
+                "NvcName": $("#NvcName").val(),
+                "NvcAddr": $("#NvcAddr").val(),
+                "VcAddr": $("#VcAddr").val(),
+                "flag": $("#flag").combobox("getValue")
+            };
+            submits(queryData);
+            return false;
+        }
+
+        //对象居中的函数，调用例子：$("#loading").center();
+        jQuery.fn.center = function () {
+            this.css("position", "absolute");
+            this.css("top", Math.max(0, (($(window).height() - this.outerHeight()) / 2) +
+                $(window).scrollTop()) + "px");
+            this.css("left", Math.max(0, (($(window).width() - this.outerWidth()) / 2) +
+                $(window).scrollLeft()) + "px");
+            return this;
+        }
+
+    </script>
+
+</head>
+<body>
+
+    <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
+        <div id="tbEdit" data-options="region:'center',split:true,title:'终端参数管理',iconCls:'icon-setting'" style="padding: 5px; height: auto">
+            <div fit="false">
+                <fieldset id="condition">
+                    <legend>信息查询</legend>
+                    <form id="ffSearch" method="post">
+                        <div id="toolbar">
+                            <table cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <th style='padding: 3px;'>
+                                        <label for="NvcName">用户编号：</label>
+                                    </th>
+                                    <td style='padding: 3px;'>
+                                        <input type="text" id="IntCustNO" class="text-info" style="width: 100px" />
+                                    </td>
+                                    <th style='padding: 3px;'>
+                                        <label for="NvcAddr">用户名：</label>
+                                    </th>
+                                    <td style='padding: 3px;'>
+                                        <input type="text" id="NvcName" style="width: 100px" />
+                                    </td>
+                                    <th style='padding: 3px;'>
+                                        <label for="VcAddr">安装地址：</label>
+                                    </th>
+                                    <td style='padding: 3px;'>
+                                        <input type="text" id="NvcAddr" style="width: 100px" />
+                                    </td>
+                                    <th style='padding: 3px;'>
+                                        <label for="VcSimNo">通信地址：</label>
+                                    </th>
+                                    <td style='padding: 3px;'>
+                                        <input type="text" id="VcAddr" style="width: 100px" />
+                                    </td>
+                                    <th style='padding: 3px;'>
+                                        <label for="VcSimNo">是否欠费：</label>
+                                    </th>
+                                    <td style='padding: 3px;'>
+                                        <select id="flag" name="flag" class="easyui-combobox" style="width: 100px;" data-options="required:true">
+                                            <option value="1">已欠费</option>
+                                            <option value="2">未欠费</option>
+                                        </select>
+                                    </td>
+                                    <td style='padding: 3px; text-align: right'>
+                                        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch" onclick="setControler()">查询</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </form>
+                </fieldset>
+
+                <div id="divTab" class="easyui-tabs">
+                    <div id="divOpenClose" title="终端参数管理" style="padding: 10px; height: auto" data-options="iconCls:'icon-key'">
+                        <form id="ffOpenClose" style="padding: 10px; height: auto" method="post" novalidate="novalidate">
+                            <table id="gridOpenClose" style="width: 940px;height: auto" title="用户列表" data-options="iconCls:'icon-view'"></table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</body>
+</html>

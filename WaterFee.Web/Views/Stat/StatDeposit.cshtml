@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>预存流水账统计</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+    <script src="~/Scripts/ComponentUtil.js"></script>
+    <script src="~/Scripts/dbjs.js"></script>
+    <style>
+        table.view {
+            border: 1px solid #A8CFEB;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+            vertical-align: top;
+            height: 98%;
+            width: 98%;
+        }
+
+        .view th {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #F1F6FF;
+        }
+
+        .view td {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #FAFCFF;
+        }
+
+        .view input {
+            width: 99%;
+        }
+
+        .subtotal {
+            font-weight: bold;
+        }
+    </style>
+    <script type="text/javascript">
+
+        $(function () {
+            $(document).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    $("#btnSearch").click();
+                    return;
+                }
+            });
+            //easyui("#txtDate").val(new Date().Format());
+
+            BindSearchEvent();
+        });
+
+
+        //实现对DataGird控件的绑定操作
+        function InitGrid(queryData) {
+            //console.log(queryData);
+            $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/Stat/StatDepositData',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                title: '预存流水账统计',
+                iconCls: 'icon-view',
+                height: document.body.clientHeight * 0.9 - 30,
+                width: function () { return document.body.clientWidth * 0.9 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                //idField: 'ID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+	                 //{ field: 'ck', checkbox: true },   //选择
+                     { title: '户号', field: '户号', width: 100, sortable: true, hidden: true },
+                     { title: '小区', field: '小区', width: 100, sortable: true, align: 'center' },
+                     { title: '楼栋', field: '楼栋', width: 100, sortable: true, align: 'center' },
+                     { title: '户名', field: '户名', width: 100, sortable: true, align: 'center' },
+                     { title: '地址', field: '地址', width: 200, sortable: true, align: 'center' },
+                     { title: '金额', field: '金额', width: 100, sortable: true, align: 'center' },
+                     { title: '操作时间', field: '操作时间', width: 150, sortable: true, align: 'center' }
+                ]],
+                onLoadSuccess: function () {
+
+                },
+                //toolbar: [
+                //    //{
+                //    //    id: 'btnFee',
+                //    //    text: '选中冲正',
+                //    //    iconCls: 'icon-add',
+                //    //    handler: function () {
+                //    //        Fee();
+                //    //    }
+                //    //},
+                //'-', {
+                //    id: 'btnReload',
+                //    text: '刷新',
+                //    iconCls: 'icon-reload',
+                //    handler: function () {
+                //        //实现刷新栏目中的数据
+                //        $("#grid").datagrid("reload");
+                //    }
+                //}],
+
+
+                onDblClickRow: function (rowIndex, rowData) {
+                    //$('#grid').datagrid('uncheckAll');
+                    //$('#grid').datagrid('checkRow', rowIndex);
+                }
+            });
+            //var heightMargin = $("#toolbar").height() + 60;
+            //var widthMargin = $(document.body).width() - $("#tb").width();
+            //// 第一次加载时和当窗口大小发生变化时，自动变化大小
+            //$('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            //$(window).resize(function () {
+            //    $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            //});
+        };
+
+        //绑定搜索按钮的的点击事件
+        function BindSearchEvent() {
+            //按条件进行查询数据，首先我们得到数据的值
+            $("#btnSearch").click(function () {
+                //得到用户输入的参数
+                //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
+                //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
+                var start = $("#txtDateStart").datebox('getValue');
+                var end = $("#txtDateEnd").datebox('getValue');
+                if (!start || !end) {
+                    alert("开始日期或结束日期不能为空!");
+                    return false;
+                }
+                var queryData = {
+                    paramMode: $("#ddlParamMode").combobox('getValue'),
+                    paramValue: $("#txtParamValue").val(),
+                    dtStart: start,
+                    dtEnd: end
+                }
+                //将值传递给
+                InitGrid(queryData);
+                return false;
+            });
+        }
+
+    </script>
+
+
+</head>
+<body>
+
+    <div id="loading" style="display: none;">
+        <img alt="数据正在加载中..." src="~/Content/images/loading02.gif" />
+    </div>
+    <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
+
+        <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding: 5px; height: auto">
+            <!-------------------------------搜索框----------------------------------->
+            <fieldset style="margin-bottom: 5px;">
+                <legend>信息查询</legend>
+                <div id="ffSearch" method="post">
+                    <div id="toolbar">
+                        <table cellspacing="0" cellpadding="0">
+                            <tr>
+                                <th style='padding: 3px;'>
+                                    <select id="ddlParamMode" name="Status" class="easyui-combobox" style="width: 100px;">
+                                        <option value="0">全部</option>
+                                        <option value="1">户号</option>
+                                        <option value="2">采集器</option>
+                                        <option value="3">小区</option>
+                                    </select>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="txtParamValue" class="text-info" style="width: 100px" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="txtIntNo">日期：</label></th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="txtDateStart" class="easyui-datebox" style="width: 100px" />
+                                    -
+                                    <input type="text" id="txtDateEnd" class="easyui-datebox" style="width: 100px" />
+                                </td>
+
+                                <td style='padding: 3px; text-align: right'>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-------------------------------详细信息展示表格----------------------------------->
+            <table id="grid" style="width: 940px" title="用户操作" data-options="iconCls:'icon-view'"></table>
+        </div>
+    </div>
+
+
+</body>
+</html>

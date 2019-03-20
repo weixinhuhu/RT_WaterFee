@@ -1,0 +1,232 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>无线水表采集收费管理系统</title>
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+    <script src="~/Scripts/ComponentUtil.js"></script>
+
+    <script type="text/javascript">
+        //判断显示用户登录的时候显示整个页面
+        if (window.parent.window != window) {
+            window.top.location.href = "/Home/Index";
+        }
+
+        //当用户刷新页面触发的方法
+        $(function () {
+            //实现用户登录的方法
+            LoginUserInfo();
+            //单击的时候修改验证码的方法
+            //ClickRemoveChangeCode();
+
+            //BindReturnEvent();
+            $(document).keyup(function (e) {
+                if (e.keyCode == 13)
+                    $("#btnLogin").click();
+            })
+        });
+
+        function BindReturnEvent() {
+            $("#Password").bind("enterKey", function (e) {
+                $("#btnLogin").click();
+            });
+            $("#Password").bind("keyup", function (e) {
+                console.log(e);
+                if (e.keyCode == 13) {
+                    $(this).trigger("enterKey");
+                }
+            }).bind("keydown", function (e) {
+                console.log(e);
+                if (e.keyCode == 13) {
+                    $(this).trigger("enterKey");
+                }
+            });
+        }
+
+        //实现用户登录
+        function LoginUserInfo() {
+            //获取单击用户登录按钮的事件
+            $("#btnLogin").click(function () {
+                //首先获取到要传递到控制器的参数，并且狗造成Json。UserName，UserPassword，Code
+                var postData = {
+                    UserName: $("#UserName").val(),
+                    Password: $("#Password").val(),
+                    Code: $("#Code").val()
+                };
+                loading.show();
+                //发送异步请求实现登录 ajax
+                $.ajax({
+                    type: 'POST',
+                    url: '/Login/CheckUser',
+                    dataType: 'json',
+                    cache: false,
+                    data: postData,
+                    success: function (data) {
+                        if (data.Success) {
+                            window.location.href = "/Home/Index";
+                        }
+                        else {
+                            loading.hide();
+                            showError("登陆失败：" + data.ErrorMessage, 3000);
+                        }
+                    },
+                    error: function () {
+                        loading.hide();
+                        showError("登陆失败：网络超时!", 3000);
+                    }
+                });
+            });
+        }
+
+        //单击重新改变验证码
+        function ClickRemoveChangeCode() {
+            //获取到验证码的路径
+            var code = $("#imgCode").attr("src");
+            //然后重新给验证码的路径赋值
+            $("#imgCode").attr("src", code + "1");
+        }
+    </script>
+    <style type="text/css">
+        .style1 {
+            height: 5px;
+        }
+
+        .style3 {
+            height: 6px;
+        }
+
+        .style4 {
+            height: 43px;
+        }
+
+        .style5 {
+            height: 18px;
+        }
+    </style>
+    <script language="javascript">
+        //表单重置
+        function doReset() {
+            document.Forms[0].reset();
+            return false;
+        }
+    </script>
+</head>
+<body>
+    <div id="divLoading"></div>
+    <div id="divLoadingMsg">正在处理，请稍待。。。</div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <form id="form1">
+        <table height="413" cellspacing="0" cellpadding="0" width="612" align="center" border="0">
+            <tbody>
+                <tr>
+                    <td valign="top" width="600" background="~/Content/Themes/Default/login_content_new.png" height="412">
+                        <div align="center">
+                            <table width="100%" height="392" border="0" cellpadding="0" cellspacing="0">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2" height="181">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                <tr>
+                                                    <td>&nbsp;
+
+                                                    </td>
+                                                    <td>&nbsp;
+
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>&nbsp;
+
+                                                    </td>
+                                                    <td>
+                                                        <div align="right" style="margin-right: 20px;">
+                                                            <p>&nbsp;</p>
+                                                            <p>&nbsp;</p>
+                                                            <p style="display: none">
+                                                                <strong>
+                                                                    <font color="#990000">
+                                                                        <br>CopyRihgt: 2015
+                                                                    </font>&nbsp;&nbsp;
+                                                                    <font color='yellow'>( MVC + EasyUI + Ajax + Enterprise Library)</font>
+                                                                </strong>&nbsp;&nbsp;
+                                                            </p>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" align="center" height="30">&nbsp;
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="38%" height="180">
+                                            <br>
+                                            <br>
+                                            <br>
+                                            <div align="center"></div>
+                                        </td>
+                                        <td width="62%">
+                                            <table cellspacing="0" cellpadding="0" width="100%" border="0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>&nbsp;</td>
+                                                        <td width="4" class="ssa">&nbsp;</td>
+                                                        <td width="264" height="40" align="left">
+                                                            <input class="easyui-textbox" id="UserName" data-options="prompt:'用户名',iconCls:'icon-user',iconWidth:30" style="width: 165px; height: 40px" value="admin" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="style1"></td>
+                                                        <td width="4" class="style1"></td>
+                                                        <td width="264" class="style1"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="style4"></td>
+                                                        <td width="4" class="style4">&nbsp;
+
+                                                        </td>
+                                                        <td width="264" align="left" class="style4">
+                                                            <input class="easyui-textbox" type="password" id="Password" data-options="prompt:'密码',iconCls:'icon-lock',iconWidth:30" style="width: 165px; height: 40px" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="style3"></td>
+                                                        <td class="style3"></td>
+                                                        <td valign="bottom" class="style3"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" align="center" class="style5">
+                                                            <img src="~/Content/Themes/Default/btn_reset2.png" style="height: 30px; width: 65px; margin-right: 40px; margin-left: 15px; cursor: pointer" onclick='doReset()'>
+                                                            <img src="~/Content/Themes/Default/btn_login2.png" id="btnLogin" width="65" height="30" border="0" style="cursor: pointer" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" height="40px">&nbsp;</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</body>
+</html>

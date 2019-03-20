@@ -1,0 +1,283 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>柜台冲正</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+    <script src="~/Scripts/ComponentUtil.js"></script>
+    <script src="~/Scripts/dbjs.js"></script>
+
+    <script type="text/javascript">
+
+        $(function () {
+            $(document).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    $("#btnSearch").click();
+                    return;
+                }
+            });
+            var queryData = {
+
+            };//可添加一些预设条件
+            InitGrid(queryData);
+            BindSearchEvent();
+        });
+
+
+        //实现对DataGird控件的绑定操作
+        function InitGrid(queryData) {
+            $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/AccPayment/CounterReverseData',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                title: '账务实收列表',
+                iconCls: 'icon-view',
+                height: document.body.clientHeight * 0.9 - 30,
+                width: function () { return document.body.clientWidth * 0.9 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                singleSelect:true,
+                //idField: 'ID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+	                 { field: 'ck', checkbox: true },   //选择
+                     { title: 'ID', field: 'IntFeeID', width: 80, sortable: true, hidden: true },
+                     { title: '客户编号', field: 'IntCustNo', width: 80, sortable: true, align: 'right' },
+                     {
+                         title: '客户名称', field: 'ArcCustomerInfo.NvcName', width: 100, sortable: false, align: 'center',
+                         formatter: function (val, rowObj, index) {
+                             if (rowObj.ArcCustomerInfo)
+                                 return rowObj.ArcCustomerInfo.NvcName;
+                         }
+                     },
+                     { title: '费用年月', field: 'IntYearMon', width: 80, sortable: true, align: 'center' },
+                     {
+                         title: '费用日期', field: 'DteFee', width: 80, sortable: true, align: 'center',
+                         formatter: function (val, rowObj, index) {
+                             return new Date(val.replace("-", "/")).Format();
+                         }
+                     },
+                     {
+                         title: '销账日期', field: 'DtePay', width: 80, sortable: true, align: 'center',
+                         formatter: function (val, rowObj, index) {
+                             return new Date(val.replace("-", "/")).Format();
+                         }
+                     },
+                     {
+                         title: '计划截止日期', field: 'DteEnd', width: 100, sortable: true, align: 'center',
+                         formatter: function (val, rowObj, index) {
+                             return new Date(val.replace("-", "/")).Format();
+                         }
+                     },
+                     {
+                         title: '实际截止日期', field: 'DteEndExec', width: 100, sortable: true, align: 'center',
+                         formatter: function (val, rowObj, index) {
+                             return new Date(val.replace("-", "/")).Format();
+                         }
+                     },
+                     { title: '费用金额', field: 'MonFee', width: 80, sortable: true, align: 'right' },
+                     { title: '实际执行费用金额', field: 'MonFeeExec', width: 110, sortable: true, align: 'right' },
+                     { title: '违约金', field: 'MonPenalty', width: 80, sortable: true, align: 'right' },
+                     { title: '违约天数', field: 'IntDays', width: 80, sortable: true, align: 'right' },
+                     { title: '销账单位代码', field: 'IntPayUnit', width: 80, sortable: true, align: 'center' },
+                     { title: '销账方式代码', field: 'IntPayMode', width: 80, sortable: true, align: 'center' },
+                     { title: '操作员', field: 'VcChargeNo', width: 80, sortable: true, align: 'center' },
+                     { title: '流水号', field: 'VcFlowNo', width: 80, sortable: true, align: 'center' },
+                     { title: '建立时间', field: 'DtCreate', width: 100, sortable: true }
+                ]],
+                onLoadSuccess: function () {
+                },
+                toolbar: [{
+                    id: 'btnFee',
+                    text: '选中冲正',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        Fee();
+                    }
+                }, '-', {
+                    id: 'btnReload',
+                    text: '刷新',
+                    iconCls: 'icon-reload',
+                    handler: function () {
+                        //实现刷新栏目中的数据
+                        $("#grid").datagrid("reload");
+                    }
+                }],
+
+
+                onDblClickRow: function (rowIndex, rowData) {
+                    //$('#grid').datagrid('uncheckAll');
+                    //$('#grid').datagrid('checkRow', rowIndex);
+                }
+            });
+            //var heightMargin = $("#toolbar").height() + 60;
+            //var widthMargin = $(document.body).width() - $("#tb").width();
+            //// 第一次加载时和当窗口大小发生变化时，自动变化大小
+            //$('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            //$(window).resize(function () {
+            //    $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            //});
+        };
+
+        function Fee() {
+            var rows = $("#grid").datagrid("getSelections");
+            if (rows.length < 1) {
+                $.messager.alert("温馨提示", "请至少选择一条记录进行冲正!");
+                return;
+            }
+            if (rows.length > 1) {
+                $.messager.alert("温馨提示", "只能选择一条记录进行冲正!");
+                return;
+            }
+
+            $.messager.confirm("确认", "您确认冲正选定的记录吗？", function (isAction) {
+                if (isAction) {
+                    $.messager.progress({
+                        //title: '温馨提示',
+                        text: '正在处理中,请稍后......'
+                    });
+
+                    var custNo = rows[0].IntCustNo;
+                    var flowNo = rows[0].VcFlowNo;
+                    var penalty = rows[0].MonPenalty;
+                    var totalMoney = rows[0].MonFee + penalty;
+
+                    $.ajax({
+                        url: '/Fee/CounterReverse?custNo=' + custNo,
+                        type: 'post',
+                        dataType: 'json',
+                        data: { flowNo: flowNo, TotalMoney: totalMoney },
+                        async: false,
+                        success: function (json) {
+                            $.messager.progress('close');
+                            if (json.Success) {
+                                $.messager.alert("温馨提示", "操作成功!");
+                                reloadGrid();
+                            }
+                            else {
+                                $.messager.alert("温馨提示", json.ErrorMessage);
+                            }
+                        },
+                        error: function () {
+                            showError("网络错误!");
+                            $.messager.progress('close');
+                        }
+                    });
+                }
+                else {
+
+                }
+            });
+        }
+        function reloadGrid() {
+            var queryData = {
+                Key: $("#txtIntNo").val(),
+                //WHC_IntCustNo: $("#txtIntNo").val(),
+                //WHC_NvcName: $("#txtNvcName").val(),
+                //WHC_NvcAddr: $("#txtNvcAddr").val(),
+                //WHC_VcMobile: $("#txtVcMobile").val()
+            }
+            //将值传递给
+            InitGrid(queryData);
+        }
+        //绑定搜索按钮的的点击事件
+        function BindSearchEvent() {
+            //按条件进行查询数据，首先我们得到数据的值
+            $("#btnSearch").click(function () {
+                //得到用户输入的参数
+                //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
+                //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
+                reloadGrid();
+                return false;
+            });
+        }
+
+
+    </script>
+
+    <style>
+        table.view {
+            border: 1px solid #A8CFEB;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+            vertical-align: top;
+            height: 98%;
+            width: 98%;
+        }
+
+        .view th {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #F1F6FF;
+        }
+
+        .view td {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #FAFCFF;
+        }
+
+        .view input {
+            width: 99%;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading" style="display: none;">
+        <img alt="数据正在加载中..." src="~/Content/images/loading02.gif" />
+    </div>
+    <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
+
+        <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding: 5px; height: auto">
+            <!-------------------------------搜索框----------------------------------->
+            <fieldset>
+                <legend>信息查询</legend>
+                <div id="ffSearch" method="post">
+                    <div id="toolbar">
+                        <table cellspacing="0" cellpadding="0">
+                            <tr>
+                                <th style='padding: 3px;'>
+                                    <label for="txtIntNo">关键词：</label></th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="txtIntNo" class="text-info" style="width: 100px" /></td>
+                                <td style='padding: 3px; text-align: right'>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-------------------------------详细信息展示表格----------------------------------->
+            <table id="grid" style="width: 940px" title="用户操作" data-options="iconCls:'icon-view'"></table>
+        </div>
+    </div>
+
+     
+</body>
+</html>

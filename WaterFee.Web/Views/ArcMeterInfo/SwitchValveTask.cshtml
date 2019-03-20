@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>开关阀任务</title>
+    <script src="~/Scripts/SignalR/jquery-1.6.4.min.js"></script>
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+    <script src="~/Scripts/ComponentUtil.js"></script>
+    <script src="../../Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/dbjs.js"></script>
+    <script type="text/javascript">
+
+        var IDgridOpenClose = '#gridOpenClose';
+
+        //信息查询
+        function submits(queryData) {
+            $(IDgridOpenClose).datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/ArcMeterInfo/SwitchValveTaskSubmit',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                // title: '水表列表',
+                // iconCls: 'icon-view',
+                height: document.body.clientHeight - 163,
+                width: function () { return document.body.clientWidth * 0.8 - 20 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                //singleSelect: true,
+                idField: 'IntID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+                    { title: '用户编号', field: '编号', width: 60, sortable: true },
+                    { title: '用户姓名', field: 'NvcName', width: 80, sortable: true },
+                    { title: '用户小区', field: 'NvcVillage', width: 80, sortable: true },
+                    { title: '用户楼栋', field: 'VcBuilding', width: 80, sortable: true },
+                    { title: '用户单元', field: 'IntUnitNum', width: 80, sortable: true },
+                    { title: '用户门牌号', field: 'IntRoomNum', width: 80, sortable: true },
+                    { title: '用户表号', field: '表号', width: 80, sortable: true },
+                    { title: '在线状态', field: '在线状态', width: 80, sortable: true },
+                    { title: '命令', field: '命令', width: 80, align: 'center', sortable: true },
+                    { title: '描述', field: '描述', width: 80, align: 'center', sortable: true },
+                    { title: '创建时间', field: '创建时间', width: 150, align: 'center', sortable: true },
+                ]]               
+            });
+        };
+        function submit() {          
+            var queryData = {
+                "VcConceAddr": $("#txtIntNo").val(),
+                "OrderType": $("#orderType").combobox('getValue'),
+                "DteStart": $("#DteStart").datebox('getValue'),
+                "DteEnd": $("#DteEnd").datebox('getValue'),
+            };
+            submits(queryData);
+            return false;
+        }
+
+        //对象居中的函数，调用例子：$("#loading").center();
+        jQuery.fn.center = function () {
+            this.css("position", "absolute");
+            this.css("top", Math.max(0, (($(window).height() - this.outerHeight()) / 2) +
+                $(window).scrollTop()) + "px");
+            this.css("left", Math.max(0, (($(window).width() - this.outerWidth()) / 2) +
+                $(window).scrollLeft()) + "px");
+            return this;
+        }
+
+    </script>
+</head>
+<body>
+    <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
+        <div id="tbEdit" data-options="region:'center',split:true,title:'开关阀任务结果',iconCls:'icon-setting'" style="padding: 5px; height: auto">
+            <div fit="false">
+                <fieldset id="condition">
+                    <legend>信息查询</legend>
+                    <div id="toolbar">
+                        <table cellspacing="0" cellpadding="0">
+                            <tr>
+                                <th style='padding: 3px;'>
+                                    <label for="txtIntNo">关键词：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="txtIntNo" class="text-info" style="width: 100px" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="orderType">控制指令：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <select id="orderType" name="orderType" class="easyui-combobox" style="width: 100px;" data-options="required:true">
+                                        <option value="1">关阀</option>
+                                        <option value="2">开阀</option>
+                                    </select>
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="DteStart">开始时间：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input class="easyui-datebox" type="text" id="DteStart" name="DteStart" style="width:150px;" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="DteEnd">结束时间：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+
+                                    <input class="easyui-datebox" type="text" id="DteEnd" name="DteEnd" style="width:150px;" />
+                                </td>
+                                <td style='padding: 3px; text-align: right'>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch" onclick="submit()">查询</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </fieldset>
+                <table id="gridOpenClose" title="开关阀任务结果" style="width: 940px" data-options="iconCls:'icon-view'"></table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

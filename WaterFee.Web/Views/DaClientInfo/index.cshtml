@@ -1,0 +1,1321 @@
+﻿@{
+    ViewBag.Title = "DaClientInfo";
+}
+
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>开户配卡</title>
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+    <!--常用的一些组件业务脚本函数-->
+    <script src="~/Scripts/ComponentUtil.js"></script>   
+    <script>
+        function initEditor() {
+			@*  $('#Content').ckeditor();*@
+        }
+    </script>
+     
+    <script type="text/javascript">
+    	var isAddOrEdit = 'add';//标识是新增还是编辑对话框弹出，用于删除附件的操作
+    	var url;//新增或者更新的连接
+    	var ID;//ID值，新增为空，编辑或者查看为具体ID
+    	
+        $(function () {            
+            initEditor();     //初始化CKEditor
+            var queryData = {  };//可添加一些预设条件
+            InitGrid(queryData);//初始化Datagrid表格数据 
+            InitDictItem();   //初始化字典信息
+            
+            BindSearchEvent();//绑定查询按钮事件
+        });
+
+        //初始化字典信息
+        function InitDictItem() {
+            //BindDictItem("Titles", "职称");
+            //BindDictItem("Rank", "职务");            
+			
+			//树控件的绑定操作
+            //$('#CustID').combotree({
+            //    url: '/DaClientInfo/GetTreeJson'
+            //});
+
+			//下拉列表绑定操作
+            //$('#CustID').combobox({
+            //    url: '/DaClientInfo/GetDictJson',
+            //    valueField: 'ID',
+            //    textField: 'FullName'
+            //});
+        }
+        
+        //实现对DataGird控件的绑定操作
+        function InitGrid(queryData) {
+            $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/DaClientInfo/FindWithPager',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                title: '客户信息', 
+                iconCls: 'icon-view',
+                height: 650,
+                width: function () { return document.body.clientWidth * 0.9 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                idField: 'ID',
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+	                { field: 'ck', checkbox: true },   //选择
+                      { title: '客户编号', field: 'Zhh', width: 80, sortable: true },
+                      { title: '台区', field: 'Qy', width: 80, sortable: true },
+                      { title: '所属单位', field: 'Sh', width: 80, sortable: true },
+                      { title: '线路编号', field: 'Cbbh', width: 80, sortable: true },
+                      { title: '线路序号', field: 'Bxh', width: 80, sortable: true },
+                      { title: '户名查码', field: 'Hmcm', width: 80, sortable: true },
+                      { title: '地址查码', field: 'Dzcm', width: 80, sortable: true },
+                      { title: '电话号码', field: 'Dhhm', width: 80, sortable: true },
+                      { title: '移动号码', field: 'Mobile', width: 80, sortable: true },
+                      { title: '联系人', field: 'Lxr', width: 80, sortable: true },
+                      { title: '合同编号', field: 'Hth', width: 80, sortable: true },
+                      { title: '客户姓名', field: 'Hm', width: 80, sortable: true },
+                      { title: '客户单位', field: 'Dw', width: 80, sortable: true },
+                      { title: '单位电话', field: 'Dwdh', width: 80, sortable: true },
+                      { title: '客户地址', field: 'Dz', width: 80, sortable: true },
+                      { title: '用户性质', field: 'Yhxz', width: 80, sortable: true },
+                      { title: '收费方式', field: 'Sffs', width: 80, sortable: true },
+                      { title: '身份证号', field: 'Sfzh', width: 80, sortable: true },
+                      { title: '用电性质', field: 'Ysxz', width: 80, sortable: true },
+                      { title: '建户日期', field: 'Jhrq', width: 80, sortable: true },
+                      { title: '销户日期', field: 'Xhrq', width: 80, sortable: true },
+                      { title: 'Yjsl', field: 'Yjsl', width: 80, sortable: true },
+                      { title: 'Yhzt', field: 'Yhzt', width: 80, sortable: true },
+                      { title: 'Gh', field: 'Gh', width: 80, sortable: true },
+                      { title: 'Rks', field: 'Rks', width: 80, sortable: true },
+                      { title: 'Fphm', field: 'Fphm', width: 80, sortable: true },
+                      { title: 'Fpdz', field: 'Fpdz', width: 80, sortable: true },
+                      { title: 'Fkdwqc', field: 'Fkdwqc', width: 80, sortable: true },
+                      { title: 'Fkdwzh', field: 'Fkdwzh', width: 80, sortable: true },
+                      { title: 'Fkkhyh', field: 'Fkkhyh', width: 80, sortable: true },
+                      { title: 'Yhlx', field: 'Yhlx', width: 80, sortable: true },
+                      { title: 'Cby', field: 'Cby', width: 80, sortable: true },
+                  ]],
+                toolbar: [{
+                    id: 'btnAdd',
+                    text: '添加',
+                    iconCls: 'icon-add',
+                    handler: function () {                        
+                        ShowAddDialog();//实现添加记录的页面
+                    }
+                }, '-', {
+                    id: 'btnEdit',
+                    text: '修改',
+                    iconCls: 'icon-edit',
+                    handler: function () {                        
+                        ShowEditOrViewDialog();//实现修改记录的方法
+                    }
+                }, '-', {
+                    id: 'btnDelete',
+                    text: '删除',
+                    iconCls: 'icon-remove',
+                    handler: function () {                        
+                        Delete();//实现直接删除数据的方法
+                    }
+                }, '-', {
+                    id: 'btnView',
+                    text: '查看',
+                    iconCls: 'icon-table',
+                    handler: function () {                        
+                        ShowEditOrViewDialog("view");//实现查看记录详细信息的方法
+                    }
+                }, '-', {
+                    id: 'btnReload',
+                    text: '刷新',
+                    iconCls: 'icon-reload',
+                    handler: function () {
+                        //实现刷新栏目中的数据
+                        $("#grid").datagrid("reload");
+                    }
+                }],
+                onDblClickRow: function (rowIndex, rowData) {
+                    $('#grid').datagrid('uncheckAll');
+                    $('#grid').datagrid('checkRow', rowIndex);
+                    ShowEditOrViewDialog();
+                }
+            });
+            
+            var heightMargin = $("#toolbar").height() + 60;
+            var widthMargin = $(document.body).width() - $("#tb").width();
+            // 第一次加载时和当窗口大小发生变化时，自动变化大小
+            $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            $(window).resize(function () {
+                $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            });
+        };
+
+        //绑定搜索按钮的的点击事件
+        function BindSearchEvent() {
+            //按条件进行查询数据，首先我们得到数据的值
+            $("#btnSearch").click(function () {
+                //得到用户输入的参数
+                //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val(),combotree('getValue'),numberbox('getValue'), 
+                //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
+                var queryData = {
+                     WHC_ZHH: $("#txtZhh").numberbox('getValue'),
+                     WHC_QY: $("#txtQy").val(),
+                     WHC_SH: $("#txtSh").val(),
+                     WHC_CBBH: $("#txtCbbh").val(),
+                     WHC_BXH: $("#txtBxh").numberbox('getValue'),
+                     WHC_HMCM: $("#txtHmcm").val(),
+                     WHC_DZCM: $("#txtDzcm").val(),
+                     WHC_DHHM: $("#txtDhhm").val(),
+                     WHC_MOBILE: $("#txtMobile").val(),
+                     WHC_LXR: $("#txtLxr").val(),
+                     WHC_HTH: $("#txtHth").val(),
+                     WHC_HM: $("#txtHm").val(),
+                     WHC_DW: $("#txtDw").val(),
+                     WHC_DWDH: $("#txtDwdh").val(),
+                     WHC_DZ: $("#txtDz").val(),
+                     WHC_YHXZ: $("#txtYhxz").val(),
+                     WHC_SFFS: $("#txtSffs").val(),
+                     WHC_SFZH: $("#txtSfzh").val(),
+                     WHC_YSXZ: $("#txtYsxz").val(),
+                     WHC_JHRQ: $("#txtJhrq").datebox('getValue') + "~" + $("#txtJhrq2").datebox('getValue'),
+                     WHC_XHRQ: $("#txtXhrq").datebox('getValue') + "~" + $("#txtXhrq2").datebox('getValue'),
+                     WHC_YJSL: $("#txtYjsl").numberbox('getValue'),
+                     WHC_YHZT: $("#txtYhzt").val(),
+                     WHC_GH: $("#txtGh").val(),
+                     WHC_RKS: $("#txtRks").numberbox('getValue'),
+                     WHC_FPHM: $("#txtFphm").val(),
+                     WHC_FPDZ: $("#txtFpdz").val(),
+                     WHC_FKDWQC: $("#txtFkdwqc").val(),
+                     WHC_FKDWZH: $("#txtFkdwzh").val(),
+                     WHC_FKKHYH: $("#txtFkkhyh").val(),
+                     WHC_YHLX: $("#txtYhlx").val(),
+                     WHC_CBY: $("#txtCby").val()
+                  }
+                //将值传递给DataGrid
+                InitGrid(queryData);
+                
+                //传递给导出操作
+                exportCondition = queryData;
+                
+                return false;
+            });
+        }
+
+        //实现删除数据的方法
+        function Delete() {
+            //得到用户选择的数据的ID
+            var rows = $("#grid").datagrid("getSelections");
+            if (rows.length >= 1) {
+                //遍历出用户选择的数据的信息，这就是用户用户选择删除的用户ID的信息
+                var ids = "";   //1,2,3,4,5
+                for (var i = 0; i < rows.length; i++) {
+                    ids += rows[i].ID + ",";
+                }
+                //最后去掉最后的那一个,
+                ids = ids.substring(0, ids.length - 1);
+                var postData = { Ids: ids };
+
+                //然后确认发送异步请求的信息到后台删除数据
+                $.messager.confirm("删除确认", "您确认删除选定的记录吗？", function (action) {
+                    if (action) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/DaClientInfo/DeletebyIds',
+                            dataType: 'json',
+                            data: postData,
+                            success: function (data) {
+                                if (data.Success) {
+                                    showTips("删除选定的记录成功");
+
+                                    $("#grid").datagrid("reload");
+                                    //当删除完成之后，第二次删除的时候还记得上次的信息，这样是不可以的，所以我们需要清除第一次的信息                                
+                                    rows.length = "";//第一种方法                                
+                                    $("#grid").datagrid("clearSelections");//第二种方法
+                                }
+                                else {
+                                    showError("操作失败：" + data.ErrorMessage, 3000);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            else {
+                $.messager.alert("提示", "请选择你要删除的数据");
+            }
+        }
+
+        //弹出新增对话框
+        function ShowAddDialog() {
+        	isAddOrEdit = 'add';//新增对话框标识
+        	//CKEDITOR.instances.Content.setData('');  //清空编辑器的数据
+        	$("#ffAdd").form("clear");
+        	
+        	url = '/DaClientInfo/Insert';      
+
+
+			//可以在此设置界面控件的一些隐藏的内容，方便映射到实体类上
+			//$("#Type").val("预设内容");
+
+            $("#DivAdd").dialog('open').dialog('setTitle', '添加信息');
+        }
+        
+        //修改或查看明细信息（绑定显示数据）
+        function ShowEditOrViewDialog(view) {
+            //首先取出来用户选择的数据的ID
+            var rows = $("#grid").datagrid("getSelections");
+            //首先取出来值判断用户只能选择一个
+            if (rows.length == 0) {
+                $.messager.alert("提示", "请选择一条记录", "error");
+                return;
+            }
+            else if (rows.length > 1) {
+                $.messager.alert("提示", "每次只能修改/查看一条记录，你已经选择了<font color='red'  size='6'>" + rows.length + "</font>条", "error");
+                return;
+            }
+            
+            ID = $("#grid").datagrid("getSelections")[0].ID;  //获取到了用用户选择的ID
+            if (view == null) {
+                //处理修改的信息
+                $("#DivAdd").dialog('open').dialog('setTitle', '修改信息');
+                url = '/DaClientInfo/Update?ID=' + ID;
+                //绑定修改详细信息的方法
+                BindEditInfo(ID);
+            }
+            else {
+                //处理查看详细
+                $("#DivView").dialog('open').dialog('setTitle', '查看详细信息');
+                //绑定查看详细信息方法
+                BindViewInfo(ID);
+            }
+        }
+
+        //绑定添加按钮的事件
+        function SaveEntity() {
+            //判断表单的信息是否通过验证
+            var validate = $("#ffAdd").form('validate');
+            if (validate == false) {
+                return false;
+            }
+            
+			var postData = $("#ffAdd").serializeArray();
+            $.post(url, postData, function (json) {
+                var data = $.parseJSON(json);
+                if (data.Success) {
+                    //添加成功  1.关闭弹出层，2.刷新DataGird
+                    showTips("保存成功");
+                    $("#DivAdd").dialog("close");
+                    $("#grid").datagrid("reload");
+                    $("#ffAdd").form("clear");
+                }
+                else {
+                    showError("保存失败:" + data.ErrorMessage, 3000);
+                }
+            }).error(function () {
+                $.messager.alert("提示", "您未被授权使用该功能，请联系管理员进行处理。", 'warning');
+            });
+        }
+        
+        //绑定编辑详细信息的方法
+        function BindEditInfo(ID) {
+            //使用同步方式，使得联动的控件正常显示
+            $.ajaxSettings.async = false;
+            //首先用户发送一个异步请求去后台实现方法
+            $.getJSON("/DaClientInfo/FindByID?id=" + ID, function (info) {
+            //赋值有几种方式：.datebox('setValue', info.Birthday);.combobox('setValue', info.Status);.val(info.Name);.combotree('setValue', info.PID);.numberbox('setValue', info.Number);
+                 $("#Zhh").numberbox('setValue', info.Zhh);
+                 $("#Qy").val(info.Qy);
+                 $("#Sh").val(info.Sh);
+                 $("#Cbbh").val(info.Cbbh);
+                 $("#Bxh").numberbox('setValue', info.Bxh);
+                 $("#Hmcm").val(info.Hmcm);
+                 $("#Dzcm").val(info.Dzcm);
+                 $("#Dhhm").val(info.Dhhm);
+                 $("#Mobile").val(info.Mobile);
+                 $("#Lxr").val(info.Lxr);
+                 $("#Hth").val(info.Hth);
+                 $("#Hm").val(info.Hm);
+                 $("#Dw").val(info.Dw);
+                 $("#Dwdh").val(info.Dwdh);
+                 $("#Dz").val(info.Dz);
+                 $("#Yhxz").val(info.Yhxz);
+                 $("#Sffs").val(info.Sffs);
+                 $("#Sfzh").val(info.Sfzh);
+                 $("#Ysxz").val(info.Ysxz);
+                 $("#Jhrq").datebox('setValue', info.Jhrq);
+                 $("#Xhrq").datebox('setValue', info.Xhrq);
+                 $("#Yjsl").numberbox('setValue', info.Yjsl);
+                 $("#Yhzt").val(info.Yhzt);
+                 $("#Gh").val(info.Gh);
+                 $("#Rks").numberbox('setValue', info.Rks);
+                 $("#Fphm").val(info.Fphm);
+                 $("#Fpdz").val(info.Fpdz);
+                 $("#Fkdwqc").val(info.Fkdwqc);
+                 $("#Fkdwzh").val(info.Fkdwzh);
+                 $("#Fkkhyh").val(info.Fkkhyh);
+                 $("#Yhlx").val(info.Yhlx);
+                 $("#Cby").val(info.Cby);
+  
+				$("#ID").val(info.ID);
+				isAddOrEdit = 'edit';//新增对话框标识    
+            });
+        }
+
+        //绑定查看详细信息的方法
+        function BindViewInfo(ID) {          
+            //发送请求
+            $.getJSON("/DaClientInfo/FindByID?id=" + ID, function (info) {
+                 $("#Zhh2").text(info.Zhh);
+                 $("#Qy2").text(info.Qy);
+                 $("#Sh2").text(info.Sh);
+                 $("#Cbbh2").text(info.Cbbh);
+                 $("#Bxh2").text(info.Bxh);
+                 $("#Hmcm2").text(info.Hmcm);
+                 $("#Dzcm2").text(info.Dzcm);
+                 $("#Dhhm2").text(info.Dhhm);
+                 $("#Mobile2").text(info.Mobile);
+                 $("#Lxr2").text(info.Lxr);
+                 $("#Hth2").text(info.Hth);
+                 $("#Hm2").text(info.Hm);
+                 $("#Dw2").text(info.Dw);
+                 $("#Dwdh2").text(info.Dwdh);
+                 $("#Dz2").text(info.Dz);
+                 $("#Yhxz2").text(info.Yhxz);
+                 $("#Sffs2").text(info.Sffs);
+                 $("#Sfzh2").text(info.Sfzh);
+                 $("#Ysxz2").text(info.Ysxz);
+                 $("#Jhrq2").text(info.Jhrq);
+                 $("#Xhrq2").text(info.Xhrq);
+                 $("#Yjsl2").text(info.Yjsl);
+                 $("#Yhzt2").text(info.Yhzt);
+                 $("#Gh2").text(info.Gh);
+                 $("#Rks2").text(info.Rks);
+                 $("#Fphm2").text(info.Fphm);
+                 $("#Fpdz2").text(info.Fpdz);
+                 $("#Fkdwqc2").text(info.Fkdwqc);
+                 $("#Fkdwzh2").text(info.Fkdwzh);
+                 $("#Fkkhyh2").text(info.Fkkhyh);
+                 $("#Yhlx2").text(info.Yhlx);
+                 $("#Cby2").text(info.Cby);
+  
+                //$.getJSON("/User/GetFullNameByID?userid=" + info.Creator, function (result) {
+                //    $("#Creator2").text(result);
+                //});
+                //$.getJSON("/User/GetFullNameByID?userid=" + info.Editor, function (result) {
+                //    $("#Editor2").text(result);
+                //});
+            });
+        }
+
+        //显示导入界面
+        function ShowImport() {
+            $.showWindow({
+                title: 'DaClientInfo-Excel数据导入',
+                useiframe: true,
+                width: 1024,
+                height: 700,
+                content: 'url:/DaClientInfo/Import',
+                buttons: [{
+                    text: '取消',
+                    iconCls: 'icon-cancel',
+                    handler: function (win) {
+                        win.close();
+                    }
+                }],
+                onLoad: function (win, content) {
+                    //window打开时调用，初始化form内容
+                    if (content) {
+                        //content.doInit(win);
+                    }
+                }
+            });
+        }
+        
+        //导出Excel数据
+        var exportCondition;
+        function ShowExport() {
+            var url = "/DaClientInfo/Export";
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: exportCondition,
+                success: function (filePath) {
+                    var downUrl = '/FileUpload/DownloadFile?file=' + filePath;
+                    window.location = downUrl;
+                }
+            });
+        }
+    </script>
+
+    <style>
+        table.view {border:1px solid #A8CFEB;border-collapse: collapse;margin-bottom:5px;width:99%;height:99%}
+        .view th{ padding-left:10px;padding-right:5px;padding-top:5px;padding-bottom:5px;width: 100px;border: 1px solid silver;background-color:#F1F6FF;}
+        .view td{ padding-left:10px;padding-right:5px;padding-top:5px;padding-bottom:5px;width: 150px;border: 1px solid silver;background-color:#FAFCFF;}
+    </style>
+    </head>
+<body>
+    <div id="loading" style="display: none;"><img alt="数据正在加载中..." src="~/Content/images/loading02.gif" /></div>
+    <div id="pnlToolbar"></div>
+    <div id="tb" style="padding:5px;height:auto">
+        <!-------------------------------搜索框----------------------------------->
+        <fieldset>
+            <legend>客户信息查询</legend>
+            <form id="ffSearch" method="post">
+                <div id="toolbar">
+                    <table cellspacing="0" cellpadding="0">
+                        <tr>
+                             <th>
+                                <label for="txtZhh">客户编号：</label>
+                            </th>
+                            <td>
+                            	<input type="text" ID="txtZhh" name="txtZhh" style="width:100px"  />
+                            </td>
+                            
+
+                             <th>
+                                <label for="txtQy">台区编号：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtQy" name="txtQy" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtSh">所属单位：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtSh" name="txtSh" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtCbbh">线路编号：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtCbbh" name="txtCbbh" style="width:100px"  />
+                            </td>
+
+                        </tr>
+                        <tr>
+                             <th>
+                                <label for="txtBxh">线路序号：</label>
+                            </th>
+                            <td>
+                            	<input type="text" ID="txtBxh" name="txtBxh" style="width:100px"  />
+                            </td>
+                            
+
+                             <th>
+                                <label for="txtHmcm">户名查码：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtHmcm" name="txtHmcm" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtDzcm">地址查码：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtDzcm" name="txtDzcm" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtDhhm">电话号码：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtDhhm" name="txtDhhm" style="width:100px"  />
+                            </td>
+
+                        </tr>
+                        <tr>
+                             <th>
+                                <label for="txtMobile">移动电话：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtMobile" name="txtMobile" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtLxr">联系人：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtLxr" name="txtLxr" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtHth">合同编号：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtHth" name="txtHth" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtHm">客户姓名：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtHm" name="txtHm" style="width:100px"  />
+                            </td>
+
+                        </tr>
+                        <tr>
+                             <th>
+                                <label for="txtDw">Dw：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtDw" name="txtDw" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtDwdh">Dwdh：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtDwdh" name="txtDwdh" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtDz">Dz：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtDz" name="txtDz" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtYhxz">Yhxz：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtYhxz" name="txtYhxz" style="width:100px"  />
+                            </td>
+
+                        </tr>
+                        <tr>
+                             <th>
+                                <label for="txtSffs">Sffs：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtSffs" name="txtSffs" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtSfzh">Sfzh：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtSfzh" name="txtSfzh" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtYsxz">Ysxz：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtYsxz" name="txtYsxz" style="width:100px"  />
+                            </td>
+
+                             <th>
+                            	<label for="Jhrq">Jhrq(开始)：</label>
+                            </th>
+                            <td>
+                                <input class="easyui-datebox" type="text" ID="txtJhrq" name="txtJhrq" style="width:100px"  />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                    			<label for="txtJhrq2">Jhrq(结束)：</label>
+                    		</th>
+                    		<td>
+                    		    <input class="easyui-datebox" type="text" ID="txtJhrq2" name="txtJhrq2" style="width:100px"  />
+                    		</td>
+
+                             <th>
+                            	<label for="Xhrq">Xhrq(开始)：</label>
+                            </th>
+                            <td>
+                                <input class="easyui-datebox" type="text" ID="txtXhrq" name="txtXhrq" style="width:100px"  />
+                            </td>
+                            <th>
+                    			<label for="txtXhrq2">Xhrq(结束)：</label>
+                    		</th>
+                    		<td>
+                    		    <input class="easyui-datebox" type="text" ID="txtXhrq2" name="txtXhrq2" style="width:100px"  />
+                    		</td>
+
+                             <th>
+                                <label for="txtYjsl">Yjsl：</label>
+                            </th>
+                            <td>
+                            	<input type="text" ID="txtYjsl" name="txtYjsl" style="width:100px"  />
+                            </td>
+                            
+
+                        </tr>
+                        <tr>
+                             <th>
+                                <label for="txtYhzt">Yhzt：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtYhzt" name="txtYhzt" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtGh">Gh：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtGh" name="txtGh" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtRks">Rks：</label>
+                            </th>
+                            <td>
+                            	<input type="text" ID="txtRks" name="txtRks" style="width:100px"  />
+                            </td>
+                            
+
+                             <th>
+                                <label for="txtFphm">Fphm：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtFphm" name="txtFphm" style="width:100px"  />
+                            </td>
+
+                        </tr>
+                        <tr>
+                             <th>
+                                <label for="txtFpdz">Fpdz：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtFpdz" name="txtFpdz" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtFkdwqc">Fkdwqc：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtFkdwqc" name="txtFkdwqc" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtFkdwzh">Fkdwzh：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtFkdwzh" name="txtFkdwzh" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtFkkhyh">Fkkhyh：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtFkkhyh" name="txtFkkhyh" style="width:100px"  />
+                            </td>
+
+                        </tr>
+                        <tr>
+                             <th>
+                                <label for="txtYhlx">Yhlx：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtYhlx" name="txtYhlx" style="width:100px"  />
+                            </td>
+
+                             <th>
+                                <label for="txtCby">Cby：</label>
+                            </th>
+                            <td>
+                                <input type="text" ID="txtCby" name="txtCby" style="width:100px"  />
+                            </td>
+
+                          </tr>
+                    </table>
+                </div>
+                
+		        <div style="margin-bottom:5px">		        
+                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" id="btnImport" iconcls="icon-excel" onclick="ShowImport()">导入</a>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" id="btnExport" iconcls="icon-excel" onclick="ShowExport()">导出</a>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnReadCard">读卡</a>
+                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnWriteCard">写卡</a>
+                </div>
+
+            </form>
+        </fieldset>
+                
+        <!-------------------------------详细信息展示表格----------------------------------->
+        <table id="grid" style="width: 940px" title="用户操作" data-options="iconCls:'icon-view'">            
+        </table>
+    </div>
+
+    <!--------------------------添加/修改信息的弹出层---------------------------->
+    <div id="DivAdd" class="easyui-dialog" style="width:780px;height:640px;padding:10px 20px"
+			closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-add',buttons: '#dlg-buttons'">
+        <form id="ffAdd" method="post" novalidate="novalidate">
+            <div id="tabAdd" class="easyui-tabs" >
+                <div title="基本信息" data-options="iconCls:'icon-view'"  style="padding:5px 5px">
+                    <table>
+                        <tr>
+                            <td>                    
+                                <table id="tblAdd1" class="view">
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Zhh">Zhh：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-numberbox" type="text" id="Zhh" name="Zhh" /> <!-- data-options="required:true,validType:'length[1,5]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Qy">Qy：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Qy" name="Qy" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Sh">Sh：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Sh" name="Sh" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Cbbh">Cbbh：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Cbbh" name="Cbbh" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Bxh">Bxh：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-numberbox" type="text" id="Bxh" name="Bxh" /> <!-- data-options="required:true,validType:'length[1,5]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Hmcm">Hmcm：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Hmcm" name="Hmcm" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Dzcm">Dzcm：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Dzcm" name="Dzcm" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Dhhm">Dhhm：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Dhhm" name="Dhhm" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Mobile">Mobile：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Mobile" name="Mobile" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Lxr">Lxr：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Lxr" name="Lxr" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Hth">Hth：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Hth" name="Hth" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Hm">Hm：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Hm" name="Hm" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Dw">Dw：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Dw" name="Dw" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Dwdh">Dwdh：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Dwdh" name="Dwdh" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Dz">Dz：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Dz" name="Dz" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Yhxz">Yhxz：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Yhxz" name="Yhxz" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Sffs">Sffs：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Sffs" name="Sffs" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Sfzh">Sfzh：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Sfzh" name="Sfzh" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Ysxz">Ysxz：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Ysxz" name="Ysxz" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Jhrq">Jhrq：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-datebox" type="text" id="Jhrq" name="Jhrq" /> <!-- data-options="required:true" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Xhrq">Xhrq：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-datebox" type="text" id="Xhrq" name="Xhrq" /> <!-- data-options="required:true" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Yjsl">Yjsl：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-numberbox" type="text" id="Yjsl" name="Yjsl" /> <!-- data-options="required:true,validType:'length[1,5]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Yhzt">Yhzt：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Yhzt" name="Yhzt" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Gh">Gh：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Gh" name="Gh" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Rks">Rks：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-numberbox" type="text" id="Rks" name="Rks" /> <!-- data-options="required:true,validType:'length[1,5]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Fphm">Fphm：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Fphm" name="Fphm" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Fpdz">Fpdz：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Fpdz" name="Fpdz" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Fkdwqc">Fkdwqc：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Fkdwqc" name="Fkdwqc" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Fkdwzh">Fkdwzh：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Fkdwzh" name="Fkdwzh" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Fkkhyh">Fkkhyh：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Fkkhyh" name="Fkkhyh" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                        <th>
+                                            <label for="Yhlx">Yhlx：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Yhlx" name="Yhlx" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+ 
+                                        <th>
+                                            <label for="Cby">Cby：</label>
+                                        </th>
+                                        <td>
+                                            <input class="easyui-validatebox" type="text" id="Cby" name="Cby" /> <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+ 
+                                    </tr>
+ 								</table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div style="text-align:right; padding-top:10px">
+                <input type="hidden" id="ID" name="ID" />
+                <a href="javascript:void(0)" class="easyui-linkbutton" id="btnAddOK" iconcls="icon-ok" onclick="SaveEntity()">确定</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#DivAdd').dialog('close')">关闭</a>
+            </div>
+         </form>
+    </div>
+
+    <!--------------------------查看详细信息的弹出层---------------------------->
+    <div id="DivView" class="easyui-dialog" style="width:780px;height:640px;padding:10px 20px"
+			closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-view',buttons: '#dlg-buttons'">
+        <form id="ffView" method="post" novalidate="novalidate">
+            <div id="tabView" class="easyui-tabs" >
+                <div title="基本信息" data-options="iconCls:'icon-view'" style="padding:5px 5px">
+                    <table>
+                        <tr>
+                            <td>
+                                <table id="tblView" class="view">
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Zhh2">客户编号：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Zhh2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Qy2">台区编号：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Qy2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Sh2">所属单位：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Sh2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Cbbh2">线路编号：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Cbbh2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Bxh2">线路序号：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Bxh2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Hmcm2">Hmcm：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Hmcm2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Dzcm2">Dzcm：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Dzcm2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Dhhm2">Dhhm：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Dhhm2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Mobile2">Mobile：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Mobile2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Lxr2">联系人：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Lxr2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Hth2">合同编号：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Hth2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Hm2">客户名称：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Hm2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Dw2">Dw：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Dw2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Dwdh2">Dwdh：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Dwdh2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Dz2">客户地址：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Dz2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Yhxz2">Yhxz：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Yhxz2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Sffs2">Sffs：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Sffs2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Sfzh2">身份证号：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Sfzh2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Ysxz2">用电性质：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Ysxz2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Jhrq2">建户日期：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Jhrq2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Xhrq2">销户日期：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Xhrq2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Yjsl2">Yjsl：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Yjsl2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Yhzt2">客户状态：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Yhzt2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Gh2">工号：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Gh2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Rks2">Rks：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Rks2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Fphm2">发票户名：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Fphm2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Fpdz2">发票地址：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Fpdz2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Fkdwqc2">Fkdwqc：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Fkdwqc2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Fkdwzh2">Fkdwzh：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Fkdwzh2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Fkkhyh2">Fkkhyh：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Fkkhyh2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                        <th>
+                                           <label for="Yhlx2">Yhlx：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Yhlx2" />
+                                       </td>
+ 
+                                        <th>
+                                           <label for="Cby2">Cby：</label>
+                                       </th>
+                                       <td>
+                                           <label id="Cby2" />
+                                       </td>
+                                   </tr>
+                                   <tr>
+ 
+                                   </tr>
+ 
+                               </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div style="text-align: right; padding-top: 10px">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#DivView').dialog('close')">关闭</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

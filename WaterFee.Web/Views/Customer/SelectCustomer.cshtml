@@ -1,0 +1,811 @@
+﻿@{
+    ViewBag.Title = "选择客户";
+}
+
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>选择客户</title>
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+    <script src="~/Scripts/ComponentUtil.js"></script>
+
+    <script type="text/javascript">
+    	var isAddOrEdit = 'add';//标识是新增还是编辑对话框弹出，用于删除附件的操作	
+        $(function () {            
+            var queryData = {  };//可添加一些预设条件
+            InitGrid(queryData);//初始化Datagrid表格数据 
+            InitDictItem();   //初始化字典信息            
+            BindSearchEvent();//绑定查询按钮事件
+        });
+
+        //初始化操作
+        function doInit(win) {
+            //var record = win.getData('record');
+            //$('#itemid').val(record.itemid);
+        }
+
+        //页面确认操作
+        function doOK(win) {
+            var id = win.getData('id');
+            var name = win.getData('name');
+            
+            var row = $('#grid').datagrid('getSelected');
+            if (row) {
+                id.val($("#grid").datagrid('getSelections')[0].ID);//客户ID
+                name.val($("#grid").datagrid('getSelections')[0].Name);//客户名称
+
+            } else {
+                $.messager.alert('提示', '请选择一条记录。', 'warning');
+            }
+
+            win.close();
+        }
+
+        //初始化字典信息
+        function InitDictItem() {
+            //$('#PID').combobox({
+            //    url: '/Customer/GetDictJson',
+            //    valueField: 'Value',
+            //    textField: 'Text'
+            //});
+        }
+
+        //实现对DataGird控件的绑定操作
+        function InitGrid(queryData) {
+            $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/Customer/FindWithPager',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                title: '客户基本资料', 
+                iconCls: 'icon-view',
+                height: 510,
+                width: 870,
+                nowrap: true,
+                autoRowHeight: false,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                singleSelect: true, //只能单选，扩展方法
+                sortOrder: 'asc',
+                remoteSort: false,
+                idField: 'ID',
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+	                { field: 'ck', checkbox: true },   //选择
+                      { title: '客户编号', field: 'HandNo', width: 80, sortable: true },
+                      { title: '客户名称', field: 'Name', width: 250, sortable: true },
+                      { title: '客户简称', field: 'SimpleName', width: 80, sortable: true },
+                      { title: '公司地址', field: 'Address', width: 200, sortable: true },
+                      { title: '公司邮编', field: 'ZipCode', width: 80, sortable: true },
+                      { title: '办公电话', field: 'Telephone', width: 80, sortable: true },
+                      { title: '传真号码', field: 'Fax', width: 80, sortable: true },
+                      { title: '主联系人', field: 'Contact', width: 80, sortable: true },
+                      { title: '所属行业', field: 'Industry', width: 80, sortable: true },
+                      { title: '客户来源', field: 'Source', width: 80, sortable: true },
+                      { title: '客户类别', field: 'CustomerType', width: 80, sortable: true },
+                      { title: '客户级别', field: 'Grade', width: 80, sortable: true },
+                      { title: '信用等级', field: 'CreditStatus', width: 80, sortable: true },
+                      { title: '重要级别', field: 'Importance', width: 80, sortable: true },
+                      { title: '备注信息', field: 'Note', width: 80, sortable: true },
+                      { title: '客户阶段', field: 'Stage', width: 80, sortable: true },
+                      { title: '客户状态', field: 'Status', width: 80, sortable: true },
+                      { title: '客户所属人员', field: 'OwnerUser', width: 80, sortable: true },
+                      { title: '创建人', field: 'Creator', width: 80, sortable: true },
+                      { title: '创建时间', field: 'CreateTime', width: 120, sortable: true }
+                  ]],
+                toolbar: [{
+                    id: 'btnView',
+                    text: '查看',
+                    iconCls: 'icon-table',
+                    handler: function () {                        
+                        ShowEditOrViewDialog("view");//实现查看记录详细信息的方法
+                    }
+                }, '-', {
+                    id: 'btnReload',
+                    text: '刷新',
+                    iconCls: 'icon-reload',
+                    handler: function () {
+                        //实现刷新栏目中的数据
+                        $("#grid").datagrid("reload");
+                    }
+                }],
+                onDblClickRow: function (rowIndex, rowData) {
+                    $('#grid').datagrid('uncheckAll');
+                    $('#grid').datagrid('checkRow', rowIndex);
+                    ShowEditOrViewDialog("view");
+                }
+            });
+            
+            var heightMargin = $("#toolbar").height() + 40;
+            var widthMargin = $(document.body).width() - $("#tb").width();
+            // 第一次加载时和当窗口大小发生变化时，自动变化大小
+            $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            $(window).resize(function () {
+                $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            });
+        };
+
+        //绑定搜索按钮的的点击事件
+        function BindSearchEvent() {
+            //按条件进行查询数据，首先我们得到数据的值
+            $("#btnSearch").click(function () {
+                //得到用户输入的参数
+                //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val(),combotree('getValue')
+                //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
+                var queryData = {
+                     WHC_HandNo: $("#txtHandNo").val(),
+                     WHC_Name: $("#txtName").val(),
+                     WHC_Address: $("#txtAddress").val(),
+                     WHC_Telephone: $("#txtTelephone").val(),
+                     WHC_Contact: $("#txtContact").val(),
+                     WHC_ContactPhone: $("#txtContactPhone").val(),
+                     WHC_ContactMobile: $("#txtContactMobile").val(),
+                     WHC_Note: $("#txtNote").val()
+                  }
+                //将值传递给
+                InitGrid(queryData);
+                return false;
+            });
+        }
+        
+        //修改或查看明细信息（绑定显示数据）
+        function ShowEditOrViewDialog(view) {
+            //首先取出来用户选择的数据的ID
+            var rows = $("#grid").datagrid("getSelections");
+            //首先取出来值判断用户只能选择一个
+            if (rows.length == 0) {
+                $.messager.alert("提示", "请选择一条记录", "error");
+                return;
+            }
+            else if (rows.length > 1) {
+                $.messager.alert("提示", "每次只能修改/查看一条记录，你已经选择了<font color='red'  size='6'>" + rows.length + "</font>条", "error");
+                return;
+            }
+            if (view == null) {
+            } else {
+                //处理查看详细
+                $("#DivView").dialog('open').dialog('setTitle', '查看详细信息');
+                //绑定查看详细信息方法
+                BindViewInfo();
+            }
+        }
+        
+        //绑定查看详细信息的方法
+        function BindViewInfo() {
+            var ID = $("#grid").datagrid('getSelections')[0].ID;            
+            //发送请求
+            $.getJSON("/Customer/FindByID?r=" + Math.random() + "&id=" + ID, function (info) {
+                $("#ID2").text(info.ID);
+                $("#HandNo2").text(info.HandNo);
+                $("#Name2").text(info.Name);
+                $("#SimpleName2").text(info.SimpleName);
+                $("#Province2").text(info.Province);
+                $("#City2").text(info.City);
+                $("#District2").text(info.District);
+                $("#Area2").text(info.Area);
+                $("#Address2").text(info.Address);
+                $("#ZipCode2").text(info.ZipCode);
+                $("#Telephone2").text(info.Telephone);
+                $("#Fax2").text(info.Fax);
+                $("#Contact2").text(info.Contact);
+                $("#ContactPhone2").text(info.ContactPhone);
+                $("#ContactMobile2").text(info.ContactMobile);
+                $("#Email2").text(info.Email);
+                $("#QQ2").text(info.QQ);
+                $("#Industry2").text(info.Industry);
+                $("#BusinessScope2").text(info.BusinessScope);
+                $("#Brand2").text(info.Brand);
+                $("#PrimaryClient2").text(info.PrimaryClient);
+                $("#PrimaryBusiness2").text(info.PrimaryBusiness);
+                $("#RegisterCapital2").text(info.RegisterCapital);
+                $("#TurnOver2").text(info.TurnOver);
+                $("#LicenseNo2").text(info.LicenseNo);
+                $("#Bank2").text(info.Bank);
+                $("#BankAccount2").text(info.BankAccount);
+                $("#LocalTaxNo2").text(info.LocalTaxNo);
+                $("#NationalTaxNo2").text(info.NationalTaxNo);
+                $("#LegalMan2").text(info.LegalMan);
+                $("#LegalTelephone2").text(info.LegalTelephone);
+                $("#LegalMobile2").text(info.LegalMobile);
+                $("#Source2").text(info.Source);
+                $("#WebSite2").text(info.WebSite);
+                $("#CompanyPictureGUID2").text(info.CompanyPictureGUID);
+                $("#AttachGUID2").text(info.AttachGUID);
+                $("#CustomerType2").text(info.CustomerType);
+                $("#Grade2").text(info.Grade);
+                $("#CreditStatus2").text(info.CreditStatus);
+                $("#Importance2").text(info.Importance);
+                $("#IsPublic2").text(info.IsPublic);
+                $("#Satisfaction2").text(info.Satisfaction);
+                $("#Note2").text(info.Note);
+                $("#TransactionCount2").text(info.TransactionCount);
+                $("#TransactionTotal2").text(info.TransactionTotal);
+                $("#TransactionFirstDay2").text(info.TransactionFirstDay);
+                $("#TransactionLastDay2").text(info.TransactionLastDay);
+                $("#LastContactDate2").text(info.LastContactDate);
+                $("#Stage2").text(info.Stage);
+                $("#Status2").text(info.Status);
+                $("#OwnerUser2").text(info.OwnerUser);
+                $("#Creator2").text(info.Creator);
+                $("#CreateTime2").text(info.CreateTime);
+                $("#Editor2").text(info.Editor);
+                $("#EditTime2").text(info.EditTime);
+                $("#Deleted2").text(info.Deleted);
+                $("#Dept_ID2").text(info.Dept_ID);
+                $("#Company_ID2").text(info.Company_ID); 
+            });
+        }
+    </script>
+
+    <style>
+        table.view {border:1px solid #A8CFEB;border-collapse: collapse;margin-bottom:5px;width:99%;height:99%}
+        .view th{ padding-left:10px;padding-right:5px;padding-top:5px;padding-bottom:5px;width: 100px;border: 1px solid silver;background-color:#F1F6FF;}
+        .view td{ padding-left:10px;padding-right:5px;padding-top:5px;padding-bottom:5px;width: 150px;border: 1px solid silver;background-color:#FAFCFF;}
+    </style>
+    </head>
+<body>
+    <div id="loading" style="display: none;"><img alt="数据正在加载中..." src="~/Content/images/loading02.gif" /></div>
+    <div id="pnlToolbar"></div>
+    <div id="tb" style="padding:5px;height:auto">
+        <!-------------------------------搜索框----------------------------------->
+        <fieldset>
+            <legend>信息查询</legend>
+            <form id="ffSearch" method="post">                
+                <div id="toolbar">
+                    <table cellspacing="0" cellpadding="0">
+                        <tr> 
+                        <th>
+                            <label for="txtHandNo">客户编号：</label>
+                        </th>
+                        <td>
+                            <input type="text" ID="txtHandNo" name="txtHandNo" style="width:100px"  />&nbsp;&nbsp;&nbsp;
+                        </td>
+ 
+                        <th>
+                           <label for="txtName">客户名称：</label>
+                        </th>
+                        <td>
+                            <input type="text" ID="txtName" name="txtName" style="width:100px"  />&nbsp;&nbsp;&nbsp;
+                        </td>
+
+                        <th>
+                            <label for="txtAddress">公司地址：</label>
+                        </th>
+                        <td>
+                            <input type="text" ID="txtAddress" name="txtAddress" style="width:100px"  />&nbsp;&nbsp;&nbsp;
+                        </td>
+ 
+                        <th>
+                           <label for="txtTelephone">办公电话：</label>
+                        </th>
+                        <td>
+                             <input type="text" ID="txtTelephone" name="txtTelephone" style="width:100px"  />&nbsp;&nbsp;&nbsp;
+                        </td>
+                    </tr>
+                        <tr>
+                         <th>
+                              <label for="txtContact">主联系人：</label>
+                         </th>
+                         <td>
+                             <input type="text" ID="txtContact" name="txtContact" style="width:100px"  />&nbsp;&nbsp;&nbsp;
+                         </td>
+                         <th>
+                              <label for="txtContactPhone">联系人电话：</label>
+                         </th>
+                         <td>
+                              <input type="text" ID="txtContactPhone" name="txtContactPhone" style="width:100px"  />&nbsp;&nbsp;&nbsp;
+                         </td>
+                         <th>
+                             <label for="txtContactMobile">联系人手机：</label>
+                         </th>
+                         <td>
+                             <input type="text" ID="txtContactMobile" name="txtContactMobile" style="width:100px"  />&nbsp;&nbsp;&nbsp;
+                         </td>
+                         <th>
+                             <label for="txtNote">备注信息：</label>
+                         </th>
+                         <td>
+                             <input type="text" ID="txtNote" name="txtNote" style="width:100px"  />&nbsp;&nbsp;&nbsp;
+                         </td>
+                     </tr>
+                        <tr>
+                            <td colspan="8" style="text-align:right">
+                                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+
+        </fieldset>
+                
+        <!-------------------------------详细信息展示表格----------------------------------->
+        <table id="grid" style="width: 940px" title="用户操作" data-options="iconCls:'icon-view'">
+            
+        </table>
+    </div>
+
+    <!--------------------------查看详细信息的弹出层---------------------------->
+    <div id="DivView" class="easyui-dialog" style="width:680px;height:500px;padding:10px 20px"
+			closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-view',buttons: '#dlg-buttons'">
+        <form id="ffView" method="post" novalidate="novalidate">
+                <table id="tblView" class="view">
+                    <tr>
+ 
+                        <th>
+                            <label for="HandNo2">客户编号：</label>
+                        </th>
+                        <td>
+                            <label id="HandNo2" />
+                        </td>
+ 
+                        <th>
+                            <label for="Name2">客户名称：</label>
+                        </th>
+                        <td>
+                            <label id="Name2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="SimpleName2">客户简称：</label>
+                        </th>
+                        <td>
+                            <label id="SimpleName2" />
+                        </td>
+ 
+                        <th>
+                            <label for="Province2">所在省份：</label>
+                        </th>
+                        <td>
+                            <label id="Province2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="City2">城市：</label>
+                        </th>
+                        <td>
+                            <label id="City2" />
+                        </td>
+ 
+                        <th>
+                            <label for="District2">所在行政区：</label>
+                        </th>
+                        <td>
+                            <label id="District2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Area2">市场分区：</label>
+                        </th>
+                        <td>
+                            <label id="Area2" />
+                        </td>
+ 
+                        <th>
+                            <label for="Address2">公司地址：</label>
+                        </th>
+                        <td>
+                            <label id="Address2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="ZipCode2">公司邮编：</label>
+                        </th>
+                        <td>
+                            <label id="ZipCode2" />
+                        </td>
+ 
+                        <th>
+                            <label for="Telephone2">办公电话：</label>
+                        </th>
+                        <td>
+                            <label id="Telephone2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Fax2">传真号码：</label>
+                        </th>
+                        <td>
+                            <label id="Fax2" />
+                        </td>
+ 
+                        <th>
+                            <label for="Contact2">主联系人：</label>
+                        </th>
+                        <td>
+                            <label id="Contact2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="ContactPhone2">联系人电话：</label>
+                        </th>
+                        <td>
+                            <label id="ContactPhone2" />
+                        </td>
+ 
+                        <th>
+                            <label for="ContactMobile2">联系人手机：</label>
+                        </th>
+                        <td>
+                            <label id="ContactMobile2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Email2">电子邮件：</label>
+                        </th>
+                        <td>
+                            <label id="Email2" />
+                        </td>
+ 
+                        <th>
+                            <label for="QQ2">QQ号码：</label>
+                        </th>
+                        <td>
+                            <label id="QQ2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Industry2">所属行业：</label>
+                        </th>
+                        <td>
+                            <label id="Industry2" />
+                        </td>
+ 
+                        <th>
+                            <label for="BusinessScope2">经营范围：</label>
+                        </th>
+                        <td>
+                            <label id="BusinessScope2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Brand2">经营品牌：</label>
+                        </th>
+                        <td>
+                            <label id="Brand2" />
+                        </td>
+ 
+                        <th>
+                            <label for="PrimaryClient2">主要客户群：</label>
+                        </th>
+                        <td>
+                            <label id="PrimaryClient2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="PrimaryBusiness2">主营业务：</label>
+                        </th>
+                        <td>
+                            <label id="PrimaryBusiness2" />
+                        </td>
+ 
+                        <th>
+                            <label for="RegisterCapital2">注册资金：</label>
+                        </th>
+                        <td>
+                            <label id="RegisterCapital2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="TurnOver2">营业额：</label>
+                        </th>
+                        <td>
+                            <label id="TurnOver2" />
+                        </td>
+ 
+                        <th>
+                            <label for="LicenseNo2">营业执照：</label>
+                        </th>
+                        <td>
+                            <label id="LicenseNo2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Bank2">开户银行：</label>
+                        </th>
+                        <td>
+                            <label id="Bank2" />
+                        </td>
+ 
+                        <th>
+                            <label for="BankAccount2">银行账号：</label>
+                        </th>
+                        <td>
+                            <label id="BankAccount2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="LocalTaxNo2">地税登记号：</label>
+                        </th>
+                        <td>
+                            <label id="LocalTaxNo2" />
+                        </td>
+ 
+                        <th>
+                            <label for="NationalTaxNo2">国税登记号：</label>
+                        </th>
+                        <td>
+                            <label id="NationalTaxNo2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="LegalMan2">法人名称：</label>
+                        </th>
+                        <td>
+                            <label id="LegalMan2" />
+                        </td>
+ 
+                        <th>
+                            <label for="LegalTelephone2">法人电话：</label>
+                        </th>
+                        <td>
+                            <label id="LegalTelephone2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="LegalMobile2">法人手机：</label>
+                        </th>
+                        <td>
+                            <label id="LegalMobile2" />
+                        </td>
+ 
+                        <th>
+                            <label for="Source2">客户来源：</label>
+                        </th>
+                        <td>
+                            <label id="Source2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="WebSite2">单位网站：</label>
+                        </th>
+                        <td>
+                            <label id="WebSite2" />
+                        </td>
+ 
+                        <th>
+                            <label for="CompanyPictureGUID2">公司图片信息：</label>
+                        </th>
+                        <td>
+                            <label id="CompanyPictureGUID2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="AttachGUID2">附件组别ID：</label>
+                        </th>
+                        <td>
+                            <label id="AttachGUID2" />
+                        </td>
+ 
+                        <th>
+                            <label for="CustomerType2">客户类别：</label>
+                        </th>
+                        <td>
+                            <label id="CustomerType2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Grade2">客户级别：</label>
+                        </th>
+                        <td>
+                            <label id="Grade2" />
+                        </td>
+ 
+                        <th>
+                            <label for="CreditStatus2">信用等级：</label>
+                        </th>
+                        <td>
+                            <label id="CreditStatus2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Importance2">重要级别：</label>
+                        </th>
+                        <td>
+                            <label id="Importance2" />
+                        </td>
+ 
+                        <th>
+                            <label for="IsPublic2">公开与否：</label>
+                        </th>
+                        <td>
+                            <label id="IsPublic2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Satisfaction2">客户满意度：</label>
+                        </th>
+                        <td>
+                            <label id="Satisfaction2" />
+                        </td>
+ 
+                        <th>
+                            <label for="Note2">备注信息：</label>
+                        </th>
+                        <td>
+                            <label id="Note2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="TransactionCount2">交易次数：</label>
+                        </th>
+                        <td>
+                            <label id="TransactionCount2" />
+                        </td>
+ 
+                        <th>
+                            <label for="TransactionTotal2">交易金额：</label>
+                        </th>
+                        <td>
+                            <label id="TransactionTotal2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="TransactionFirstDay2">首次交易时间：</label>
+                        </th>
+                        <td>
+                            <label id="TransactionFirstDay2" />
+                        </td>
+ 
+                        <th>
+                            <label for="TransactionLastDay2">最近交易时间：</label>
+                        </th>
+                        <td>
+                            <label id="TransactionLastDay2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="LastContactDate2">最近联系日期：</label>
+                        </th>
+                        <td>
+                            <label id="LastContactDate2" />
+                        </td>
+ 
+                        <th>
+                            <label for="Stage2">客户阶段：</label>
+                        </th>
+                        <td>
+                            <label id="Stage2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Status2">客户状态：</label>
+                        </th>
+                        <td>
+                            <label id="Status2" />
+                        </td>
+ 
+                        <th>
+                            <label for="OwnerUser2">客户所属人员：</label>
+                        </th>
+                        <td>
+                            <label id="OwnerUser2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Creator2">创建人：</label>
+                        </th>
+                        <td>
+                            <label id="Creator2" />
+                        </td>
+ 
+                        <th>
+                            <label for="CreateTime2">创建时间：</label>
+                        </th>
+                        <td>
+                            <label id="CreateTime2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Editor2">编辑人：</label>
+                        </th>
+                        <td>
+                            <label id="Editor2" />
+                        </td>
+ 
+                        <th>
+                            <label for="EditTime2">编辑时间：</label>
+                        </th>
+                        <td>
+                            <label id="EditTime2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Deleted2">是否已删除：</label>
+                        </th>
+                        <td>
+                            <label id="Deleted2" />
+                        </td>
+ 
+                        <th>
+                            <label for="Dept_ID2">所属部门：</label>
+                        </th>
+                        <td>
+                            <label id="Dept_ID2" />
+                        </td>
+                    </tr>
+                    <tr>
+ 
+                        <th>
+                            <label for="Company_ID2">所属公司：</label>
+                        </th>
+                        <td>
+                            <label id="Company_ID2" />
+                        </td>
+ 
+                    </tr>
+ 
+                    <tr>
+                        <td colspan="4" style="text-align:right; padding-top:10px">
+                            <input type="hidden" id="ID2" />
+                            <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls: 'icon-cancel'" onclick="javascript:$('#DivView').dialog('close')">关闭</a>
+                        </td>
+                    </tr>
+                </table>
+        </form>
+    </div>
+</body>
+</html>

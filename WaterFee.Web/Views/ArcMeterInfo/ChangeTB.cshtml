@@ -1,0 +1,196 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>换表管理</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+    <script src="~/Scripts/ComponentUtil.js"></script>
+    <script src="~/Scripts/SignalR/jquery-1.6.4.min.js"></script>
+    <script src="~/Scripts/SignalR/jquery.signalR-2.2.2.min.js"></script>
+    <script src="../../Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/dbjs.js"></script>
+    <script type="text/javascript">
+        var isAddOrEdit = 'add';//标识是新增还是编辑对话框弹出，用于删除附件的操作
+
+        $(function () {
+
+
+
+
+           //  btnSearch();
+        });
+
+
+
+
+
+
+
+        //绑定保存按钮的的点击事件
+        function btnSearch() {
+
+          //  $("#btnSearch").click(function () {
+
+            var IntType = $("#IntType").val();
+            var DteChange = $("#DteChange").val();
+            var DtCreate = $("#DtCreate").val();
+                $.ajax({
+                    url: '/ArcMeterInfo/ChangeTBL',
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "IntCustNo": $("#IntCustNo").val(),
+                        "VcAddrOld": $("#VcAddrOld").val(),
+                        "VcAddrNew": $("#VcAddrNew").val(),
+                        "NumReading": $("#NumReading").val(),
+                        "IntType": IntType ,
+                        "NVcDesc": $("#NVcDesc").val(),
+                        "VcUserID": $("#VcUserID").val(),
+                        "DteChange": DteChange,
+                        "DtCreate": DtCreate
+                    },
+                    success: function (data) {
+                        alert("添加成功！！！");
+                    },
+                    error: function () {
+                        alert(data);
+                    }
+               // })
+                //return false;
+            });
+        }
+
+
+
+    </script>
+
+    <style>
+        table.view {
+            border: 1px solid #A8CFEB;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+            vertical-align: top;
+            height: 98%;
+            width: 98%;
+        }
+
+        .view th {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #F1F6FF;
+        }
+
+        .view td {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #FAFCFF;
+        }
+
+        .view input {
+            width: 98%;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading" style="display: none;">
+        <img alt="数据正在加载中..." src="~/Content/images/loading02.gif" />
+    </div>
+    <div class="easyui-layout" style="width: 100%; height: 100%;" fit="true">
+
+        <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding: 5px; height: auto">
+            <!-------------------------------搜索框----------------------------------->
+            <fieldset>
+                <legend>换表信息输入</legend>
+                <form id="ffSearch" method="post">
+                    <div id="toolbar">
+                        <table cellspacing="0" cellpadding="0">
+                            <tr>
+                                <th style='padding: 3px;'>
+                                    <label for="IntCustNo">客户编号：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="IntCustNo" class="text-info" style="width: 100px" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="VcAddrOld">旧表通讯地址：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="VcAddrOld" style="width: 100px" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="VcAddrNew">新表通讯地址：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="VcAddrNew" style="width: 100px" />
+                                </td>
+                                </tr>
+                            <tr>
+                                <th style='padding: 3px;'>
+                                    <label for="NumReading">旧表最后读数：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="NumReading" style="width: 100px" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="IntType">换表类型：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <select id="IntType" class="easyui-combobox" name="IntStatus" style="width: 100px;" data-options="required:true">
+                                        <option value="0" selected="selected">未知</option>
+                                        <option value="1" selected="selected">水锈</option>
+                                        <option value="2" selected="selected">倒表</option>
+                                        <option value="3" selected="selected">表停</option>
+                                        <option value="4" selected="selected">失灵</option>
+                                        <option value="5" selected="selected">表内漏</option>
+                                        <option value="6" selected="selected">表面坏</option>
+                                    </select>
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="NVcDesc">换表说明：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="NVcDesc" style="width: 100px" />
+                                </td>
+                                </tr>
+                            <tr>
+                                <th style='padding: 3px;'>
+                                    <label for="DteChange">换表日期：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" class="easyui-datebox" id="DteChange" style="width: 100px" />
+                                </td>
+                                </tr>
+                            <tr>
+                               
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style='text-align: center' id="btnSearch" onclick="btnSearch()">保存</a>
+                                
+                            </tr>
+                        </table>
+                    </div>
+                </form>
+            </fieldset>
+
+     
+           
+        </div>
+    </div>
+
+</body>
+</html>

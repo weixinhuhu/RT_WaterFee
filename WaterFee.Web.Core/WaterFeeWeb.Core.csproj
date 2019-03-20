@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8DBA9D3E-B702-4D5D-A8BC-1786B599E543}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WHC.WaterFeeWeb.Core</RootNamespace>
+    <AssemblyName>WHC.WaterFeeWeb.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WHC.Pager.Entity">
+      <HintPath>..\packages\Reference\WHC.Pager.Entity.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BLL\MessageTemplate.cs" />
+    <Compile Include="BLL\AccDepositDetail.cs" />
+    <Compile Include="BLL\AccDetail.cs" />
+    <Compile Include="BLL\AccLedger.cs" />
+    <Compile Include="BLL\AccPayment.cs" />
+    <Compile Include="BLL\AccPlus.cs" />
+    <Compile Include="BLL\AccDeposit.cs" />
+    <Compile Include="BLL\AccDebt.cs" />
+    <Compile Include="BLL\AccChargeRecord.cs" />
+    <Compile Include="BLL\ArcConcentratorInfo.cs" />
+    <Compile Include="BLL\ArcCustomerInfo.cs" />
+    <Compile Include="BLL\ArcMeterInfo.cs" />
+    <Compile Include="BLL\ArcCalcReading.cs" />
+    <Compile Include="BLL\ArcMeterReading.cs" />
+    <Compile Include="BLL\MidConcentrator.cs" />
+    <Compile Include="BLL\MidCustomerMeter.cs" />
+    <Compile Include="BLL\PriceCalc.cs" />
+    <Compile Include="BLL\PriceComposition.cs" />
+    <Compile Include="BLL\PriceList.cs" />
+    <Compile Include="BLL\PriceProperty.cs" />
+    <Compile Include="BLL\T_ACL_Department_Menu.cs" />
+    <Compile Include="BLL\T_ACL_User_Department.cs" />
+    <Compile Include="BLL\T_ACL_Department.cs" />
+    <Compile Include="BLL\PriceType.cs" />
+    <Compile Include="DAL\DALSQL\AccChargeRecord.cs" />
+    <Compile Include="DAL\DALSQL\AccDebt.cs" />
+    <Compile Include="DAL\DALSQL\AccDeposit.cs" />
+    <Compile Include="DAL\DALSQL\AccDepositDetail.cs" />
+    <Compile Include="DAL\DALSQL\AccDetail.cs" />
+    <Compile Include="DAL\DALSQL\AccLedger.cs" />
+    <Compile Include="DAL\DALSQL\AccPayment.cs" />
+    <Compile Include="DAL\DALSQL\AccPlus.cs" />
+    <Compile Include="DAL\DALSQL\ArcCalcReading.cs" />
+    <Compile Include="DAL\DALSQL\ArcConcentratorInfo.cs" />
+    <Compile Include="DAL\DALSQL\ArcCustomerInfo.cs" />
+    <Compile Include="DAL\DALSQL\ArcMeterInfo.cs" />
+    <Compile Include="DAL\DALSQL\ArcMeterReading.cs" />
+    <Compile Include="DAL\DALSQL\MessageTemplate.cs" />
+    <Compile Include="DAL\DALSQL\MidConcentrator.cs" />
+    <Compile Include="DAL\DALSQL\MidCustomerMeter.cs" />
+    <Compile Include="DAL\DALSQL\PriceCalc.cs" />
+    <Compile Include="DAL\DALSQL\PriceComposition.cs" />
+    <Compile Include="DAL\DALSQL\PriceList.cs" />
+    <Compile Include="DAL\DALSQL\PriceProperty.cs" />
+    <Compile Include="DAL\DALSQL\PriceType.cs" />
+    <Compile Include="DAL\DALSQL\T_ACL_Department.cs" />
+    <Compile Include="DAL\DALSQL\T_ACL_Department_Menu.cs" />
+    <Compile Include="DAL\DALSQL\T_ACL_User_Department.cs" />
+    <Compile Include="DAL\DALMySql\AccChargeRecord.cs" />
+    <Compile Include="DAL\DALMySql\AccDebt.cs" />
+    <Compile Include="DAL\DALMySql\AccDeposit.cs" />
+    <Compile Include="DAL\DALMySql\AccDepositDetail.cs" />
+    <Compile Include="DAL\DALMySql\AccDetail.cs" />
+    <Compile Include="DAL\DALMySql\AccLedger.cs" />
+    <Compile Include="DAL\DALMySql\AccPayment.cs" />
+    <Compile Include="DAL\DALMySql\AccPlus.cs" />
+    <Compile Include="DAL\DALMySql\ArcCalcReading.cs" />
+    <Compile Include="DAL\DALMySql\ArcConcentratorInfo.cs" />
+    <Compile Include="DAL\DALMySql\ArcCustomerInfo.cs" />
+    <Compile Include="DAL\DALMySql\ArcMeterInfo.cs" />
+    <Compile Include="DAL\DALMySql\ArcMeterReading.cs" />
+    <Compile Include="DAL\DALMySql\MessageTemplate.cs" />
+    <Compile Include="DAL\DALMySql\MidConcentrator.cs" />
+    <Compile Include="DAL\DALMySql\MidCustomerMeter.cs" />
+    <Compile Include="DAL\DALMySql\PriceCalc.cs" />
+    <Compile Include="DAL\DALMySql\PriceComposition.cs" />
+    <Compile Include="DAL\DALMySql\PriceList.cs" />
+    <Compile Include="DAL\DALMySql\PriceProperty.cs" />
+    <Compile Include="DAL\DALMySql\PriceType.cs" />
+    <Compile Include="DAL\DALMySql\T_ACL_Department.cs" />
+    <Compile Include="DAL\DALMySql\T_ACL_Department_Menu.cs" />
+    <Compile Include="DAL\DALMySql\T_ACL_User_Department.cs" />
+    <Compile Include="Entity\AccChargeRecord.cs" />
+    <Compile Include="Entity\AccDebt.cs" />
+    <Compile Include="Entity\AccDeposit.cs" />
+    <Compile Include="Entity\AccDepositDetail.cs" />
+    <Compile Include="Entity\AccDetail.cs" />
+    <Compile Include="Entity\AccLedger.cs" />
+    <Compile Include="Entity\AccPayment.cs" />
+    <Compile Include="Entity\AccPlus.cs" />
+    <Compile Include="Entity\ArcCalcReading.cs" />
+    <Compile Include="Entity\ArcConcentratorInfo.cs" />
+    <Compile Include="Entity\ArcCustomerInfo.cs" />
+    <Compile Include="Entity\ArcMeterInfo.cs" />
+    <Compile Include="Entity\ArcMeterReading.cs" />
+    <Compile Include="Entity\MessageTemplate.cs" />
+    <Compile Include="Entity\MidConcentrator.cs" />
+    <Compile Include="Entity\MidCustomerMeter.cs" />
+    <Compile Include="Entity\PriceCalc.cs" />
+    <Compile Include="Entity\PriceComposition.cs" />
+    <Compile Include="Entity\PriceList.cs" />
+    <Compile Include="Entity\PriceProperty.cs" />
+    <Compile Include="Entity\PriceType.cs" />
+    <Compile Include="Entity\T_ACL_Department.cs" />
+    <Compile Include="Entity\T_ACL_Department_Menu.cs" />
+    <Compile Include="Entity\T_ACL_User_Department.cs" />
+    <Compile Include="IDAL\IAccChargeRecord.cs" />
+    <Compile Include="IDAL\IAccDebt.cs" />
+    <Compile Include="IDAL\IAccDeposit.cs" />
+    <Compile Include="IDAL\IAccDepositDetail.cs" />
+    <Compile Include="IDAL\IAccDetail.cs" />
+    <Compile Include="IDAL\IAccLedger.cs" />
+    <Compile Include="IDAL\IMessageTemplate.cs" />
+    <Compile Include="IDAL\IAccPayment.cs" />
+    <Compile Include="IDAL\IAccPlus.cs" />
+    <Compile Include="IDAL\IArcCalcReading.cs" />
+    <Compile Include="IDAL\IArcConcentratorInfo.cs" />
+    <Compile Include="IDAL\IPriceCalc.cs" />
+    <Compile Include="IDAL\IArcCustomerInfo.cs" />
+    <Compile Include="IDAL\IPriceComposition.cs" />
+    <Compile Include="IDAL\IArcMeterInfo.cs" />
+    <Compile Include="IDAL\IPriceList.cs" />
+    <Compile Include="IDAL\IArcMeterReading.cs" />
+    <Compile Include="IDAL\IPriceProperty.cs" />
+    <Compile Include="IDAL\IMidConcentrator.cs" />
+    <Compile Include="IDAL\IT_ACL_Department.cs" />
+    <Compile Include="IDAL\IT_ACL_Department_Menu.cs" />
+    <Compile Include="IDAL\IT_ACL_User_Department.cs" />
+    <Compile Include="IDAL\IPriceType.cs" />
+    <Compile Include="IDAL\IMidCustomerMeter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Lib\公用类库\WHC.Framework.Commons\WHC.Framework.Commons.csproj">
+      <Project>{53AC195E-DCFF-47C4-BC02-7E0241FF520C}</Project>
+      <Name>WHC.Framework.Commons</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lib\公用类库\WHC.Framework.ControlUtil\WHC.Framework.ControlUtil.csproj">
+      <Project>{D1D3850B-206F-49A9-BA9F-EAC0C39DE3DD}</Project>
+      <Name>WHC.Framework.ControlUtil</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

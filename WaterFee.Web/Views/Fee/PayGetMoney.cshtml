@@ -1,0 +1,797 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>存取预存款</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <script src="~/Scripts/SignalR/jquery-1.6.4.min.js"></script>
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+    <script src="~/Scripts/ComponentUtil.js"></script>
+    <script src="~/Scripts/SignalR/jquery.
+            -2.2.2.min.js"></script>
+    
+    @Html.Raw(ViewBag.SignalrScript)
+    <script src="../../Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/dbjs.js"></script>
+    <script type="text/javascript">
+          
+        $(function () {        
+            $(document).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    $("#btnSearch").click();
+
+                    return;
+                }
+            });
+            var queryData = {
+
+            };//可添加一些预设条件
+            InitGrid(queryData);
+            BindSearchEvent();
+        });
+
+        //实现对DataGird控件的绑定操作
+        function InitGrid(queryData) {
+            $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/AccDeposit/GetMoneyJson',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                title: '客户预存款',
+                iconCls: 'icon-view',
+                height: document.body.clientHeight * 0.9 - 30,
+                width: function () { return document.body.clientWidth * 0.9 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                singleSelect: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                //idField: 'ID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+                    //{ field: 'ck', checkbox: true },   //选择
+                    //{ title: 'ID', field: 'IntFeeID', width: 80, sortable: true, hidden: true },
+                    { title: '客户编号', field: 'IntCustNo', width: 100, sortable: false, align: 'center' },
+                    { title: '客户名称', field: 'NvcName', width: 100, sortable: false, align: 'center' },
+                    { title: '客户小区', field: 'NvcVillage', width: 100, sortable: false, align: 'center' },
+                    { title: '客户楼栋', field: 'VcBuilding', width: 100, sortable: false, align: 'center' },
+                    { title: '客户单元', field: 'IntUnitNum', width: 80, sortable: false, align: 'center' },
+                    { title: '客户门牌号', field: 'IntRoomNum', width: 100, sortable: false, align: 'center' },
+                    {
+                        title: '存款余额', field: 'MonSum', width: 100, sortable: false, align: 'right',
+                        formatter: function (val, rowObj, index) {
+                            if (val == null || val == "") return 0;
+                            else return val;
+                        }
+                    },
+                    { title: '最后更新时间', field: 'DtLastUpd', width: 150, sortable: false, align: 'center' }
+                ]],
+                onLoadSuccess: function () {
+                },
+                toolbar: [{
+                    id: 'btnPay',
+                    text: '存款',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        PayMoney();
+                    }
+                }, {
+                    id: 'btnGet',
+                    text: '取款',
+                    iconCls: 'icon-remove',
+                    handler: function () {
+                        GetMoney();
+                    }
+                }, '-', {
+                    id: 'btnView1',
+                    text: '查看欠费记录',
+                    iconCls: 'icon-view',
+                    handler: function () {
+                        viewAccDebt();
+                    }
+                }, {
+                    id: 'btnView2',
+                    text: '查看扣费记录',
+                    iconCls: 'icon-curve',
+                    handler: function () {
+                        viewAccPayment();
+                    }
+                }, {
+                    id: 'btnView3',
+                    text: '查看存取明细',
+                    iconCls: 'icon-bar',
+                    handler: function () {
+                        viewDetail();
+                    }
+                }, '-', {
+                    id: 'btnReload',
+                    text: '刷新',
+                    iconCls: 'icon-reload',
+                    handler: function () {
+                        //实现刷新栏目中的数据
+                        $("#grid").datagrid("reload");
+
+                    }
+                    }],
+
+                onDblClickRow: function (rowIndex, rowData) {
+                    $('#grid').datagrid('uncheckAll');
+                    $('#grid').datagrid('checkRow', rowIndex);
+                    PayMoney();
+                }
+            });       
+        };
+
+        function InitGridPayGet(queryData) {
+            $('#gridPayGet').datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/AccDepositDetail/GetDetailByCustomerNo',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                title: null,
+                iconCls: 'icon-bar',
+                height: document.body.clientHeight * 0.9 - 10,
+                width: function () { return document.body.clientWidth * 0.9 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                singleSelect: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                //idField: 'ID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+                    //{ field: 'ck', checkbox: true },   //选择
+                    //{ title: 'ID', field: 'IntFeeID', width: 80, sortable: true, hidden: true },
+                    { title: '编号', field: 'IntID', width: 80, sortable: false, align: 'center' },
+                    { title: '金额', field: 'MonAmount', width: 80, sortable: false, align: 'right' },
+                    { title: '流水号', field: 'VcFlowNo', width: 155, sortable: false, align: 'center' },
+                    {
+                        title: '业务类型', field: 'IntType', width: 80, sortable: false, align: 'center',
+                        formatter: function (val, rowObj, index) {
+                            //0：存入 1：提取 2：销账
+                            var s = "";
+                            switch (val) {
+                                case 0: s = "存入"; break;
+                                case 1: s = "提取"; break;
+                                case 2: s = "销账"; break;
+                                default: s = "未知代码:" + val; break;
+                            }
+                            return s;
+                        }
+                    },
+                    { title: '业务描述', field: 'VcDesc', width: 100, sortable: false, align: 'center' },
+                    { title: '票据号码', field: 'VcReceiptNo', width: 100, sortable: false, align: 'center' },
+                    { title: '账务日期', field: 'DteAccount', width: 65, sortable: false, align: 'center' },
+                    { title: '操作员', field: 'VcUserID', width: 100, sortable: false, align: 'center' },
+                    { title: '最后更新时间', field: 'DtCreate', width: 150, sortable: false, align: 'center' },
+                    {
+                        title: '补打票据', field: 'IntFeeID', width: 80, sortable: false, align: 'center',
+                        formatter: function (val, rowObj, index) {
+                            var s = '<a href="PayGetMoneyPrint?flowNo=' + rowObj.VcFlowNo + '" target="_blank">打印</a>';
+                            return s;
+                        }
+                    }
+                ]],
+                onLoadSuccess: function () {
+                }
+            });         
+        };
+
+
+        function InitGridAccDebt(queryData) {
+            $('#gridAccDebt').datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/Fee/GetAccDebtByIntCustNo',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                title: null,
+                iconCls: 'icon-view',
+                height: document.body.clientHeight * 0.9 - 10,
+                width: function () { return document.body.clientWidth * 0.9 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                singleSelect: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                //idField: 'ID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+                    { field: 'ck', checkbox: true },   //选择
+                    { title: 'ID', field: 'IntFeeID', width: 80, sortable: true, hidden: true },
+                    { title: '客户编号', field: 'IntCustNo', width: 80, sortable: true, align: 'right' },
+                    {
+                        title: '客户名称', field: 'ArcCustomerInfo.NvcName', width: 100, sortable: false, align: 'center',
+                        formatter: function (val, rowObj, index) {
+                            if (rowObj.ArcCustomerInfo)
+                                return rowObj.ArcCustomerInfo.NvcName;
+                        }
+                    },
+                    { title: '费用年月', field: 'IntYearMon', width: 80, sortable: true, align: 'center' },
+                    {
+                        title: '费用日期', field: 'DteFee', width: 100, sortable: true, align: 'center',
+                        formatter: function (val, rowObj, index) {
+                            return new Date(val.replace("-", "/")).Format();
+                        }
+                    },
+                    { title: '费用金额', field: 'MonFee', width: 80, sortable: true, align: 'right' },
+                    { title: '实际执行费用金额', field: 'MonFeeExec', width: 110, sortable: true, align: 'right' },
+                    { title: '违约金', field: 'MonPenalty', width: 110, sortable: true, align: 'right' },
+                    {
+                        title: '状态', field: 'IntStatus', width: 80, sortable: true, align: 'center',
+                        formatter: function (val, obj, index) {
+                            //状态0:未收1:加锁2:在途4:呆坏帐 6:已免水费
+                            switch (parseInt(val)) {
+                                case 0: return "未收"; break;
+                                case 1: return "加锁"; break;
+                                case 2: return "在途"; break;
+                                case 4: return "呆坏帐"; break;
+                                case 6: return "已免水费"; break;
+                                default: return "未知标识:" + val; break;
+                            }
+                        }
+                    },
+                    { title: '建立时间', field: 'DtCreate', width: 150, sortable: true, align: 'center' }
+                ]],
+                onLoadSuccess: function () {
+                }
+            });   
+        };
+
+        function InitGridAccPayment(queryData) {
+            $('#gridAccPayment').datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/AccPayment/CounterReverseDataByIntCustNo',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                title: null,// '客户预存款明细',
+                iconCls: 'icon-curve',
+                height: document.body.clientHeight * 0.9 - 10,
+                width: function () { return document.body.clientWidth * 0.9 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                singleSelect: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                //idField: 'ID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+                    { field: 'ck', checkbox: true },   //选择
+                    { title: 'ID', field: 'IntFeeID', width: 80, sortable: true, hidden: true },
+                    { title: '客户编号', field: 'IntCustNo', width: 80, sortable: true, align: 'right' },
+                    {
+                        title: '客户名称', field: 'ArcCustomerInfo.NvcName', width: 100, sortable: false, align: 'center',
+                        formatter: function (val, rowObj, index) {
+                            if (rowObj.ArcCustomerInfo)
+                                return rowObj.ArcCustomerInfo.NvcName;
+                        }
+                    },
+                    { title: '费用年月', field: 'IntYearMon', width: 80, sortable: true, align: 'center' },
+                    {
+                        title: '费用日期', field: 'DteFee', width: 80, sortable: true, align: 'center',
+                        formatter: function (val, rowObj, index) {
+                            return new Date(val.replace("-", "/")).Format();
+                        }
+                    },
+                    {
+                        title: '销账日期', field: 'DtePay', width: 80, sortable: true, align: 'center',
+                        formatter: function (val, rowObj, index) {
+                            return new Date(val.replace("-", "/")).Format();
+                        }
+                    },
+                    {
+                        title: '计划截止日期', field: 'DteEnd', width: 100, sortable: true, align: 'center',
+                        formatter: function (val, rowObj, index) {
+                            return new Date(val.replace("-", "/")).Format();
+                        }
+                    },
+                    {
+                        title: '实际截止日期', field: 'DteEndExec', width: 100, sortable: true, align: 'center',
+                        formatter: function (val, rowObj, index) {
+                            return new Date(val.replace("-", "/")).Format();
+                        }
+                    },
+                    { title: '用水量', field: 'Data1', width: 80, sortable: false, align: 'right' },
+                    { title: '费用金额', field: 'MonFee', width: 80, sortable: true, align: 'right' },
+                    { title: '实际执行费用金额', field: 'MonFeeExec', width: 110, sortable: true, align: 'right' },
+                    { title: '违约金', field: 'MonPenalty', width: 80, sortable: true, align: 'right' },
+                    { title: '违约天数', field: 'IntDays', width: 80, sortable: true, align: 'right' },
+                    { title: '销账单位代码', field: 'IntPayUnit', width: 80, sortable: true, align: 'center' },
+                    { title: '销账方式代码', field: 'IntPayMode', width: 80, sortable: true, align: 'center' },
+                    { title: '操作员', field: 'VcChargeNo', width: 80, sortable: true, align: 'center' },
+                    { title: '流水号', field: 'VcFlowNo', width: 80, sortable: true, align: 'center' },
+                    { title: '建立时间', field: 'DtCreate', width: 100, sortable: true }
+                ]],
+                onLoadSuccess: function () {
+                }
+            });
+        };
+
+        function viewDetail() {
+            var rows = $("#grid").datagrid("getSelections");
+            if (rows.length < 1) {
+                $.messager.alert("温馨提示", "请至少选择一条记录!");
+                return;
+            }
+            var data = { "WHC_IntCustNo": rows[0].IntCustNo };
+            InitGridPayGet(data);
+            var name = rows[0].NvcName;
+            $("#divPayGet").dialog('open').dialog('setTitle', '【' + name + '】预存款明细');
+        }
+
+        function viewAccDebt() {
+            var rows = $("#grid").datagrid("getSelections");
+            if (rows.length < 1) {
+                $.messager.alert("温馨提示", "请至少选择一条记录!");
+                return;
+            }
+            var data = { "IntCustNo": rows[0].IntCustNo };
+            InitGridAccDebt(data);
+            var name = rows[0].NvcName;
+            $("#divAccDebt").dialog('open').dialog('setTitle', '【' + name + '】欠费记录');
+        }
+
+        function viewAccPayment() {
+            var rows = $("#grid").datagrid("getSelections");
+            if (rows.length < 1) {
+                $.messager.alert("温馨提示", "请至少选择一条记录!");
+                return;
+            }
+            var data = { "IntCustNo": rows[0].IntCustNo };
+            InitGridAccPayment(data);
+            var name = rows[0].NvcName;
+            $("#divAccPayment").dialog('open').dialog('setTitle', '【' + name + '】扣费记录');
+        }
+
+        function PayMoney() {
+            var rows = $("#grid").datagrid("getSelections");
+            if (rows.length < 1) {
+                $.messager.alert("温馨提示", "请选择一条记录!");
+                return;
+            }
+            var name = rows[0].NvcName;
+            $("#payIntCustNo").html(rows[0].IntCustNo);
+            $("#payNvcName").html(name);
+            $("#payMonSum").html(rows[0].MonSum);
+            $("#payMoney").numberbox('setValue', '');
+
+            $("#DivPay").dialog('open').dialog('setTitle', '【' + name + '】存款');
+        }
+
+        function GetMoney() {
+            var rows = $("#grid").datagrid("getSelections");
+            if (rows.length < 1) {
+                $.messager.alert("温馨提示", "请选择一条记录!");
+                return;
+            }
+            var name = rows[0].NvcName;
+            $("#getIntCustNo").html(rows[0].IntCustNo);
+            $("#getNvcName").html(name);
+            $("#getMonSum").html(rows[0].MonSum);
+            $("#getMoney").numberbox('setValue', '');
+
+            $("#DivGet").dialog('open').dialog('setTitle', '【' + name + '】取款');
+        }
+
+        function PayMoneyOK() {
+            var rows = $("#grid").datagrid("getSelections");
+            if (rows.length < 1) {
+                $.messager.alert("温馨提示", "请至少选择一条记录!");
+                return;
+            }
+
+            var validate = $("#ffPay").form('validate');
+            if (validate == false) {
+                return false;
+            }
+            var money = parseFloat($("#payMoney").numberbox('getValue'));
+            var name = rows[0].NvcName;
+            var msg = "确认给【" + name + "】存款【" + money + "】元？";
+
+            //然后确认发送异步请求的信息到后台删除数据
+            $.messager.confirm("存款确认", msg, function (isAction) {
+                if (isAction) {
+                    $.messager.progress({ text: '正在处理中,请稍后......' });
+
+                    var custNo = rows[0].IntCustNo;
+                    //var monSum = rows[0].MonSum;
+
+                    $.ajax({
+                        url: '/Fee/PayGetMoney_Pay?custNo=' + custNo,
+                        type: 'post',
+                        dataType: 'json',
+                        data: { PayMoney: money },
+                        async: false,
+                        success: function (json) {
+                            console.log(json);
+                            $.messager.progress('close');
+                            if (json.Success) {
+
+                                $("#DivPay").dialog('close');
+                                $.messager.confirm("存款成功!", "是否要打印票据?", function (isAction) {
+                                    if (isAction) {
+                                        window.open("PayGetMoneyPrint?flowNo=" + json.Data1);
+                                    }
+                                });
+                                reloadGrid();
+                            }
+                            else {
+                                $.messager.alert("温馨提示", json.ErrorMessage);
+                            }
+                            Money();
+
+                        },
+                        error: function () {
+                            showError("网络错误!");
+                            $.messager.progress('close');
+                        }
+                    });
+                }
+            });
+        }
+
+        function GetMoneyOK() {
+            var rows = $("#grid").datagrid("getSelections");
+            if (rows.length < 1) {
+                $.messager.alert("温馨提示", "请至少选择一条记录!");
+                return;
+            }
+
+            var validate = $("#ffGet").form('validate');
+            if (validate == false) {
+                return false;
+            }
+
+            var money = parseFloat($("#getMoney").val());
+            if (money > rows[0].MonSum) {
+                $.messager.alert("温馨提示", "本次提取金额不能大于可提取余额!");
+                return false;
+            }
+
+            var name = rows[0].NvcName;
+            var msg = "【" + name + "】确认取款【" + money + "】元？";
+
+            $.messager.confirm("取款确认", msg, function (isAction) {
+                if (isAction) {
+                    $.messager.progress({ text: '正在处理中,请稍后......' });
+
+                    var custNo = rows[0].IntCustNo;
+                    //var monSum = rows[0].MonSum;
+
+                    $.ajax({
+                        url: '/Fee/PayGetMoney_Get?custNo=' + custNo,
+                        type: 'post',
+                        dataType: 'json',
+                        data: { PayMoney: -money },
+                        async: false,
+                        success: function (json) {
+                            $.messager.progress('close');
+                            if (json.Success) {
+                                $("#DivGet").dialog('close')
+                                $.messager.confirm("取款成功!", "是否要打印票据?", function (isAction) {
+                                    if (isAction) {
+                                        window.open("PayGetMoneyPrint?flowNo=" + json.Data1);
+                                    }
+                                });
+                                reloadGrid();
+                            }
+                            else {
+                                $.messager.alert("温馨提示", json.ErrorMessage);
+                            }
+                        },
+                        error: function () {
+                            showError("网络错误!");
+                            $.messager.progress('close');
+                        }
+                    });
+                }
+            });
+        }
+        function reloadGrid() {
+            var queryData = {
+                KEY: $("#txtIntNo").val()
+            }
+            //将值传递给
+            InitGrid(queryData);
+        }
+        //绑定搜索按钮的的点击事件
+        function BindSearchEvent() {
+            //按条件进行查询数据，首先我们得到数据的值
+            $("#btnSearch").click(function () {
+                //得到用户输入的参数
+                //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
+                //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
+                reloadGrid();
+                return false;
+            });
+            $("#btnPayOK").click(PayMoneyOK);
+            $("#btnGetOK").click(GetMoneyOK);
+        }
+
+        function Money() {
+            //获取某一行
+            var rows = $("#grid").datagrid("getSelections");
+            //获取编号
+            var line = rows[0].IntCustNo;
+
+            //获取之前的金额
+            var old = rows[0].MonSum;
+            //存入的金额
+            var news = Number($("#payMoney").val());
+            $.ajax({
+                url: '/ArcCustomerInfo/PdIntAutoSwitch',
+                type: 'post',
+                dataType: 'json',
+                data: { "IntCustNo": line },
+                async: false,
+                success: function (data) {
+                    var a = data[0].IntAutoSwitch;
+                    
+                    if (a == 1) {
+                        if (old < 0) {
+                            if (old + news > 0) {
+                                //执行开阀命令
+                                timeout = CommandTimeout;
+                                var arrMP = new Array();
+
+                                for (var i = 0; i < rows.length; i++) {
+                                    arrMP.push(rows[i].IntMP);
+                                }
+                                var data = getClass1Param(rows[0].VcAddr, "2", arrMP);
+
+                                downloadCommand(data);
+                                alert("下发指令成功！");
+                            }
+                        }
+
+                    }
+
+                }
+            })
+
+        }
+        function getClass1Param(addr, fn, arrMP) {
+            return {
+                "AMR05Msg": {
+                    "ConcentratorAddr": addr,  /*集中器地址*/
+                    "Fn": fn,                  /*FN编号*/
+                    "Content": arrMP.join(',') /*见Fn定义表格中Content部分描述*/
+                }
+            }
+        }
+       
+        function downloadCommand(data) {
+             Measure();
+            hub.server.commandDownload(JSON.stringify(data));
+
+
+        }
+        var timeout = 10 * 1000;
+
+        var timeoutCounter;
+        var IsMeasureSuccess = false;
+        function Measure() {
+            loading.show('正在开阀,请稍候...');
+            IsMeasureSuccess = false;
+            timeoutCounter = setTimeout(MeasureSuccess, timeout);
+        }
+        function MeasureFailed(errMsg) {
+           
+                        if (IsMeasureSuccess) return;
+                        loading.hide();
+                        clearTimeout(timeoutCounter);
+                        showError('设置超时!' + (errMsg || ""));
+                    
+        }
+        function MeasureSuccess() {
+            IsMeasureSuccess = true;
+            loading.hide();
+            clearTimeout(timeoutCounter);
+            alert('设置成功!');
+        }
+        
+
+    </script>
+
+    <style>
+        table.view {
+            border: 1px solid #A8CFEB;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+            vertical-align: top;
+            height: 98%;
+            width: 98%;
+        }
+
+        .view th {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 35px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #F1F6FF;
+        }
+
+        .view td {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 35px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #FAFCFF;
+        }
+
+        .view input {
+            width: 99%;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="loading" style="display: none;">
+        <img alt="数据正在加载中..." src="~/Content/images/loading02.gif" />
+    </div>
+    <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
+
+        <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding: 5px; height: auto">
+            <!-------------------------------搜索框----------------------------------->
+            <fieldset>
+                <legend>信息查询</legend>
+                <div id="ffSearch" method="post">
+                    <div id="toolbar">
+                        <table cellspacing="0" cellpadding="0">
+                            <tr>
+                                <th style='padding: 3px;'>
+                                    <label for="txtIntNo">关键词：</label></th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="txtIntNo" class="text-info" style="width: 100px" /></td>
+                                <td style='padding: 3px; text-align: right'>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-------------------------------详细信息展示表格----------------------------------->
+            <table id="grid" style="width: 940px" title="用户操作" data-options="iconCls:'icon-view'"></table>
+        </div>
+    </div>
+
+    <div style="display: none;">
+        <!--------------------------添加信息的弹出层---------------------------->
+        <div id="divPayGet" class="easyui-dialog" style="width: 99%; height: 99%; padding: 5px 5px"
+            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-bar'">
+            <form id="ffPayGet" method="post" novalidate="novalidate">
+                <table id="gridPayGet" style="width: 940px" title="存取款明细" data-options="iconCls:'icon-bar'"></table>
+            </form>
+        </div>
+        <div id="divAccDebt" class="easyui-dialog" style="width: 99%; height: 99%; padding: 5px 5px"
+            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-view'">
+            <form id="ffAccDebt" method="post" novalidate="novalidate">
+                <table id="gridAccDebt" style="width: 940px" title="欠费记录" data-options="iconCls:'icon-view'"></table>
+            </form>
+        </div>
+        <div id="divAccPayment" class="easyui-dialog" style="width: 99%; height: 99%; padding: 5px 5px"
+            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-curve'">
+            <form id="ffAccPayment" method="post" novalidate="novalidate">
+                <table id="gridAccPayment" style="width: 940px" title="扣费记录" data-options="iconCls:'icon-curve'"></table>
+            </form>
+        </div>
+
+        <!--------------------------编辑信息的弹出层---------------------------->
+        <div id="DivPay" class="easyui-dialog" style="width: 475px; height: 220px; padding: 5px 5px"
+            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-pay'">
+            <form id="ffPay" method="post" novalidate="novalidate">
+
+                <table id="tblAdd" class="view" style="text-align: center;">
+                    <tr>
+                        <th>
+                            <label for="payVcAddr">客户编号</label>
+                        </th>
+                        <td id="payIntCustNo"></td>
+                        <th>
+                            <label for="payNvcName">客户名称</label>
+                        </th>
+                        <td id="payNvcName"></td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="payMonSum">余额</label>
+                        </th>
+                        <td id="payMonSum"></td>
+                        <th>
+                            <label for="payGetMoney">本次存款</label>
+                        </th>
+                        <td>
+                            <input class="easyui-numberbox" type="text" id="payMoney" style="width: 99%;" name="GetMoney" data-options="required:true"
+                                min="0.01" max="100000000" precision="2" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="text-align: right; padding-top: 10px">
+                            <br />
+                            <br />
+                            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript: $('#DivPay').dialog('close')">关闭</a>
+                            <a href="javascript:void(0)" class="easyui-linkbutton" id="btnPayOK" iconcls="icon-ok" >确定</a>
+                        </td>
+                    </tr>
+                </table>
+
+            </form>
+        </div>
+
+        <div id="DivGet" class="easyui-dialog" style="width: 475px; height: 220px; padding: 5px 5px"
+            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-pay'">
+            <form id="ffGet" method="post" novalidate="novalidate">
+
+                <table id="tblAdd" class="view" style="text-align: center;">
+                    <tr>
+                        <th>
+                            <label for="getVcAddr">客户编号</label>
+                        </th>
+                        <td id="getIntCustNo"></td>
+                        <th>
+                            <label for="getNvcName">客户名称</label>
+                        </th>
+                        <td id="getNvcName"></td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="getMonSum">可提取余额</label>
+                        </th>
+                        <td id="getMonSum"></td>
+                        <th>
+                            <label for="getGetMoney">本次提取金额</label>
+                        </th>
+                        <td>
+                            <input class="easyui-numberbox" type="text" id="getMoney" style="width: 99%;" name="GetMoney" data-options="required:true"
+                                min="0.01" max="100000000" precision="2" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="text-align: right; padding-top: 10px">
+                            <br />
+                            <br />
+                            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript: $('#DivGet').dialog('close')">关闭</a>
+                            <a href="javascript:void(0)" class="easyui-linkbutton" id="btnGetOK" iconcls="icon-ok">确定</a>
+                        </td>
+                    </tr>
+                </table>
+
+            </form>
+        </div>
+        <!--------------------------查看详细信息的弹出层---------------------------->
+        <div id="DivView" class="easyui-dialog" style="width: 840px; height: 650px; padding: 5px 5px"
+            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-view'">
+            <div id="tabViewUser" class="easyui-tabs">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

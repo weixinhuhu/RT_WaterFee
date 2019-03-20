@@ -1,0 +1,1148 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>终端召测</title>
+    <script src="~/Scripts/SignalR/jquery-1.6.4.min.js"></script>
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+    <script src="~/Scripts/ComponentUtil.js"></script>
+    <script src="~/Scripts/SignalR/jquery.signalR-2.2.2.min.js"></script>
+
+    <!--<script src="http://192.168.10.8:55555/signalr/hubs"></script>-->
+    <!--已在后台配置-->
+    @Html.Raw(ViewBag.SignalrScript)
+
+    <script src="../../Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/dbjs.js"></script>
+
+    <script type="text/javascript">
+        var con = {
+            log: function (msg) {
+                alert(msg);
+            }
+        };
+        console = console || con;
+
+        var hub;
+        var isInitHubDone = false;
+        $(function () {
+            try {
+                //var signalrUrl = "http://192.168.10.8:55555";
+                //var script = document.createElement("script");
+                //script.src = signalrUrl + "/signalr/hubs";
+                //document.getElementsByTagName("script")[0].appendChild(script);
+
+                $.connection.hub.url = signalrUrl + "/signalr";
+                hub = $.connection.arcConcentratorHub;
+                $.connection.hub.start()
+                    .done(function () { isInitHubDone = true; })
+                    .fail(function () { showError("与终端连接未能正常初始化,请将多余与召测有关的页面关闭后刷新页面后再试!"); });
+
+                hub.client.keepAlive = function (json) {
+                    offlineAll();
+                    var arr = json.split('#');
+                    for (var i = 0; i < arr.length; i++) {
+                        var vcAddr = arr[i];
+                        var node = $("#treeRole").tree('find', vcAddr);
+                        if (node) {
+                            $("#treeRole").tree('update', { target: node.target, iconCls: "icon-online" });
+                            //setTreeChildenOnline(node.children);
+                        }
+                    }
+                    setSelectStatus();
+                }
+
+                hub.client.commandUpload = function (json) {
+                    if (!json) return;
+                    var s = json.substring(json.indexOf('{'));
+                    var obj = JSON.parse(s);
+
+                    if (currentFn == 999) {
+                        if (json.indexOf("AMR00Msg") > -1) {//下发完配置水表指令再下发Fn=130指令读水表数指令,如有读数返回
+                            var data = { "AMR0CMsg": { "ConcentratorAddr": addr, "Fn": 130, "MP": 999 } };
+                            hub.server.commandDownload(JSON.stringify(data));
+                        }
+                        else if (json.indexOf("AMR0CMsg") > -1) {//第二次返回结果
+                            try {
+                                set999(obj.AMR0CMsg.Content[0]);
+                                MeasureSuccess();
+                            } catch (e) {
+                                console.log(e);
+                                MeasureFailed();
+                            }
+                        }
+                    }
+                    else if (json.indexOf(getParamBackCode) > -1) {
+                        if (obj.AMR0CMsg.ConcentratorAddr != addr) {
+                            //console.log('AMR0CMsg.ConcentratorAddr != addr');
+                            return;
+                        }
+
+                        initFn(obj.AMR0CMsg);
+                        if (currentFn == 2 || arrMP == null || arrMP.length == 0)
+                            MeasureSuccess();
+                        else {
+                            clearTimeout(timeoutCounterNext);
+                            downloadMP();
+                        }
+                    }
+
+                    else if (json.indexOf(ParamFreezeCode) > -1) {
+                        if (obj.AMR0DMsg.ConcentratorAddr != addr) {
+                            //console.log('AMR0DMsg.ConcentratorAddr != addr');
+                            return;
+                        }
+
+                        initFn(obj.AMR0DMsg);
+                        if (currentFn == 2 || arrMP == null || arrMP.length == 0)
+                            MeasureSuccess();
+                        else {
+                            clearTimeout(timeoutCounterNext);
+                            downloadMP();
+                        }
+                    }
+                }
+
+            }
+            catch (e) {
+                alert(e.message);
+            }
+
+        });
+        function set999(data) {
+            var item = {};
+            if (data) {
+                item = {
+                    "StatusWord": data.StatusWord.indexOf('掉线') > -1 ? "掉线" : "正常",
+                    "SG1": data.SNR,
+                    "SG2": data.上行RSSI,
+                    "SG3": data.下行RSSI
+                };
+            } else {
+                item = {
+                    "StatusWord": strEmpty,
+                    "SG1": strEmpty,
+                    "SG2": strEmpty,
+                    "SG3": strEmpty
+                };
+            }
+
+            var grid = "#grid" + currentFn;
+            var rows = $(grid).datagrid('getSelections');
+            for (var i = 0; i < rows.length; i++) {
+                var IntID = rows[i].IntID;
+                var index = $(grid).datagrid('getRowIndex', IntID);
+                updateRow(grid, index, item);
+            }
+        }
+        function setTreeChildenOnline(nodes) {
+            if (nodes == null || nodes.length == 0) return;
+            for (var i = 0; i < nodes.length; i++) {
+                var node = $("#treeRole").tree('find', nodes[i].id);
+                if (node) {
+                    $("#treeRole").tree('update', { target: node.target, iconCls: "icon-online" });
+                    setTreeChildenOnline(node.children);
+                }
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        //获取参数成功返回包含的字段
+        var getParamBackCode = "AMR0CMsg";
+        var ParamFreezeCode = "AMR0DMsg";
+        var ParamConfigCodeBack = "";
+        var ArrFnNo = [2, 28, 130, 999];
+        var addr = null;
+
+        //初始化对象
+        $(document).ready(function () {
+
+            //信息查询隐藏
+            $("#condition").hide();
+            //点击 信息查询显示
+            $('#divFn130').click(function () {
+                $("#condition").show();
+            });
+            $('#divFn2').click(function () {
+                $("#condition").hide();
+            });
+            $('#divFn28').click(function () {
+                $("#condition").hide();
+            });
+            $('#divFn999').click(function () {
+                $("#condition").hide();
+            });
+            
+
+            $("#roleExpand").bind("click", function () {
+                expandAll("treeRole");
+            });
+            $("#roleCollapse").bind("click", function () {
+                collapseAll("treeRole");
+            });
+
+            //初始化树
+            initRoleTree();
+            //$("#loading").center(); //loading的图片显示居中
+            //一分钟主动刷新
+            //setInterval("initRoleTree()", 60000);
+
+            $("#divTab").tabs({
+                onSelect: function (tab, index) {
+                    //loadParamByFn(ArrFnNo[index]);
+                    currentFn = ArrFnNo[index];
+
+                    initGridData();
+
+                    arrMP = new Array();
+                    arrMP28 = new Array();
+                    arrMP130 = new Array();
+                }
+            });
+        });
+        function initGridData() {
+            var queryData = { "WHC_IntConID": $("#txtIntConID").val() };
+            if (currentFn == 28) InitGrid28(queryData);
+            else if (currentFn == 130) InitGrid130(queryData);
+            else if (currentFn == 999) {
+                queryData = { "IntUpID": $("#txtIntConID").val() }
+                InitGrid999(queryData);
+            }
+        }
+        function clickTab() {
+            //var tab = $("#divTab").tabs('getSelected');
+            //var tabIndex = $("#divTab").tabs('getTabIndex', tab);
+
+            loadParamByFn(currentFn);
+
+
+            //setTimeout(zhaoce,11000);
+
+        }
+
+
+
+
+        function loadParamByFn(fn) {
+            initFn(null);
+            if (!addr) {
+                showError("请先选择终端!");
+                return;
+            }
+            //var node = $("#treeRole").tree('find', addr);
+            //if (node) {
+            //    if (node.iconCls != "icon-online") {
+            //        showError("当前设备不在线,不能进行操作!");
+            //        return;
+            //    }
+            //} else {
+            //    showError("终端列表数据有变,请刷新或关闭后重新进入页面!");
+            //    return;
+            //}
+
+            if (!isInitHubDone) {
+                showError("与终端连接未能正常初始化,请稍刷新页面后再试!");
+                return false;
+            }
+            arrMP28 = new Array();
+            arrMP130 = new Array();
+            arrMP = getSelectMP(currentFn);
+            if (!arrMP) return false;
+            //开始下发召测命令
+            timeout = CommandTimeout * (arrMP.length == 0 ? 1 : arrMP.length);
+            if (currentFn == 2) {
+                Measure();
+                var data = getClass1Param(addr, currentFn, -1);
+                downloadCommand(data);
+            }
+            else if (currentFn == 999) {
+                Measure999();
+            }
+            else {
+                downloadMP();
+            }
+
+
+
+        }
+        function zhaoce() {
+            var grid = "#grid" + currentFn;
+            var rows = $(grid).datagrid('getSelections');
+            //获取整个grid
+            var arr = $('#grid130').datagrid('getData');
+            //获取某一列
+            var line = $('#grid130').datagrid('getSelected');
+            //选中的IntCustNO号
+            var row = line.IntCustNO;
+            var newrow;
+            for (var i = 0; i < arr.rows.length; i++) {
+                newrow = arr.rows[i].IntCustNO;
+                if (row == newrow) {
+   
+                    updateRow("#grid130", i, { "LastAmount": rows[0].Amount, "LastCopyTime": rows[0].抄表时间, "StatusWord": rows[0].StatusWord });
+                    break;
+                }
+            }
+
+        }
+
+        function Measure999() {
+            var grid = "#grid" + currentFn;
+            var rows = $(grid).datagrid('getSelections');
+            if (rows.length == 0) {
+                showError("请选择要召测的中继器!");
+                return;
+            }
+            set999(null);
+            var vcAddr = rows[0].VcAddr;
+            var meters = [];
+            var meter = {
+                "MP": 999,
+                "Addr": vcAddr,
+                "Collector": "0",
+                "Repeater1": "0",
+                "Repeater2": "0",
+                "Repeater3": "0"
+            };
+            meters.push(meter);
+            var obj = {
+                "Freq": "0000000000",
+                "Count": meters.length,
+                "Meter": meters
+            };
+            var data = { "AMR04Msg": { "ConcentratorAddr": addr, "Fn": 10, "Content": obj } };
+            //console.log(data);
+            loading.show('正在召测,请稍候...');
+            hub.server.commandDownload(JSON.stringify(data));
+            IsMeasureSuccess = false;
+            timeoutCounter = setTimeout(MeasureFailed, timeout);
+        }
+
+        //已经发送的MP
+        var arrMP = new Array();
+        var arrMP28 = new Array();
+        var arrMP130 = new Array();
+        var currentFn = ArrFnNo[0];
+        var timeoutCounterNext = -1;
+        function downloadMP() {
+            if (arrMP == null || arrMP.length == 0) return;
+
+            var mp = arrMP.shift();
+            if (currentFn == 28) arrMP28.push(mp);
+            else if (currentFn == 130) arrMP130.push(mp);
+            var ck = $("#ck" + currentFn).prop("checked");
+            var tm = "";
+            var data = null;
+            if (ck) {
+                tm = $("#txtDate" + currentFn).val();
+                if (tm == "") {
+                    showError("请选择冻结日期!");
+                    return false;
+                }
+                data = getClass2Param(addr, 5, tm, mp);
+            } else {
+                data = getClass1Param(addr, currentFn, mp);
+            }
+            if (!data) {
+                showError("参数不能为空!");
+                return false;
+            }
+            downloadCommand(data);
+            timeoutCounterNext = setTimeout(downloadMP, CommandTimeout);
+        }
+        function downloadCommand(data) {
+            if (!isInitHubDone) {
+                showError("与终端连接未能正常初始化,请稍刷新页面后再试!");
+                return false;
+            }
+            else {
+                Measure();
+                hub.server.commandDownload(JSON.stringify(data));
+
+                return;
+            }
+        }
+
+        function getSelectMP(fn) {
+            var arrMP = new Array();
+            if (fn == 28 || fn == 130) {
+                var rows = $("#grid" + fn).datagrid('getSelections');
+                if (rows.length == 0) {
+                    showError("请先勾选水表再进行召测!");
+                    return null;
+                }
+                for (var i = 0; i < rows.length; i++) {
+                    arrMP.push(rows[i].IntMP);
+                }
+            }
+            return arrMP;
+        }
+        function getClass2Param(addr, fn, TM, MP) {
+            return {
+                "AMR0DMsg": {
+                    "ConcentratorAddr": addr,/*集中器地址*/
+                    "Fn": fn,                        /*FN编号*/
+                    "TM": TM,             /*数据时标*/
+                    "MP": MP /*测量点号，多个测量点逗号隔开*/
+
+                }
+            }
+
+        }
+        function getClass1Param(addr, fn, mp) {
+            return {
+                "AMR0CMsg": {
+                    "ConcentratorAddr": addr,/*集中器地址*/
+                    "Fn": fn,               /*FN编号*/
+                    "MP": mp
+                }
+            };
+        }
+
+        var timeout = 10 * 1000;
+
+        var timeoutCounter;
+        var IsMeasureSuccess = false;
+        function Measure() {
+            loading.show('正在召测,请稍候...');
+            IsMeasureSuccess = false;
+            timeoutCounter = setTimeout(MeasureFailed, timeout);
+        }
+        function MeasureSuccess() {
+            IsMeasureSuccess = true;
+            loading.hide();
+            clearTimeout(timeoutCounter);
+        }
+        function MeasureFailed() {
+            if (IsMeasureSuccess) return;
+            loading.hide();
+            clearTimeout(timeoutCounter);
+            showError('召测失败!');
+        }
+
+        var lastClickNode = null;
+        var paramNode = null;
+        //初始化列表
+        function initRoleTree() {
+            $('#treeRole').tree({
+                url: '/ArcConcentratorInfo/GetRootListJson?key=' + escape($("#txtKey").val()),
+                onClick: function (node) {
+                    if (node == lastClickNode) return;
+                    addr = node.ConcentratorAddr;
+                    lastClickNode = node;
+                    setSelectStatus();
+                    //setRepeater();
+                    valIntConID(node.IntConID);
+                    //clearInput();
+                    //clickTab();
+                    initGridData();
+                }
+                //, onLoadSuccess: offlineAll
+            });
+        }
+        function valIntConID(val) {
+            if (val) $("#txtIntConID").val(val);
+            return $("#txtIntConID").val();
+        }
+
+        function setRepeater() {
+            arrParent = new Array();
+            getParentRecurice(lastClickNode);
+            clearSelectStatus();
+            setRepeaterDefault();
+            if (arrParent.length >= 2) {
+                paramNode = arrParent[1];
+                addr = paramNode.id;
+                setSelectStatus(paramNode);
+            }
+            if (arrParent.length <= 2) return;
+            for (var i = 2; i < arrParent.length; i++) {
+                $("#txtRepeater" + (i - 1)).val(arrParent[i].id);
+                $("#txtRepeaterName" + (i - 1)).html(arrParent[i].text);
+            }
+        }
+        var arrParent = new Array();
+        function getParentRecurice(node) {
+            arrParent.splice(0, 0, node);
+            var node1 = $('#treeRole').tree('getParent', node.target);
+            if (node1) {
+                getParentRecurice(node1);
+            }
+        }
+        function setRepeaterDefault() {
+            $("#txtRepeater1").val("000000");
+            $("#txtRepeater2").val("000000");
+            $("#txtRepeater3").val("000000");
+            $("#txtRepeaterName1").html("");
+            $("#txtRepeaterName2").html("");
+            $("#txtRepeaterName3").html("");
+        }
+
+        function setSelectStatus(inputNode) {
+            var node = inputNode || lastClickNode;
+            if (!node || node.id == "0") return;
+            //var node = $('#treeRole').tree('find', lastClickNode.id);//查找节点
+            $("#txtIntConID").val(node.IntConID);
+            $("#txtAddr").val(node.ConcentratorAddr);
+            $("#txtConcentratorAddr").html(node.ConcentratorAddr);
+            $("#lblSelectName").html(node.text);
+            if (node.iconCls == "icon-online") $("#lblOnline").html("在线");
+            else { $("#lblOnline").html("离线"); }
+        }
+        function clearSelectStatus() {
+            $("#txtIntConID").val("");
+            $("#txtAddr").val("");
+            $("#txtConcentratorAddr").html("");
+            $("#lblSelectName").html("");
+            $("#lblOnline").html("");
+            //setRepeaterDefault();
+        }
+
+        function offlineAll() {
+            var roots = $('#treeRole').tree('getRoots');//返回tree的所有根节点数组
+            for (var i = 0; i < roots.length; i++) {
+                var node = $('#treeRole').tree('find', roots[i].id);//查找节点
+                if (node.id != "0") $('#treeRole').tree('update', { target: node.target, iconCls: "icon-offline" });//将得到的节点选中
+            }
+        }
+
+        function clearInput() {
+            initFn2();
+            initFn28();
+            initFn130();
+        }
+
+
+        var strEmpty = "";
+        function initFn(data) {
+            var fn = parseInt(currentFn);
+            switch (fn) {
+                case 2: initFn2(data); break;
+                case 28: initFn28(data); break;
+                case 130: initFn130(data); break;
+                default: break;
+            }
+        }
+
+        function initFn2(data) {
+            $("#txtCalendar").val(strEmpty);
+            if (!data) { return; }
+            //"Content": {
+            //    "Status": "0",
+            //    "Calendar": "2017-05-01 10:20:30"
+            //}
+
+            if (data.Content.Status == "0") {
+                $("#txtCalendar").val(data.Content.Calendar);
+            }
+            else {
+                showError("数据获取失败,错误如下:" + data.Status);
+            }
+        }
+
+        //$('#dg').datagrid('updateRow', {
+        //    index: 2,
+        //    row: {
+        //        name: 'new name',
+        //        note: 'new note message'
+        //    }
+        //});
+        function updateRow(gird, index, rowObj) {
+            $(gird).datagrid('updateRow', {
+                index: index,
+                row: rowObj
+            });
+        }
+
+        function initFn28(data) {
+            var fn = 28;
+            var grid = "#grid" + fn;
+            var rows = $(grid).datagrid('getSelections');
+            //Status	状态	字符串		0：正常  其它为错误
+            //var data = {
+            //    "Content": [
+            //  {
+            //      "MP": 1,
+            //      "Status": "0",
+            //      "抄表时间": "2017-05-01 10:20",
+            //      "状态字": "正常"
+            //  },
+            //  {
+            //      "MP": 2,
+            //      "Status": "失败",
+            //      "抄表时间": "2017-05-01 10:20",
+            //      "状态字": "电池欠压"
+            //  }
+            //    ]
+            //}
+            if (!data) {
+                var item = {
+                    "MP": strEmpty,
+                    "Status": strEmpty,
+                    "抄表时间": strEmpty,
+                    "状态字": strEmpty
+                };
+                for (var i = 0; i < rows.length; i++) {
+                    var IntID = rows[i].IntID;
+                    var mp = rows[i].IntMP;
+                    var index = $(grid).datagrid('getRowIndex', IntID);
+                    updateRow(grid, index, item);
+                }
+            }
+            else {
+                if (data.Fn != fn) return;
+                for (var i = 0; i < rows.length; i++) {
+                    var IntID = rows[i].IntID;
+                    var mp = rows[i].IntMP;
+                    var index = $(grid).datagrid('getRowIndex', IntID);
+                    var item = getJsonItem(data.Content, "MP", mp);
+                    if (item != null) {
+                        //console.log(data);
+                        if (item.Status == 0) item.Status = "正常";
+                        if (item.状态字 == "") item.状态字 = "正常";
+                        updateRow(grid, index, item);
+                    }
+                }
+            }
+        }
+
+        function initFn130(data) {
+            var fn = 130;
+            //if (data.Fn != fn) return;
+            var grid = "#grid" + fn;
+            var rows = $(grid).datagrid('getSelections');
+            //var data = {
+            //    "Content": [
+            //                {
+            //                    "MP": 2,
+            //                    "Status": "0",
+            //                    "抄表时间": "2017-05-01 10:20",
+            //                    "Addr": "12345678901234",
+            //                    "Amount": 12,
+            //                    "Unit": "吨",
+            //                    "StatusWord": ""
+            //                }]
+            //};
+            if (!data) {
+                var item = {
+                    "MP": strEmpty,
+                    "Status": strEmpty,
+                    "抄表时间": strEmpty,
+                    "Addr": strEmpty,
+                    "Amount": strEmpty,
+                    //"LastAmount":strEmpty,
+                    "Unit": strEmpty,
+                    "StatusWord": strEmpty
+                };
+
+                for (var i = 0; i < rows.length; i++) {
+                    var IntID = rows[i].IntID;
+                    var mp = rows[i].IntMP;
+                    var index = $(grid).datagrid('getRowIndex', IntID);
+                    updateRow(grid, index, item);
+                }
+            }
+            else {
+                for (var i = 0; i < rows.length; i++) {
+                    var IntID = rows[i].IntID;
+                    var mp = rows[i].IntMP;
+                    var index = $(grid).datagrid('getRowIndex', IntID);
+                    var item = getJsonItem(data.Content, "MP", mp);
+                    //console.log(item);
+                    if (item != null) {
+                        if (!item.抄表时间) item.抄表时间 = item.TM;
+                        updateRow(grid, index, item);
+                    }
+                    zhaoce();
+                }
+            }
+        }
+
+        function getJsonItem(arr, name, val) {
+            for (var i = 0; i < arr.length; i++)
+                if (arr[i][name] == val)
+                    return arr[i];
+            return null;
+        }
+
+        //保存召测数据
+        function clickSave() {
+
+            var grid = "#grid" + currentFn;
+            var rows = $(grid).datagrid('getSelections');
+            
+            var ck = $("#ck" + currentFn).prop("checked");
+            var date = $("#txtDate" + currentFn).val();
+            if (ck == false) date = new Date().Format("yyyy-MM-dd");
+            //console.log(rows)
+
+            var arrData = new Array();
+
+
+            var ck = document.getElementById("ck130");
+            var IntFlag;
+            if (ck.checked == true) {
+                IntFlag = 1
+            } else
+            { IntFlag = 0; }
+           
+            for (var i = 0; i < rows.length; i++) {
+                if (rows[i].Amount && rows[i].Status) {
+                    if (rows[i].Status == "0" && rows[i].Amount > 0) {
+                        arrData.push({ IntCustNo: rows[i].IntCustNO, Amount: rows[i].Amount, IntMP: rows[i].IntMP, Date: date, VcAddr: rows[i].VcAddr, SW: ""+rows[i].SW+"", IntFlag: IntFlag });
+                    }
+                }
+            }
+            if (arrData.length == 0) {
+                showError("没有可保存的数据!");
+                return;
+            }
+            //console.log(arrData);
+            loading.show();
+            $.ajax({
+                type: 'post',
+                url: '/ArcMeterReading/SaveZhaoCeData',
+                dataType: 'json',
+                data: { PostData: JSON.stringify(arrData) },
+                success: function (json) {
+                    loading.hide();
+                    $.messager.alert("温馨提示", json.ErrorMessage);
+                },
+                error: function () {
+                    loading.hide();
+                    showError("网络错误!");
+                }
+            });
+        }
+
+        var IDgrid28 = '#grid28';
+        function InitGrid28(queryData) {
+            $(IDgrid28).datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/ArcMeterInfo/ListByIntConID',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                // title: '水表列表',
+                // iconCls: 'icon-view',
+                height: document.body.clientHeight - 163,
+                width: function () { return document.body.clientWidth * 0.8 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                //singleSelect: true,
+                idField: 'IntID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+                    { field: 'ck', checkbox: true },   //选择
+                    { title: '编号', field: 'IntID', width: 60, sortable: true, hidden: true },
+                    { title: '通信地址', field: 'VcAddr', width: 100, sortable: true },
+                    { title: '名称', field: 'NvcName', width: 80, sortable: true },
+                    { title: '安装地址', field: 'NvcAddr', width: 120, sortable: true },
+                    //{ title: '条形码', field: 'VcBarCode', width: 100, align: 'center', sortable: true },
+                    { title: '计量点', field: 'IntMP', width: 80, align: 'center', sortable: true },
+                    {
+                        title: '状态', field: 'Status', width: 100, align: 'center', sortable: true,
+                        formatter: function (val, rowdata, index) {
+                            if (val == "0") return "正常";
+                            else return val;
+                        }
+                    },
+                    { title: '抄表时间', field: '抄表时间', width: 120, align: 'center', sortable: true },
+                    { title: '状态字', field: '状态字', width: 100, align: 'center', sortable: true }
+                ]],
+                onLoadSuccess: function () {
+                    $(IDgrid28).datagrid('clearSelections');
+                },
+                onDblClickRow: function (rowIndex, rowData) {
+                    $(IDgrid28).datagrid('uncheckAll');
+                    $(IDgrid28).datagrid('checkRow', rowIndex);
+                    //var row = $(IDgrid).datagrid('getData', rowIndex);
+                    //initFn10Select(rowData);
+                }
+            });
+        };
+
+        var IDgrid130 = '#grid130';
+        function InitGrid130(queryData) {
+            $(IDgrid130).datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/ArcMeterInfo/ListByIntConID_Data',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                // title: '水表列表',
+                // iconCls: 'icon-view',
+                height: document.body.clientHeight - 160,
+                width: function () { return document.body.clientWidth * 0.8 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                //singleSelect: true,
+                idField: 'IntID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+                    { field: 'ck', checkbox: true },   //选择
+                    //{ title: '编号', field: 'IntID', width: 60, sortable: true, hidden: true },
+                    { title: '客户编号', field: 'IntCustNO', width: 100, align: 'center', sortable: true },
+                    { title: '客户名称', field: 'VcCustName', width: 100, align: 'center', sortable: true },
+                    { title: '计量点', field: 'IntMP', width: 80, align: 'center', sortable: true },
+                    { title: '安装地址', field: 'NvcAddr', width: 120, sortable: true },
+                    { title: '通信地址', field: 'VcAddr', width: 100, sortable: true, align: 'center' },
+                    //{ title: '表地址', field: 'Addr', width: 100, align: 'center', sortable: true, hidden: true },
+                    { title: '客户余额', field: 'MonSum', width: 80, align: 'center', sortable: true },
+                    //{ title: '名称', field: 'NvcName', width: 80, sortable: true, hidden: true },
+                    //{ title: '上次抄表时间', field: 'LastCopyTime', width: 120, align: 'center', sortable: true, hidden: true },
+                    //{ title: '上次用量', field: 'LastAmount', width: 100, align: 'center', sortable: true, hidden: true },
+                    { title: '累计用量', field: 'LastAmount', width: 100, align: 'center', sortable: true },
+                    { title: '抄表时间', field: 'LastCopyTime', width: 120, align: 'center', sortable: true },
+                    //{ title: '抄表时间', field: '抄表时间', width: 120, align: 'center', sortable: true },
+                    //Status 状态,抄表时间 集中器抄表时间,Addr 表地址,
+                    //Amount 累计用量,Unit 累计用量单位,StatusWord 表状态字
+                    {
+                        title: '通信状态', field: 'Status', width: 100, align: 'center', sortable: true,
+                        formatter: function (val, rowdata, index) {
+                            if (val == "0") return "正常";
+                            else return val;
+                        }
+                    },
+                    {
+                        title: '表状态字', field: 'StatusWord', width: 100, align: 'center', sortable: true,
+                        formatter: function (val, rowdata, index) {
+                            if (val == "") return "开阀";
+                            else return val;
+                        }
+                    },
+                    { title: '单位', field: 'Unit', width: 80, align: 'center', sortable: true, hidden: true }
+                ]],
+                onLoadSuccess: function () {
+                    $(IDgrid130).datagrid('clearSelections');
+                },
+                onDblClickRow: function (rowIndex, rowData) {
+                    $(IDgrid130).datagrid('uncheckAll');
+                    $(IDgrid130).datagrid('checkRow', rowIndex);
+                    //var row = $(IDgrid).datagrid('getData', rowIndex);
+                    //initFn10Select(rowData);
+                }
+            });
+        };
+        function submits(queryData) {
+            $(IDgrid130).datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/ArcMeterInfo/submit',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                // title: '水表列表',
+                // iconCls: 'icon-view',
+                height: document.body.clientHeight - 160,
+                width: function () { return document.body.clientWidth * 0.8 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                //singleSelect: true,
+                idField: 'IntID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+                    { field: 'ck', checkbox: true },   //选择
+                    //{ title: '编号', field: 'IntID', width: 60, sortable: true, hidden: true },
+                    { title: '客户编号', field: 'IntCustNO', width: 100, align: 'center', sortable: true },
+                    { title: '客户名称', field: 'VcCustName', width: 100, align: 'center', sortable: true },
+                    { title: '计量点', field: 'IntMP', width: 80, align: 'center', sortable: true },
+                    { title: '安装地址', field: 'NvcAddr', width: 120, sortable: true },
+                    { title: '通信地址', field: 'VcAddr', width: 100, sortable: true, align: 'center' },
+                    //{ title: '表地址', field: 'Addr', width: 100, align: 'center', sortable: true, hidden: true },
+                    { title: '客户余额', field: 'MonSum', width: 80, align: 'center', sortable: true },
+                    //{ title: '名称', field: 'NvcName', width: 80, sortable: true, hidden: true },
+                    //{ title: '上次抄表时间', field: 'LastCopyTime', width: 120, align: 'center', sortable: true, hidden: true },
+                    //{ title: '上次用量', field: 'LastAmount', width: 100, align: 'center', sortable: true, hidden: true },
+                    { title: '累计用量', field: 'LastAmount', width: 100, align: 'center', sortable: true },
+                    { title: '抄表时间', field: 'LastCopyTime', width: 120, align: 'center', sortable: true },
+                    //{ title: '抄表时间', field: '抄表时间', width: 120, align: 'center', sortable: true },
+                    //Status 状态,抄表时间 集中器抄表时间,Addr 表地址,
+                    //Amount 累计用量,Unit 累计用量单位,StatusWord 表状态字
+                    {
+                        title: '集中器状态', field: 'Status', width: 100, align: 'center', sortable: true,
+                        formatter: function (val, rowdata, index) {
+                            if (val == "0") return "正常";
+                            else return val;
+                        }
+                    },
+                    {
+                        title: '表状态字', field: 'StatusWord', width: 100, align: 'center', sortable: true,
+                        formatter: function (val, rowdata, index) {
+                            if (val == "" || val == "00") return "开阀";
+                            else return val;
+                        }
+                    },
+                    { title: '单位', field: 'Unit', width: 80, align: 'center', sortable: true, hidden: true }
+                ]],
+                onLoadSuccess: function () {
+                    $(IDgrid130).datagrid('clearSelections');
+                },
+                onDblClickRow: function (rowIndex, rowData) {
+                    $(IDgrid130).datagrid('uncheckAll');
+                    $(IDgrid130).datagrid('checkRow', rowIndex);
+                    //var row = $(IDgrid).datagrid('getData', rowIndex);
+                    //initFn10Select(rowData);
+                }
+            });
+        };
+
+        var IDgrid999 = '#grid999';
+        function InitGrid999(queryData) {
+            $(IDgrid999).datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/ArcConcentratorInfo/ListByIntUpID',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                // title: '水表列表',
+                // iconCls: 'icon-view',
+                height: document.body.clientHeight - 160,
+                width: function () { return document.body.clientWidth * 0.8 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                singleSelect: true,
+                idField: 'IntID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+                    { field: 'ck', checkbox: true },   //选择
+                    { title: '编号', field: 'IntID', width: 60, sortable: true },
+                    { title: '通信地址', field: 'VcAddr', width: 120, sortable: true },
+                    { title: '名称', field: 'NvcName', width: 150, sortable: true },
+                    { title: '状态字', field: 'StatusWord', width: 80, sortable: true, align: 'center' },
+                    { title: 'SNR', field: 'SG1', width: 80, sortable: true, align: 'center' },
+                    { title: '上行RSSI', field: 'SG2', width: 80, sortable: true, align: 'center' },
+                    { title: '下行RSSI', field: 'SG3', width: 80, sortable: true, align: 'center' },
+                    { title: '安装地址', field: 'NvcAddr', width: 150, sortable: true },
+                    { title: '通讯卡电话号码', field: 'VcSimNo', width: 100, sortable: true }
+                ]],
+                onLoadSuccess: function () {
+                    $(IDgrid999).datagrid('clearSelections');
+                },
+                onDblClickRow: function (rowIndex, rowData) {
+                    $(IDgrid999).datagrid('uncheckAll');
+                    $(IDgrid999).datagrid('checkRow', rowIndex);
+                }
+            });
+        };
+        function submit() {
+
+            //$.ajax({
+
+            //    url: '/ArcMeterInfo/submit',//请求后台加载数据的方法
+            //    type: "post",
+            //    dataType: "json",
+            //    data: {
+            //        "IntCustNO": $("#IntCustNO").val(),
+            //        "NvcName": $("#NvcName").val(),
+            //        "NvcAddr": $("#NvcAddr").val(),
+            //        "VcAddr": $("#VcAddr").val(),
+            //    },
+            //    success: function (data) {
+            //        data.success = function () {
+
+            //        }
+            //    }
+            //})
+
+            var queryData = {
+                "IntCustNO": $("#IntCustNO").val(),
+                "NvcName": $("#NvcName").val(),
+                "NvcAddr": $("#NvcAddr").val(),
+                "VcAddr": $("#VcAddr").val(),
+            };
+            submits(queryData);
+            return false;
+        }
+
+    </script>
+
+</head>
+<body>
+
+    <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
+        <div data-options="region:'west',split:true,title:'终端列表',iconCls:'icon-house'" style="width: 200px; padding: 1px;">
+            <div title="终端列表" style="padding: 5px; height: auto" data-options="iconCls:'icon-organ'">
+                <div style="padding: 1px; border: 1px solid #ddd;">
+                    <!--<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-reload'" id="roleRefresh" onclick="initRoleTree()">刷新</a>
+                    <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-expand'" id="roleExpand" onclick="return false;">展开</a>
+                    <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-collapse'" id="roleCollapse" onclick="return false;">折叠</a>-->
+                    <input type="text" id="txtKey" class="easyui-textbox" style="width: 55%;" placeholder="关键词" />
+                    <a href="#" style="width: 40%" class="easyui-linkbutton" iconcls="icon-ok" id="btnSearch" onclick="initRoleTree();">搜索</a>
+                </div>
+                <div style="padding-top: 5px;">
+                    <ul id="treeRole"></ul>
+                </div>
+            </div>
+        </div>
+        <div id="tbEdit" data-options="region:'center',split:true,title:'终端参数设置',iconCls:'icon-setting'" style="padding: 5px; height: auto">
+            <div fit="false">
+                <fieldset style="margin-bottom: 5px;">
+                    <legend>当前选择终端</legend>
+                    <table id="tbDevice" style="height: auto; width: 98%">
+                        <tr height="10%">
+                            <td align="left" style="width: 12%">集中器地址：</td>
+                            <td align="left" style="width: 25%">
+                                <input type="hidden" id="txtIntConID" />
+                                <input type="hidden" id="txtAddr" />
+                                <label id="txtConcentratorAddr">未选择</label>
+                            </td>
+                            <td align="left" style="width: 12%">名称：</td>
+                            <td align="left" style="width: 25%">
+                                <label id="lblSelectName">未选择</label>
+                            </td>
+                            <td align="center" style="width: 10%">在线状态：</td>
+                            <td align="left">
+                                <label id="lblOnline"></label>
+                            </td>
+                        </tr>
+                        <tr style="display: none;">
+                            <td>一级中继器：</td>
+                            <td>
+                                <input type="hidden" id="txtRepeater1" style="width: 77px" />
+                                <label id="txtRepeaterName1"></label>
+                            </td>
+                            <td>二级中继器：</td>
+                            <td>
+                                <input type="hidden" id="txtRepeater2" style="width: 77px" />
+                                <label id="txtRepeaterName2"></label>
+                            </td>
+                            <td>三级中继器：</td>
+                            <td>
+                                <input type="hidden" id="txtRepeater3" style="width: 77px" />
+                                <label id="txtRepeaterName3"></label>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+
+                <fieldset id="condition">
+                    <legend>信息查询</legend>
+                    <form id="ffSearch" method="post">
+                        <div id="toolbar">
+                            <table cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <th style='padding: 3px;'>
+                                        <label for="NvcName">用户编号：</label>
+                                    </th>
+                                    <td style='padding: 3px;'>
+                                        <input type="text" id="IntCustNO" class="text-info" style="width: 100px" />
+                                    </td>
+                                    <th style='padding: 3px;'>
+                                        <label for="NvcAddr">用户名：</label>
+                                    </th>
+                                    <td style='padding: 3px;'>
+                                        <input type="text" id="NvcName" style="width: 100px" />
+                                    </td>
+                                    <th style='padding: 3px;'>
+                                        <label for="VcAddr">安装地址：</label>
+                                    </th>
+                                    <td style='padding: 3px;'>
+                                        <input type="text" id="NvcAddr" style="width: 100px" />
+                                    </td>
+                                    <th style='padding: 3px;'>
+                                        <label for="VcSimNo">通信地址：</label>
+                                    </th>
+                                    <td style='padding: 3px;'>
+                                        <input type="text" id="VcAddr" style="width: 100px" />
+                                    </td>
+                                    <td style='padding: 3px; text-align: right'>
+                                        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch" onclick="submit()">查询</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </form>
+                </fieldset>
+
+                <div id="divTab" class="easyui-tabs">
+                    <div id="divFn2" title="集中器日历时钟" style="padding: 10px; height: auto" data-options="iconCls:'icon-key'">
+                        <form id="ff2" method="post" novalidate="novalidate">
+                            <table style="height: auto; width: 500px">
+                                <tr height="10%">
+                                    <td align="left" style="width: 80px">
+                                        日历时钟：
+                                    </td>
+                                    <td align="left">
+                                        <input id="txtCalendar" name="txtCalendar" class="easyui-validatebox" style="width: 150px" type="text" data-options="required:true">
+                                    </td>
+                                </tr>
+
+                                <tr height="10%">
+                                    <td style="width: 95px"></td>
+                                    <td align="left">
+                                        <br />
+                                        <a href="#" style="width: 80px" class="easyui-linkbutton" iconcls="icon-tip" id="btnSave2" onclick="clickTab();">召测</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+
+                    <div id="divFn28" title="水表运行状态字及其变位标志" style="padding: 10px; height: auto" data-options="iconCls:'icon-key'">
+                        <form id="ff28" method="post" novalidate="novalidate">
+                            <table id="grid28" style="width: 940px" title="水表列表" data-options="iconCls:'icon-view'"></table>
+                            <div style="margin: 2px;">
+                                <input type="hidden" id="ck28" /><!--<label for="ck28">日冻结</label>-->
+                                <input type="hidden" id="txtDate28" onclick="WdatePicker()" readonly="readonly" style="width: 100px; display: none;" />
+                                <a href="#" style="width: 100px;" class="easyui-linkbutton" iconcls="icon-tip" id="btnSave28" onclick="clickTab()">召测</a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="divFn130" title="水表累计用量" style="padding: 10px; height: auto" data-options="iconCls:'icon-key'">
+                        <form id="ff130" method="post" novalidate="novalidate">
+                            <table id="grid130" style="width: 940px" title="水表列表" data-options="iconCls:'icon-view'"></table>
+                            <div style="margin: 2px;">
+                                <input type="checkbox" id="ck130" /><label for="ck130">日冻结</label>
+                                <!--<label>日期：</label>-->
+                                <input type="text" id="txtDate130" onclick="WdatePicker()" readonly="readonly" style="width: 100px;" />
+
+                                <a href="#" style="width: 100px;" class="easyui-linkbutton" iconcls="icon-tip" onclick="clickTab()">召测</a>
+                                <a href="#" style="width: 100px;" class="easyui-linkbutton" iconcls="icon-ok" id="btnSave130" onclick="clickSave()">保存</a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="divFn999" title="中继器状态" style="padding: 10px; height: auto" data-options="iconCls:'icon-key'">
+                        <form id="ff999" method="post" novalidate="novalidate">
+                            <table id="grid999" style="width: 940px" title="中继器列表" data-options="iconCls:'icon-view'"></table>
+                            <div style="margin: 2px;">
+                                <a href="#" style="width: 100px;" class="easyui-linkbutton" iconcls="icon-tip" onclick="clickTab()">召测</a>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</body>
+</html>

@@ -1,0 +1,518 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>短信模板设置</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+    <script src="~/Scripts/ComponentUtil.js"></script>
+
+    <script type="text/javascript">
+        var isAddOrEdit = 'add';//标识是新增还是编辑对话框弹出，用于删除附件的操作
+
+        $(function () {
+            var queryData = {
+                WHC_Deleted: "0"
+            };//可添加一些预设条件
+            InitGrid(queryData);//初始化Datagrid表格数据
+            //InitDictItem();   //初始化字典信息
+
+            BindSearchEvent();//绑定查询按钮事件
+            //BindSearchDeletedEvent();//查看已删除记录
+            //BindAddEvent();   //绑定添加按钮的事件
+            //BindEditEvent();  //绑定修改按钮的事件
+ 
+        });
+         
+        //初始化字典信息
+        function InitDictItem() {
+
+            //初始化新增状态公司信息，默认公司为当前用户公司
+            //InitAddCompany();
+            //$('#Company_ID').combotree('setValue', '@Session["Company_ID"]');
+
+            //InitAddDeptTree();
+            //$('#Dept_ID').combotree('setValue', '@Session["Dept_ID"]');
+            //InitAddUserManager();
+
+            //编辑状态下仅仅初始化公司
+            //InitEditCompany();
+        }
+
+
+        //实现对DataGird控件的绑定操作
+        function InitGrid(queryData) {
+            $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/Message/TemplateList',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                title: '模板列表',
+                iconCls: 'icon-view',
+                height: 670,
+                width: function () { return document.body.clientWidth * 0.9 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 10,
+                pageList: [10, 20, 30, 50, 100, 200],
+                rownumbers: true,
+                singleSelect: true,
+                //sortName: 'ID',    //根据某个字段给easyUI排序
+                sortOrder: 'asc',
+                remoteSort: false,
+                //idField: 'ID', //不设置idField，翻页不会记录选择
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+	                 { field: 'ck', checkbox: true },   //选择
+                     { title: '编号', field: 'ID', width: 60, sortable: true, align: 'center' },
+                     { title: '模板类型', field: 'TempType', width: 200, sortable: true, align: 'center' },
+                     { title: '模板名称', field: 'TempName', width: 250, sortable: true, align: 'center' },
+                     { title: '模板ID', field: 'TempID', width: 100, sortable: true, align: 'center' },
+                     {
+                         title: '模板状态', field: 'Status', width: 100, sortable: true, align: 'center',
+                         formatter: function (val, rowdata, index) {
+                             if (val == "1") {
+                                 return '启用';
+                             } else {
+                                 return '禁用';
+                             }
+                         }
+                     },
+                     { title: '建立时间', field: 'DtCreate', width: 180, sortable: true, align: 'center' }
+                ]],
+                onLoadSuccess: function () {
+
+                },
+                toolbar: [{
+                    id: 'btnAdd',
+                    text: '添加',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        ShowAddDialog();//实现添加记录的页面
+                    }
+                }, '-', {
+                    id: 'btnEdit',
+                    text: '修改',
+                    iconCls: 'icon-edit',
+                    handler: function () {
+                        ShowEditOrViewDialog();//实现修改记录的方法
+                    }
+                },
+                '-', {
+                    id: 'btnDelete',
+                    text: '删除',
+                    iconCls: 'icon-remove',
+                    handler: function () {
+                        Delete();//实现直接删除数据的方法
+                    }
+                },
+                //'-', {
+                //    id: 'btnView',
+                //    text: '查看',
+                //    iconCls: 'icon-table',
+                //    handler: function () {
+                //        //ShowMeterList();//实现查看记录详细信息的方法
+                //    }
+                //},
+                '-', {
+                    id: 'btnReload',
+                    text: '刷新',
+                    iconCls: 'icon-reload',
+                    handler: function () {
+                        //实现刷新栏目中的数据
+                        $("#grid").datagrid("reload");
+                    }
+                }],
+                onDblClickRow: function (rowIndex, rowData) {
+                    $('#grid').datagrid('uncheckAll');
+                    $('#grid').datagrid('checkRow', rowIndex);
+                    ShowEditOrViewDialog();
+                }
+            });
+            var heightMargin = $("#toolbar").height() + 60;
+            var widthMargin = $(document.body).width() - $("#tb").width();
+            // 第一次加载时和当窗口大小发生变化时，自动变化大小
+            $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            $(window).resize(function () {
+                $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
+            });
+        };
+
+        //绑定搜索按钮的的点击事件
+        function BindSearchEvent() {
+            //按条件进行查询数据，首先我们得到数据的值
+            $("#btnSearch").click(function () {
+                //得到用户输入的参数
+                //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
+                //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
+                var queryData = {
+                    WHC_TempName: $("#TempName").val()
+                }
+                //将值传递给
+                InitGrid(queryData);
+                return false;
+            });
+        }
+        //绑定搜索按钮的的点击事件
+        function BindSearchDeletedEvent() {
+            //按条件进行查询数据，首先我们得到数据的值
+            $("#btnSearchDeleted").click(function () {
+                var queryData = {
+                    WHC_Deleted: "1"
+                }
+                //将值传递给
+                InitGrid(queryData);
+                return false;
+            });
+        }
+ 
+        //实现删除数据的方法
+        function Delete() {
+            //得到用户选择的数据的ID
+            var rows = $("#grid").datagrid("getSelections");
+            if (rows.length >= 1) {
+                //遍历出用户选择的数据的信息，这就是用户用户选择删除的用户ID的信息
+                var ids = "";   //1,2,3,4,5
+                for (var i = 0; i < rows.length; i++) {
+                    ids += rows[i].ID + ",";
+                }
+                //最后去掉最后的那一个,
+                ids = ids.substring(0, ids.length - 1);
+                var postData = { Ids: ids };
+
+                //然后确认发送异步请求的信息到后台删除数据
+                $.messager.confirm("删除确认", "您确认删除选定的记录吗？", function (action) {
+                    if (action) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/User/DeletebyIds',
+                            dataType: 'json',
+                            data: postData,
+                            success: function (data) {
+                                if (data.Success) {
+                                    showTips("删除选定的记录成功");
+
+                                    $("#grid").datagrid("reload");
+                                    //当删除完成之后，第二次删除的时候还记得上次的信息，这样是不可以的，所以我们需要清除第一次的信息
+                                    rows.length = "";//第一种方法
+                                    $("#grid").datagrid("clearSelections");//第二种方法
+                                }
+                                else {
+                                    showError("操作失败：" + data.ErrorMessage, 3000);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            else {
+                $.messager.alert("提示", "请选择你要删除的数据");
+            }
+        }
+
+        //弹出新增对话框
+        function ShowAddDialog() {
+            isAddOrEdit = 'add';//新增对话框标识
+
+            clearInput(); 
+            BindAddEvent();
+
+            $("#DivAdd").dialog('open').dialog('setTitle', '添加短信模板');
+        }
+
+        //绑定添加按钮的事件
+        function BindAddEvent() {
+            $("#btnAddOK").unbind("click");
+            $("#btnAddOK").click(function () {
+                //判断表单的信息是否通过验证
+                var validate = $("#ffAdd").form('validate');
+                if (validate == false) {
+                    return false;
+                }
+
+                //修改控件的值为复选框的值
+                //$("#hIsExpire").val($("#IsExpire").is(':checked'))
+                //$("#hDeleted").val($("#Deleted").is(':checked'))
+
+                var postData = $("#ffAdd").serializeArray();
+                $.post("/MessageTemplate/Insert", postData, function (json) {
+                    var data = $.parseJSON(json);
+                    if (data.Success) {
+                        //添加成功  1.关闭弹出层，2.刷新DataGird
+                        showTips("添加成功");
+                        $("#DivAdd").dialog("close");
+                        $("#grid").datagrid("reload");
+                        $("#ffAdd").form("clear");
+                    }
+                    else {
+                        showError("添加失败:" + data.ErrorMessage, 3000);
+                    }
+                }).error(function () {
+                    $.messager.alert("提示", "您未被授权使用该功能，请联系管理员进行处理。", 'warning');
+                });
+            });
+        }
+         
+        //修改或查看明细信息（绑定显示数据）
+        function ShowEditOrViewDialog(view) {
+            //首先取出来用户选择的数据的ID
+            var rows = $("#grid").datagrid("getSelections");
+            //首先取出来值判断用户只能选择一个
+            if (rows.length == 0) {
+                $.messager.alert("提示", "请选择一条记录", "error");
+                return;
+            }
+            else if (rows.length > 1) {
+                $.messager.alert("提示", "每次只能修改/查看一条记录，你已经选择了<font color='red'  size='6'>" + rows.length + "</font>条", "error");
+                return;
+            }
+            if (view == null) {
+                //处理修改的信息
+                //$("#DivEdit").dialog('open').dialog('setTitle', '修改信息');
+                //绑定修改详细信息的方法
+                BindEditInfo(rows[0]);
+            }
+            else {
+                //处理查看详细
+                $("#DivView").dialog('open').dialog('setTitle', '查看详细信息');
+                //绑定查看详细信息方法
+                BindViewInfo();
+            }
+        }
+        function resetForm() {
+            document.getElementById("ffAdd").reset();
+        }
+        function clearInput() {
+            //document.getElementById("ffAdd").reset();
+            $("#ffAdd").form("clear");
+            $("#ddlStatus").combobox("setValue", "1"); 
+        }
+         
+
+        //绑定编辑详细信息的方法
+        function BindEditInfo(row) {
+            //首先用户发送一个异步请求去后台实现方法
+            //var ID = $("#grid").datagrid("getSelections")[0].IntID;  //获取到了用用户选择的ID
+            isAddOrEdit = 'edit';//新增对话框标识
+
+            //$("#ffAdd input[type='text']").val("");
+            clearInput();
+
+            $("#editID").val(row.IntID);
+            $("#editTempType").val(row.TempType);
+            $("#editTempName").val(row.TempName);
+            $("#editTempID").val(row.TempID);
+            $("#editTempSQL").val(row.TempSQL);
+            $("#editTempContent").val(row.TempContent);
+            $("#ddlStatus").combobox("setValue", row.Status);
+            $("#editDtCreate").val("setValue", row.DtCreate);
+       
+            BindEditEvent();
+            $("#DivAdd").dialog('open').dialog('setTitle', '编辑短信模板');
+            //$.ajaxSettings.async = false;
+            //$.getJSON("/User/FindByID?r=" + Math.random() + "&id=" + ID, function (info) {
+            //    //赋值有几种方式：.datebox('setValue', info.Birthday);.combobox('setValue', info.Status);.val(info.Name);
+            //
+            //    isAddOrEdit = 'edit';//新增对话框标识
+            //});
+
+        }
+  
+        //绑定修改按钮的事件
+        function BindEditEvent() {
+            $("#btnAddOK").unbind("click");
+            $("#btnAddOK").click(function () {
+                //判断表单的信息是否通过验证
+                var validate = $("#ffAdd").form('validate');
+                if (validate == false) {
+                    return false;
+                }
+                  
+                //修改控件的值为复选框的值
+                //$("#hIsExpire").val($("#IsExpire").is(':checked'))
+                //$("#hDeleted").val($("#Deleted").is(':checked'))
+
+                var postData = $("#ffAdd").serializeArray();
+                $.post("/MessageTemplate/Update?id=id", postData, function (json) {
+                    var data = $.parseJSON(json);
+                    if (data.Success) {
+                        //添加成功  1.关闭弹出层，2.刷新DataGird
+                        showTips("编辑成功");
+                        $("#DivAdd").dialog("close");
+                        $("#grid").datagrid("reload");
+                    }
+                    else {
+                        showError("编辑失败:" + data.ErrorMessage, 3000);
+                    }
+                }).error(function () {
+                    $.messager.alert("提示", "您未被授权使用该功能，请联系管理员进行处理。", 'warning');
+                });
+            });
+        }
+
+    </script>
+
+    <style>
+        table.view {
+            border: 1px solid #A8CFEB;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+            vertical-align: top;
+            height: 98%;
+            width: 98%;
+        }
+
+        .view th {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #F1F6FF;
+        }
+
+        .view td {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #FAFCFF;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading" style="display: none;">
+        <img alt="数据正在加载中..." src="~/Content/images/loading02.gif" />
+    </div>
+    <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
+
+        <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding: 5px; height: auto">
+            <!-------------------------------搜索框----------------------------------->
+            <fieldset>
+                <legend>信息查询</legend>
+                <form id="ffSearch" method="post">
+                    <div id="toolbar">
+                        <table cellspacing="0" cellpadding="0">
+                            <tr>
+                                <th style='padding: 3px;'>
+                                    <label for="NvcName">模板名称：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="TempName" class="text-info" style="width: 100px" />
+                                </td>
+                                <td style='padding: 3px; text-align: right'>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </form>
+            </fieldset>
+
+            <!-------------------------------详细信息展示表格----------------------------------->
+            <table id="grid" style="width: 940px" title="用户操作" data-options="iconCls:'icon-view'"></table>
+        </div>
+    </div>
+
+    <div id="divTree" style="display: none; position: absolute; z-index: 9999; min-width: 100px; height: 100px; border: 1px solid #808080; background-color: silver; overflow-y: scroll; overflow-x: hidden;">
+        <ul id="treeRole"></ul>
+    </div>
+    <div style="display: none;">
+        <!--------------------------添加信息的弹出层---------------------------->
+        <div id="DivAdd" class="easyui-dialog" style="width: 750px; max-height: 370px;height:100%; padding: 5px 5px"
+            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-add'">
+
+            <form id="ffAdd" method="post" novalidate="novalidate">
+                <input type="hidden" id="editID" name="ID" />
+                <input type="hidden" id="editDtCreate" name="DtCreate" />
+                <table id="tblAdd" class="view">
+                    <tr>
+                        <th style="width: 15%">
+                            <label for="editVcAddr">模板类型(*)：</label>
+                        </th>
+                        <td style="width: 35%">
+                            <input class="easyui-validatebox" type="text" id="editTempType" style="width: 99%;" name="TempType" data-options="required:true,validType:'length[1,50]'" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="editNvcAddr">模板名称(*)：</label>
+                        </th>
+                        <td>
+                            <input class="easyui-validatebox" type="text" id="editTempName" name="TempName" style="width: 99%" data-options="required:true,validType:'length[1,50]'" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="editNvcAddr">模板ID(*)：</label>
+                        </th>
+                        <td>
+                            <input class="easyui-validatebox" type="text" id="editTempID" name="TempID" style="width: 99%" data-options="required:true,validType:'length[1,50]'" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="editNvcAddr">SQL语句(*)：</label>
+                        </th>
+                        <td>
+                            <textarea class="easyui-validatebox" id="editTempSQL" name="TempSQL" style="height: 50px; width: 99%" data-options="required:true,validType:'length[1,1000]'"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="editNvcAddr">模板内容(*)：</label>
+                        </th>
+                        <td>
+                            <textarea class="easyui-validatebox" id="editTempContent" name="TempContent" style="height: 50px; width: 99%" data-options="required:true,validType:'length[1,1000]'"></textarea>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="ddlIntStatus">使用状态：</label>
+                        </th>
+                        <td>
+                            <select id="ddlStatus" name="Status" class="easyui-combobox" style="width: 100px;" data-options="required:true">
+                                <option value="1">启用</option>
+                                <option value="0">禁用</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" style="text-align: right; padding-top: 10px">
+                            <!--<a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#DivAdd').dialog('close')">关闭</a>-->
+                            <a href="javascript:void(0)" class="easyui-linkbutton" id="btnAddOK" iconcls="icon-ok">确定</a>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
+        <!--------------------------编辑信息的弹出层---------------------------->
+        <div id="DivEdit" class="easyui-dialog" style="width: 850px; height: 630px; padding: 5px 5px"
+            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-edit'">
+            <div id="tabEditUser" class="easyui-tabs">
+            </div>
+        </div>
+
+        <!--------------------------查看详细信息的弹出层---------------------------->
+        <div id="DivView" class="easyui-dialog" style="width: 840px; height: 650px; padding: 5px 5px"
+            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-view'">
+            <div id="tabViewUser" class="easyui-tabs">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

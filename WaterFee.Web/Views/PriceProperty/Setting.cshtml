@@ -1,0 +1,419 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>价格设置</title>
+    <script src="~/Scripts/SignalR/jquery-1.6.4.min.js"></script>
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
+    <link href="~/Content/layui/css/layui.ext.css" rel="stylesheet" />
+    <script src="~/Content/layui/layui.js"></script>
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+
+    <script src="~/Scripts/ComponentUtil.js"></script>
+    <script src="~/Scripts/dbjs.js"></script>
+</head>
+<body>
+
+    <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
+        <div data-options="region:'west',split:true,title:'价格属性',iconCls:'icon-house'" style="width: 200px; padding: 1px;">
+            <div title="价格属性" style="padding: 5px; height: auto" data-options="iconCls:'icon-organ'">
+                <div style="padding: 1px; border: 1px solid #ddd; text-align: center;">
+                    <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-reload'" id="roleRefresh" onclick="initRoleTree()">刷新</a>
+                    <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-expand'" id="roleExpand" onclick="return false;">新增</a>
+                    <!--<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-collapse'" id="roleCollapse" onclick="return false;">折叠</a>-->
+                </div>
+                <div style="padding-top: 5px;">
+                    <ul id="treeRole"></ul>
+                </div>
+            </div>
+        </div>
+        <div id="tbEdit" data-options="region:'center',split:true,title:'价格参数',iconCls:'icon-setting'" style="padding: 5px; height: auto">
+            <div fit="false">
+                <form class="layui-form" action="">
+
+                    <div id="div1" class="layui-form-item" style="margin-top: 5px; margin-bottom: 8px;">
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 60px">价格名称</label>
+                            <div class="layui-input-inline" style="width: 100px">
+                                <input type="hidden" id="txtIntPropertyNo" name="IntPropertyNo" />
+                                <input type="text" id="NvcDesc" name="NvcDesc" lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入价格名称">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 60px">启用日期</label>
+                            <div class="layui-input-inline" style="width: 100px">
+                                <input type="text" id="DteStart" name="DteStart" lay-verify="date" autocomplete="off" class="layui-input" placeholder="yyyy-MM-dd">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 60px">阶梯</label>
+                            <div id="divIntStep" class="layui-input-inline" style="width: 100px">
+                                <input type="checkbox" id="IntStep" name="IntStep" lay-filter="switchIntStep" lay-skin="switch" lay-text="启用|禁用">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="divStep" class="layui-form-item" style="display: none; margin-bottom: 8px;">
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 60px">阶梯数量</label>
+                            <div class="layui-input-inline" style="width: 100px">
+                                <select id="IntStepCount" name="IntStepCount" lay-filter="StepCount">
+                                    <option value="2">2</option>
+                                    <option value="3" selected="selected">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 60px">阶梯周期</label>
+                            <div class="layui-input-inline" style="width: 100px">
+                                <select name="IntInterval" lay-filter="StepInterval">
+                                    <option value="30">1个月</option>
+                                    <option value="60">2个月</option>
+                                    <option value="120">1季度</option>
+                                    <option value="180">半年</option>
+                                    <option value="360" selected>一年</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 60px">阶梯人口</label>
+                            <div class="layui-input-inline" style="width: 100px">
+                                <input type="text" id="IntStepNum" name="IntStepNum" value="3" autocomplete="off" class="layui-input" placeholder="">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" style="margin-left: 25px; margin-bottom: 8px;">
+                        <div class="layui-inline">
+                            <table class="layui-table table" style="text-align: center;">
+                                <thead id="tbHead">
+                                </thead>
+                                <tbody id="tbBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <div id="div3" class="layui-form-item" style="margin-left: 25px;">
+                        <div class="layui-inline">
+                            <div class="layui-input-inline" style="width: 160px">
+                                <button id="btnSave" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="demo1">保存</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+    <style type="text/css">
+        .table > tr:hover {
+            background: none;
+        }
+
+        .table input {
+            text-align: center;
+            padding-left: 0px;
+        }
+    </style>
+    <script>
+        var con = {
+            log: function (msg) {
+                alert(msg);
+            }
+        };
+        console = console || con;
+
+        //初始化对象
+        $(document).ready(function () {
+            $("#roleExpand").bind("click", function () {
+                add();
+            });
+            $("#roleCollapse").bind("click", function () {
+                collapseAll("treeRole");
+            });
+
+            //初始化树
+            initRoleTree(); 
+        });
+
+        var lastClickNode = null;
+        //初始化列表
+        function initRoleTree() {
+            $('#treeRole').tree({
+                url: '/PriceProperty/GetTreeJson',
+                onClick: function (node) {
+                    if (node == lastClickNode) return;
+                    lastClickNode = node;
+                    setInput(node.data);
+                }
+                //, onLoadSuccess: offlineAll
+            });
+        }
+        function add() {
+            $("#btnSave").html("新增-保存");
+            loading.show();
+            $("#txtIntPropertyNo").val(0);
+            $("#NvcDesc").val("");
+            $("#DteStart").val(new Date().Format());
+            $("#IntStepNum").val(3);
+            $("#IntInterval").val(360);
+            IntStepChecked = 0;
+            if (IntStepChecked) {
+                $("#divIntStep").html('<input type="checkbox" id="IntStep" checked="checked" name="IntStep" lay-filter="switchIntStep" lay-skin="switch" lay-text="启用|禁用">');
+            }
+            else {
+                $("#divIntStep").html('<input type="checkbox" id="IntStep" name="IntStep" lay-filter="switchIntStep" lay-skin="switch" lay-text="启用|禁用">');
+            }
+            setDivStep();
+            initTable();
+            form.render();
+            loading.hide();
+        }
+        function setInput(data) { 
+            if (!data) return;
+            $("#btnSave").html("编辑-保存");
+            loading.show();
+            $("#txtIntPropertyNo").val(data.IntNo);
+            $("#NvcDesc").val(data.NvcDesc);
+            $("#DteStart").val(new Date(data.DteStart.replace(/-/g,'/')).Format());
+            $("#IntStepNum").val(data.IntStepNum);
+            $("#IntInterval").val(data.IntInterval);
+            IntStepChecked = data.IntStep == 1;
+            if (IntStepChecked) {
+                $("#divIntStep").html('<input type="checkbox" id="IntStep" checked="checked" name="IntStep" lay-filter="switchIntStep" lay-skin="switch" lay-text="启用|禁用">');
+            }
+            else {
+                $("#divIntStep").html('<input type="checkbox" id="IntStep" name="IntStep" lay-filter="switchIntStep" lay-skin="switch" lay-text="启用|禁用">');
+            }
+            setDivStep();
+            initTable();
+            form.render();
+            loading.hide();
+        }
+        var arrTypeNo = new Array();
+        function initTable(isSelectChange) {
+            arrTypeNo = new Array();
+            var arrPriceType = [];
+            var arrPriceCalc = [];
+            $.ajax({
+                url: '/PriceType/GetTreeJson',
+                type: 'post',
+                async: false,
+                dataType: 'json',
+                success: function (data) {
+                    arrPriceType = data;
+                    for (var index in arrPriceType) {
+                        arrTypeNo.push(arrPriceType[index].IntNo);
+                    }
+                },
+                error: function () {
+
+                }
+            });
+
+            var intPropertyNo = $("#txtIntPropertyNo").val();
+            if (intPropertyNo != "") {
+                $.ajax({
+                    url: '/PriceProperty/GetInfoByIntPropertyNo',
+                    type: 'post',
+                    async: false,
+                    data: { IntPropertyNo: intPropertyNo },
+                    dataType: 'json',
+                    success: function (data) {
+                        arrPriceCalc = data;
+                    },
+                    error: function () {
+
+                    }
+                });
+            }
+            if (arrPriceType.length == 0) {
+                layer.alert("请先添加[价格类型]!");
+                return false;
+            }
+
+            var strHead = "", strBody = "";
+
+            if (IntStepChecked) {
+                //负值
+                if (arrPriceCalc.length > 1) {//该条件表明之前已经保存过了
+                    if (!isSelectChange) {
+                        console.log(isSelectChange)
+                        var oldStep = 2;//设置默认,最少2个阶梯
+                        for (var i in arrPriceCalc) {
+                            if (arrPriceCalc[i].IntStepOrder > oldStep)
+                                oldStep = arrPriceCalc[i].IntStepOrder;
+                        }
+                        $("#IntStepCount").val(oldStep);
+                    }
+                }
+                strHead += "<tr>";
+                strHead += "<th style='width:60px;'></th>";
+                strHead += "<th>阶梯起始数</th>";
+                strHead += "<th>阶梯增量</th>";
+                for (var i in arrPriceType) {
+                    strHead += "<th>" + arrPriceType[i].NvcDesc + "</th>";
+                }
+                strHead += "<th>总价</th>";
+                strHead += "</tr>";
+
+                var stepCount = parseInt($("#IntStepCount").val());
+                for (var step = 1; step <= stepCount; step++) {
+                    var itemOld = QueryJson(arrPriceCalc, 'IntStepOrder', step);
+                    strBody += "<tr>";
+                    strBody += "<td>第" + step + "阶梯</td>";
+                    if (step == 1)
+                        strBody += '<td><input type="text" name="IntStepStart' + step + '" value="0" style="background-color:#e6e6e6;" lay-verify="required|number" autocomplete="off" class="layui-input"></td>';
+                    else {
+                        if (itemOld == null)
+                            strBody += '<td><input name="IntStepStart' + step + '" type="text"  lay-verify="required|number" autocomplete="off" class="layui-input"></td>';
+                        else
+                            strBody += '<td><input value="' + itemOld.IntStepStart + '" name="IntStepStart' + step + '" type="text"  lay-verify="required|number" autocomplete="off" class="layui-input"></td>';
+                    }
+                    if (step == stepCount)
+                        strBody += '<td><input type="text" name="IntStepInc' + step + '" value="0" style="background-color:#e6e6e6;" lay-verify="required|number" autocomplete="off" class="layui-input"></td>';
+                    else {
+                        if (itemOld == null)
+                            strBody += '<td><input type="text" name="IntStepInc' + step + '" lay-verify="required|number" autocomplete="off" class="layui-input"></td>';
+                        else
+                            strBody += '<td><input value="' + itemOld.IntStepInc + '" type="text" name="IntStepInc' + step + '" lay-verify="required|number" autocomplete="off" class="layui-input"></td>';
+
+                    }
+                    for (var arrIndex in arrPriceType) {
+                        var price = QueryJson2(arrPriceCalc, "IntTypeNo", arrPriceType[arrIndex].IntNo, "IntStepOrder", step);
+                        if (price == null)
+                            strBody += '<td><input type="text" onblur="countPrice(this)" step="' + step + '" name="NumPrice' + step + '_' + arrPriceType[arrIndex].IntNo + '" lay-verify="required|number" autocomplete="off" class="layui-input Step' + step + '"></td>';
+                        else
+                            strBody += '<td><input value="' + price.NumPrice + '" type="text" onblur="countPrice(this)" step="' + step + '" name="NumPrice' + step + '_' + arrPriceType[arrIndex].IntNo + '" lay-verify="required|number" autocomplete="off" class="layui-input Step' + step + '"></td>';
+                    }
+                    if (itemOld == null)
+                        strBody += '<td><input type="text" name="NumTotalPrice' + step + '" style="background-color:#e6e6e6;" class="layui-input" readonly></td>';
+                    else
+                        strBody += '<td><input value="' + itemOld.NumTotalPrice + '" type="text" name="NumTotalPrice' + step + '" style="background-color:#e6e6e6;" class="layui-input" readonly></td>';
+                    strBody += "</tr>";
+                }
+
+            } else {
+                var step = 1;
+                strHead += "<tr>";
+                strBody += "<tr>";
+                for (var arrIndex in arrPriceType) {
+                    strHead += "<th>" + arrPriceType[arrIndex].NvcDesc + "</th>";
+                    var price = QueryJson(arrPriceCalc, "IntTypeNo", arrPriceType[arrIndex].IntNo);
+                    if (price == null)
+                        strBody += '<td><input type="text" onblur="countPrice(this)" step="' + step + '" name="NumPrice' + step + '_' + arrPriceType[arrIndex].IntNo + '" lay-verify="required|number" autocomplete="off" class="layui-input Step' + step + '"></td>';
+                    else
+                        strBody += '<td><input value="' + price.NumPrice + '" type="text" onblur="countPrice(this)" step="' + step + '" name="NumPrice' + step + '_' + arrPriceType[arrIndex].IntNo + '" lay-verify="required|number" autocomplete="off" class="layui-input Step' + step + '"></td>';
+                }
+                strHead += "<th>总价</th>";
+                strHead += "</tr>";
+
+                if (arrPriceCalc.length == 0)
+                    strBody += '<td><input type="text" name="NumTotalPrice' + step + '"  style="background-color:#e6e6e6;" class="layui-input" readonly></td>';
+                else
+                    strBody += '<td><input value="' + arrPriceCalc[0].NumTotalPrice + '"  type="text" name="NumTotalPrice' + step + '"  style="background-color:#e6e6e6;" class="layui-input" readonly></td>';
+                strBody += "</tr>";
+            }
+            $("#tbHead").html(strHead);
+            $("#tbBody").html(strBody);
+        }
+
+        function countPrice($this) {
+            var step = $($this).attr("step");
+            var total = 0;
+            $(".Step" + step).each(function () {
+                var val = $(this).val();
+                if (!isNaN(val) && val != "") total += parseFloat(val);
+            });
+            $("input[name='NumTotalPrice" + step + "'").val(total.toFixed(2));
+        }
+
+        var form, layer, laydate, table;
+        layui.use(['form', 'laydate', 'table'], function () {
+            form = layui.form
+          , layer = layui.layer
+          , laydate = layui.laydate;
+            table = layui.table;
+
+            //日期
+            laydate.render({
+                elem: '#DteStart'
+            });
+
+            //自定义验证规则
+            form.verify({
+                title: function (value) {
+                    if (value.length < 5) {
+                        return '标题至少得5个字符啊';
+                    }
+                }
+              , pass: [/(.+){6,12}$/, '密码必须6到12位']
+              , content: function (value) {
+                  layedit.sync(editIndex);
+              }
+            });
+
+            //监听指定开关
+            form.on('switch(switchIntStep)', function (data) {
+                IntStepChecked = this.checked;
+                setDivStep();
+                initTable(true);
+            });
+
+            //监听指定开关
+            form.on('select(StepCount)', function (data) {
+                initTable(true);
+            });
+
+            //监听提交
+            form.on('submit(demo1)', function (data) {
+                data.field.IntNo = data.field.IntPropertyNo;
+                data.field.arrTypeNo = arrTypeNo.join(',');
+                data.field.IntStep = IntStepChecked ? 1 : 0;
+                //data.field.IntStepCount = $("#IntStepCount").val();
+                loading.show();
+                $.ajax({
+                    url: '/PriceProperty/AddOrUpdate',
+                    type: 'post',
+                    //async: false,
+                    data: data.field,
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.Success) {
+                            initRoleTree();
+                            layer.msg("保存成功!");
+                        }
+                        else layer.msg("保存失败!" + data.ErrorMessage);
+                        loading.hide();
+                    },
+                    error: function () {
+                        loading.hide();
+                    }
+                });
+                //layer.alert(JSON.stringify(data.field), {
+                //    title: '最终的提交信息'
+                //})
+                return false;
+            });
+             
+            setDivStep();
+            add();
+        });
+        var IntStepChecked = false;
+        function setDivStep() {
+            if (IntStepChecked) $("#divStep").show();
+            else $("#divStep").hide();
+        }
+    </script>
+</body>
+</html>

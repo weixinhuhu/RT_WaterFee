@@ -1,0 +1,15 @@
+.layui-btn-primary:hover {
+    border-color: #1E9FFF;
+    /*border-color: #95B8E7;*/
+    color: #333;
+}
+
+.layui-form-onswitch {
+    border-color: #1E9FFF;
+    background-color: #1E9FFF;
+}
+
+.layui-form-select dl dd.layui-this {
+    background-color: #1E9FFF;
+    color: #fff;
+}
