@@ -62,58 +62,42 @@ namespace WHC.WaterFeeWeb.Controllers
             string pageSizeNum = Request["pageNum"];
             string pageSize = Request["pageSize"];
 
-            if (pageSize == null)
+            string WHC_VcAddr = Request["WHC_VcAddr"];
+            string WHC_IntCustNo = Request["WHC_IntCustNo"];
+            string WHC_StartDteFreeze = Request["WHC_StartDteFreeze"];
+            string WHC_EndDteFreeze = Request["WHC_EndDteFreeze"];
+            string NvcVillage = Request["NvcVillage"];
+            string VcBuilding = Request["VcBuilding"];
+
+            if (NvcVillage != "")
             {
-                sql = @" SELECT a.IntID ,
-		                NvcName,
-		                VcMobile,
-		                NvcVillage,
-		                VcBuilding,
-		                IntUnitNum, 
-		                IntRoomNum,
-                        VcAddr ,
-                        IntCustNo ,
-                        DteReading ,
-                        a.DteFreeze ,
-                        NumReading ,
-                        VcStatus ,
-                        a.IntStatus ,
-                        DtLastUpd ,
-                        a.DtCreate ,
-                        dbo.uf_TransStatusWord(VcStatus) Word ,
-                        b.VcDesc
-                 FROM   ArcMeterReading a
-                        LEFT JOIN DictMeterReadingFlag b ON a.IntFlag = b.IntCode
-                        LEFT JOIN dbo.ArcCustomerInfo c ON a.IntCustNo = c.IntNo
-                 WHERE  ( 1 = 1 ) 
-                        AND a.DtCreate between  (SELECT DATEADD(dd,-1,GETDATE())) AND (SELECT GETDATE())";
+                where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
             }
-            else
+
+            if (VcBuilding != "")
             {
-                string WHC_VcAddr = Request["WHC_VcAddr"];
-                string WHC_IntCustNo = Request["WHC_IntCustNo"];
-                string WHC_StartDteFreeze = Request["WHC_StartDteFreeze"];
-                string WHC_EndDteFreeze = Request["WHC_EndDteFreeze"];
+                where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
+            }
 
-                if (WHC_VcAddr != "")
-                {
-                    where = "  and NvcName like'" + WHC_VcAddr + "'";
-                    where += " OR VcMobile like'" + WHC_VcAddr + "'";
-                    where += " OR NvcVillage like'" + WHC_VcAddr + "'";
-                    where += " OR VcBuilding like'" + WHC_VcAddr + "'";
-                    where += " OR IntUnitNum like'" + WHC_VcAddr + "'";
-                    where += " OR IntRoomNum like'" + WHC_VcAddr + "'";
-                    where += " OR IntCustNo like'" + WHC_VcAddr + "'";
-                    where += " OR VcAddr like'" + WHC_VcAddr + "'";
-                }
+            if (WHC_VcAddr != "")
+            {
+                where += "  and NvcName like" + "'%" + WHC_VcAddr + "%'";
+                where += " OR VcMobile like" + "'%" + WHC_VcAddr + "%'";
+                where += " OR NvcVillage like" + "'%" + WHC_VcAddr + "%'";
+                where += " OR VcBuilding like" + "'%" + WHC_VcAddr + "%'";
+                where += " OR IntUnitNum like'" + WHC_VcAddr + "'";
+                where += " OR IntRoomNum like" + "'%" + WHC_VcAddr + "%'";
+                where += " OR IntCustNo like" + "'%" + WHC_VcAddr + "%'";
+                where += " OR VcAddr like" + "'%" + WHC_VcAddr + "%'";
+            }
 
-                if (WHC_StartDteFreeze != "")
-                {
-                    where += "  and DteFreeze between  '" + WHC_StartDteFreeze + "' and '" + WHC_EndDteFreeze + "'";
-                }
+            if (WHC_StartDteFreeze != "")
+            {
+                where += "  and DtLastUpd between  '" + WHC_StartDteFreeze + "' and '" + WHC_EndDteFreeze + "'";
+            }
 
-                //20190312
-                sql = @" SELECT a.IntID ,
+            //20190312
+            sql = @" SELECT a.IntID ,
 		                NvcName,
 		                VcMobile,
 		                NvcVillage,
@@ -136,8 +120,8 @@ namespace WHC.WaterFeeWeb.Controllers
                         LEFT JOIN dbo.ArcCustomerInfo c ON a.IntCustNo = c.IntNo
                  WHERE  ( 1 = 1 ) ";
 
-                sql += where + "order by DteFreeze desc";
-            }
+            sql += where + "order by DteFreeze desc";
+
 
             var dts = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.SqlTable(sql);
             int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
