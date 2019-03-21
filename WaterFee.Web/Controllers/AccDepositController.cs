@@ -76,9 +76,29 @@ namespace WHC.WaterFeeWeb.Controllers
         {   
             //weixin 2019.2.28修改分页bug
             var key = SqlTextClear(Request["key"]);
+            var NvcVillage = Request["NvcVillage"];
+            var VcBuilding = Request["VcBuilding"];
             var sb = new System.Text.StringBuilder();
             sb.Append(" select AA.NvcName,AA.IntNo IntCustNo,AA.IntUnitNum,AA.NvcVillage,AA.VcBuilding,AA.IntRoomNum,IsNULL(BB.MonSum,0) MonSum,BB.DtLastUpd ,CC.IntMP,DD.VcAddr from ArcCustomerInfo AA ");
             sb.Append(" left join AccDeposit BB on AA.IntNo = BB.IntCustNO left join ArcMeterInfo CC on AA.IntNo=CC.IntCustNO and CC.IntStatus=0 left join ArcConcentratorInfo DD  on CC.IntTopConID=DD.IntID where 1 =1 ");
+            if (NvcVillage != "")
+            {
+                if (NvcVillage == "所有小区")
+                {
+                    sb.AppendFormat("  AND NvcVillage =  " + "'" + VcBuilding + "'");
+                }
+                else {
+                    sb.AppendFormat("  AND NvcVillage =  " + "'" + NvcVillage + "'");
+
+                    if (VcBuilding != "")
+                    {
+                        sb.AppendFormat("  AND VcBuilding =  " + "'" + VcBuilding + "'");
+
+                    }
+                }                   
+            }
+
+           
             if (key.IsNotNullOrEmpty())
             {
                 sb.AppendFormat(" and AA.IntNo like '%{0}%' or AA.NvcName like '%{0}%'  or AA.NvcVillage like '%{0}%'or AA.VcBuilding like '%{0}%' or AA.IntUnitNum like '%{0}%' or AA.IntRoomNum like '%{0}%' or AA.VcMobile like '%{0}%' or AA.VcTelNo like '%{0}%' ", key);

@@ -20,20 +20,53 @@
     <script src="~/Scripts/dbjs.js"></script>
     <script type="text/javascript">
           
-        $(function () {        
-            $(document).keydown(function (event) {
-                if (event.keyCode == 13) {
-                    $("#btnSearch").click();
+        //$(function () {        
+        //    $(document).keydown(function (event) {
+        //        if (event.keyCode == 13) {
+        //            $("#btnSearch").click();
 
-                    return;
+        //            return;
+        //        }
+        //    });
+        //    var queryData = {
+
+        //    };//可添加一些预设条件
+        //    InitGrid(queryData);
+        //    BindSearchEvent();
+        //});
+
+        $(function () {
+            initDeptTreeview();
+        });
+        var sNvcVillage = "";
+        var sVcBuilding = "";
+        function initDeptTreeview() {
+            $("#loading").show();
+            $('#treeDept1').tree({
+                url: '/ArcCustomerInfo/TreeCommunity',
+                onBeforeSelect: function (node) {
+                    fujiText = node.text;
+
+                },
+                onClick: function (node) {
+                    var Text = $("#treeDept1").tree("getParent", node.target);
+                    if (Text == null) {
+                        sNvcVillage = "";
+                        sVcBuilding = "";
+                    } else {
+                        sNvcVillage = Text.text;
+                        sVcBuilding = node.text;
+                    }                
+                    var queryData = {
+                        KEY: $("#txtIntNo").val(),
+                        "NvcVillage": sNvcVillage,
+                        "VcBuilding": sVcBuilding
+                    };
+                    InitGrid(queryData);
                 }
             });
-            var queryData = {
-
-            };//可添加一些预设条件
-            InitGrid(queryData);
-            BindSearchEvent();
-        });
+            $("#loading").fadeOut(500);
+        }
 
         //实现对DataGird控件的绑定操作
         function InitGrid(queryData) {
@@ -509,7 +542,9 @@
         }
         function reloadGrid() {
             var queryData = {
-                KEY: $("#txtIntNo").val()
+                KEY: $("#txtIntNo").val(),
+                "NvcVillage": sNvcVillage,
+                "VcBuilding": sVcBuilding
             }
             //将值传递给
             InitGrid(queryData);
@@ -568,7 +603,6 @@
 
                 }
             })
-
         }
         function getClass1Param(addr, fn, arrMP) {
             return {
@@ -656,7 +690,13 @@
         <img alt="数据正在加载中..." src="~/Content/images/loading02.gif" />
     </div>
     <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
-
+        <div data-options="region:'west',split:true,title:'',iconCls:'icon-book'" style="width: 200px; padding: 1px;">
+            <div class="easyui-tabs" style="width:200px;">
+                <div title="小区" style="padding:10px;">
+                    <ul id="treeDept1"></ul>
+                </div>
+            </div>
+        </div>
         <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding: 5px; height: auto">
             <!-------------------------------搜索框----------------------------------->
             <fieldset>
@@ -666,9 +706,11 @@
                         <table cellspacing="0" cellpadding="0">
                             <tr>
                                 <th style='padding: 3px;'>
-                                    <label for="txtIntNo">关键词：</label></th>
+                                    <label for="txtIntNo">关键词：</label>
+                                </th>
                                 <td style='padding: 3px;'>
-                                    <input type="text" id="txtIntNo" class="text-info" style="width: 100px" /></td>
+                                    <input type="text" id="txtIntNo" class="text-info" style="width: 100px" />
+                                </td>
                                 <td style='padding: 3px; text-align: right'>
                                     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
                                 </td>

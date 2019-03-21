@@ -71,12 +71,20 @@ namespace WHC.WaterFeeWeb.Controllers
 
             if (NvcVillage != "")
             {
-                where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
-            }
+                if (NvcVillage == "所有小区")
+                {
+                    where += @"  AND NvcVillage =  " + "'" + VcBuilding + "'";
+                }
+                else
+                {
+                    where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
 
-            if (VcBuilding != "")
-            {
-                where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
+                    if (VcBuilding != "")
+                    {
+                        where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
+
+                    }
+                }
             }
 
             if (WHC_VcAddr != "")

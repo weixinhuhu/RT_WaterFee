@@ -157,12 +157,20 @@ namespace WHC.WaterFeeWeb.Controllers
 
             if (NvcVillage != "")
             {
-                where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
-            }
+                if (NvcVillage == "所有小区")
+                {
+                    where += @"  AND NvcVillage =  " + "'" + VcBuilding + "'";
+                }
+                else
+                {
+                    where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
 
-            if (VcBuilding != "")
-            {
-                where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
+                    if (VcBuilding != "")
+                    {
+                        where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
+
+                    }
+                }
             }
 
             if (IntCustNO != "")
@@ -211,13 +219,22 @@ namespace WHC.WaterFeeWeb.Controllers
             string NvcVillage = Request["NvcVillage"];
             string VcBuilding = Request["VcBuilding"];
 
-            if (NvcVillage != "") {
-                where += @"  AND A.NvcVillage =  "+  "'" + NvcVillage + "'" ;
-            }
-
-            if (VcBuilding != "")
+            if (NvcVillage != "")
             {
-                where += @"  AND A.VcBuilding =  " + "'" + VcBuilding + "'";
+                if (NvcVillage == "所有小区")
+                {
+                    where += @"  AND NvcVillage =  " + "'" + VcBuilding + "'";
+                }
+                else
+                {
+                    where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
+
+                    if (VcBuilding != "")
+                    {
+                        where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
+
+                    }
+                }
             }
 
             if (WHC_IntCustNo != "")

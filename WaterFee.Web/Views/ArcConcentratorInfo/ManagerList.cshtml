@@ -31,8 +31,13 @@
                 onClick: function (node) {
                   
                     var Text = $("#treeDept1").tree("getParent", node.target);               
-                    sNvcVillage = Text.text;
-                    sVcBuilding = node.text;
+                    if (Text == null) {
+                        sNvcVillage = "";
+                        sVcBuilding = "";
+                    } else {
+                        sNvcVillage = Text.text;
+                        sVcBuilding = node.text;
+                    }   
                     var queryData = {
                         "IntCustNO": $("#IntCustNO").val(),
                         "NvcVillage": sNvcVillage,
