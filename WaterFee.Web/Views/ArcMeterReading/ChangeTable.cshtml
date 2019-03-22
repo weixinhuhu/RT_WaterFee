@@ -15,20 +15,44 @@
     <script src="~/Scripts/ComponentUtil.js"></script>
     <script type="text/javascript">
         var isAddOrEdit = 'add';//标识是新增还是编辑对话框弹出，用于删除附件的操作
-
+        var sNvcVillage = "";
+        var sVcBuilding = "";
         $(function () {
-
-            //   $('#addIntConID').next(".numberbox").hide();
-            var queryData = {
-
-            };//可添加一些预设条件
-            InitGrid(queryData);//初始化Datagrid表格数据
-
-
-
+            initDeptTreeview();
             BindSearchEvent();//绑定查询按钮事件
-
         });
+     
+        function initDeptTreeview() {
+            $("#loading").show();
+            $('#treeDept1').tree({
+                url: '/ArcCustomerInfo/TreeCommunity',
+                onBeforeSelect: function (node) {
+                    fujiText = node.text;
+                },
+                onClick: function (node) {
+                    var Text = $("#treeDept1").tree("getParent", node.target);
+                    if (Text == null) {
+                        sNvcVillage = "";
+                        sVcBuilding = "";
+                    } else {
+
+                        sNvcVillage = Text.text;
+                        sVcBuilding = node.text;
+                    }
+                    var queryData = {
+                        WHC_IntCustNO: $("#IntCustNO").val(),
+                        WHC_NvcName: $("#NvcName").val(),
+                        WHC_VcAddr: $("#VcAddr").val(),
+                        WHC_NvcAddr: $("#NvcAddr").val(),
+                        "IntCustNO": $("#IntCustNO").val(),
+                        "NvcVillage": sNvcVillage,
+                        "VcBuilding": sVcBuilding
+                    };
+                    InitGrid(queryData);
+                }
+            });
+            $("#loading").fadeOut(500);
+        }
 
         //实现对DataGird控件的绑定操作
         var pageSize;
@@ -55,15 +79,19 @@
                 queryParams: queryData,  //异步查询的参数
                 columns: [[
                     //{ field: 'ck', checkbox: true },   //选择
-                    { title: 'ID', field: 'IntID', width: 80, sortable: true },
+                    { title: 'ID', field: 'IntID', width: 80, sortable: true, hidden: true  },
                     { title: '所属客户编号', field: 'IntCustNO', width: 80, sortable: true },
-                    { title: '通信地址', field: 'VcAddr', width: 100, sortable: true },
-                    { title: '名称', field: 'NvcName', width: 80, sortable: true },
+                    { title: '通信地址', field: 'VcAddr', width: 100, sortable: true },                   
+                    { title: '用户姓名', field: 'NvcName', width: 80, sortable: true },
+                    { title: '用户小区', field: 'NvcVillage', width: 80, sortable: true },
+                    { title: '用户楼栋', field: 'VcBuilding', width: 80, sortable: true },
+                    { title: '用户单元', field: 'IntUnitNum', width: 80, sortable: true },
+                    { title: '用户门牌号', field: 'IntRoomNum', width: 80, sortable: true },
                     { title: '安装地址', field: 'NvcAddr', width: 120, sortable: true },
                     { title: '阀门状态', field: 'IntValveState', width: 80, sortable: true },
                     { title: '使用状态', field: 'IntStatus', width: 80, sortable: true },
-                    { title: '最后更新时间', field: 'DtLastUpd', width: 100, sortable: true },
-                    { title: '建立时间', field: 'DtCreate', width: 100, sortable: true }
+                    { title: '最后更新时间', field: 'DtLastUpd', width: 140, sortable: true },
+                    { title: '建立时间', field: 'DtCreate', width: 140, sortable: true }
                 ]],
                 onLoadSuccess: function () {
                     // $(".grid_visible").linkbutton({ text: '可用', plain: true, iconCls: 'icon-ok' });
@@ -117,7 +145,9 @@
                     WHC_IntCustNO: $("#IntCustNO").val(),
                     WHC_NvcName: $("#NvcName").val(),
                     WHC_VcAddr: $("#VcAddr").val(),
-                    WHC_NvcAddr: $("#NvcAddr").val()
+                    WHC_NvcAddr: $("#NvcAddr").val(),
+                     "NvcVillage": sNvcVillage,
+                    "VcBuilding": sVcBuilding
                 }
                 //将值传递给
                 InitGrid(queryData);
@@ -270,7 +300,13 @@
         <img alt="数据正在加载中..." src="~/Content/images/loading02.gif" />
     </div>
     <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
-
+        <div data-options="region:'west',split:true,title:'',iconCls:'icon-book'" style="width: 230px; padding: 1px;">
+            <div class="easyui-tabs" style="width:200px;">
+                <div title="用户列表" style="padding:10px;">
+                    <ul id="treeDept1"></ul>
+                </div>
+            </div>
+        </div>
         <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding: 5px; height: auto">
             <!-------------------------------搜索框----------------------------------->
             <fieldset>
@@ -304,7 +340,7 @@
                                     <input type="text" id="NvcAddr" style="width: 100px" />
                                 </td>
                                 <td style='padding: 3px; text-align: right'>
-                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch" >查询</a>
                                 </td>
                             </tr>
                         </table>

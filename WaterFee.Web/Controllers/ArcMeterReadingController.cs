@@ -552,6 +552,28 @@ namespace WHC.WaterFeeWeb.Controllers
             string VcAddr = Request["WHC_VcAddr"];
             string NvcAddr = Request["WHC_NvcAddr"];
 
+            string NvcVillage = Request["NvcVillage"];
+            string VcBuilding = Request["VcBuilding"];
+
+
+            if (NvcVillage != "")
+            {
+                if (NvcVillage == "所有小区")
+                {
+                    where += @"  AND NvcVillage =  " + "'" + VcBuilding + "'";
+                }
+                else
+                {
+                    where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
+
+                    if (VcBuilding != "")
+                    {
+                        where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
+
+                    }
+                }
+            }
+
             if (IntCustNO != null)
             {
                 if (IntCustNO != "")
@@ -572,8 +594,27 @@ namespace WHC.WaterFeeWeb.Controllers
                 }
             }
             where += " order by DtLastUpd ";
-            sql = " SELECT IntID,VcAddr ,NvcName,NvcAddr,c.VcDesc as IntValveState,IntCustNO,b.VcDesc as IntStatus,DtLastUpd,a.DtCreate FROM ArcMeterInfo a,DictConcentStatus b,DictValveStatus c where a.IntStatus=b.IntCode and c.IntCode=a.IntValveState " + where + " ";
 
+            sql = @"SELECT a.IntID ,
+                            VcAddr ,
+                            a.NvcName ,
+                            a.NvcAddr ,
+                            NvcVillage,
+                            VcBuilding,
+                            IntUnitNum,
+                            IntRoomNum,
+                            c.VcDesc AS IntValveState ,
+                            IntCustNO ,
+                            b.VcDesc AS IntStatus ,
+                            DtLastUpd ,
+                            a.DtCreate
+                     FROM   ArcMeterInfo a
+                            LEFT JOIN DictConcentStatus b ON a.IntStatus = b.IntCode
+                            LEFT JOIN DictValveStatus c ON a.IntValveState = c.IntCode
+                            LEFT JOIN dbo.ArcCustomerInfo d ON a.IntCustNO = d.IntNo
+                     WHERE  1=1";
+                                
+            sql += where;
 
 
             var dts = BLLFactory<Core.DALSQL.ArcMeterInfo>.Instance.SqlTable(sql);

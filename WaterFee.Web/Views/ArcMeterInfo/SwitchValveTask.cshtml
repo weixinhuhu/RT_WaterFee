@@ -51,10 +51,10 @@
                     { title: '命令', field: '命令', width: 80, align: 'center', sortable: true },
                     { title: '描述', field: '描述', width: 80, align: 'center', sortable: true },
                     { title: '创建时间', field: '创建时间', width: 150, align: 'center', sortable: true },
-                ]]               
+                ]]
             });
         };
-        function submit() {          
+        function submit() {
             var queryData = {
                 "VcConceAddr": $("#txtIntNo").val(),
                 "OrderType": $("#orderType").combobox('getValue'),
@@ -121,7 +121,11 @@
                         </table>
                     </div>
                 </fieldset>
-                <table id="gridOpenClose" title="开关阀任务结果" style="width: 940px" data-options="iconCls:'icon-view'"></table>
+                <div id="divTab" class="easyui-tabs">
+                    <div id="divOpenClose" title="开关阀任务详情" style="padding: 10px" data-options="iconCls:'icon-key'">
+                        <table id="gridOpenClose" style="width: 940px" data-options="iconCls:'icon-view'"></table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
