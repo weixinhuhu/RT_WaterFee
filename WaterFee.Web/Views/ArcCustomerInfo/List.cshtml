@@ -14,13 +14,12 @@
 
     <script type="text/javascript">
         var isAddOrEdit = 'add';//标识是新增还是编辑对话框弹出，用于删除附件的操作
+        var sNvcVillage = "";
+        var sVcBuilding = "";
 
         $(function () {
             initDeptTreeview();
-            var queryData = {
-                WHC_Deleted: "0"
-            };//可添加一些预设条件
-            InitGrid(queryData);//初始化Datagrid表格数据
+            
             //价格属性
             InitPriceProperty();
 
@@ -42,30 +41,7 @@
 
         });
         var isAdd = false;
-        //集中器
-        function InitArcConcentratorInfo() {
-            $('#ddlArcConcentratorInfo').combobox({
-                url: '/ArcConcentratorInfo/GetTreeJson',
-                valueField: 'IntID',
-                textField: 'NvcName',
-                required: true,
-                onSelect: function (record) {
-                    $.ajax({
-                        type: 'POST',
-                        url: '/ArcMeterInfo/FindMaxIntMPByIntConID',
-                        dataType: 'json',
-                        data: { IntConID: $('#ddlArcConcentratorInfo').combobox('getValue') },
-                        async: false,
-                        success: function (data) {
-                            if (data.Success && isAdd) {
-                                $("#meterIntMP").numberbox('setValue', data.Data1);
-                            }
-                        }
-                    });
-                }
-            });
-        }
-
+       
         function InputNvcName(obj) {
             $("#addNvcInvName").val($(obj).val());
         }
@@ -218,7 +194,9 @@
                     WHC_IntNo: $("#txtIntNo").val(),
                     WHC_NvcName: $("#txtNvcName").val(),
                     WHC_NvcAddr: $("#txtNvcAddr").val(),
-                    WHC_VcMobile: $("#txtVcMobile").val()
+                    WHC_VcMobile: $("#txtVcMobile").val(),
+                    "NvcVillage": sNvcVillage,
+                    "VcBuilding": sVcBuilding
                 }
                 //将值传递给
                 InitGrid(queryData);
@@ -750,30 +728,9 @@
                 }
             });
         }
-        //混合占比触发事件
-        function show() {
-
-        }
+    
         function initDeptTreeview() {
             $("#loading").show();
-
-            var queryData = "";
-            $('#treeDept').tree({
-                url: '/ArcCustomerInfo/TreeArcConcentratorInfo',
-                onBeforeSelect: function (node) {
-                    fujiText = node.text;
-
-                },
-                onClick: function (node) {
-
-                    loadDataByOu(node.id);
-
-                    queryData = { "WHC_IntID": node.id };
-
-                    InitGrid(queryData);
-
-                }
-            });
             $('#treeDept1').tree({
                 url: '/ArcCustomerInfo/TreeCommunity',
                 onBeforeSelect: function (node) {
@@ -781,15 +738,23 @@
 
                 },
                 onClick: function (node) {
-
-                    loadDataByOu(node.id);
-                  
                     var Text = $("#treeDept1").tree("getParent", node.target);
-
-                    queryData = { "WHC_Fuji": Text.text, "WHC_Text": node.text };
-                 
+                    if (Text == null) {
+                        sNvcVillage = "";
+                        sVcBuilding = "";
+                    } else {
+                        sNvcVillage = Text.text;
+                        sVcBuilding = node.text;
+                    }                
+                    var queryData = {
+                        WHC_IntNo: $("#txtIntNo").val(),
+                        WHC_NvcName: $("#txtNvcName").val(),
+                        WHC_NvcAddr: $("#txtNvcAddr").val(),
+                        WHC_VcMobile: $("#txtVcMobile").val(),
+                        "NvcVillage": sNvcVillage,
+                        "VcBuilding": sVcBuilding
+                    };
                     InitGrid(queryData);
-
                 }
             });
             $("#loading").fadeOut(500);
@@ -860,20 +825,12 @@
     </div>
 
     <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
-        <div data-options="region:'west',split:true,title:'',iconCls:'icon-book'" style="width: 200px; padding: 1px;">
-            <div class="easyui-tabs" style="width:200px;">
-                @*<div title="集中器" style="padding:10px;">
-                        <ul id="treeDept"></ul>
-                    </div>*@
-                <div title="小区" style="padding:10px;">
+        <div data-options="region:'west',split:true,title:'',iconCls:'icon-book'" style="width: 230px; padding: 1px;">
+            <div class="easyui-tabs" style="width:200px;">             
+                <div title="用户列表" style="padding:10px;">
                     <ul id="treeDept1"></ul>
                 </div>
-
             </div>
-
-            @*<div style="margin: 2px; padding: 5px;">
-                    <ul id="treeDept"></ul>
-                </div>*@
         </div>
         <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding: 5px; height: auto">
             <!-------------------------------搜索框----------------------------------->

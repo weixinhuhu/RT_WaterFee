@@ -31,129 +31,73 @@ namespace WHC.WaterFeeWeb.Controllers
             // return base.FindWithPager();
             string where = "";
             string sql = "";
+            var WHC_IntNo = Request["WHC_IntNo"];
+            var WHC_NvcName = Request["WHC_NvcName"];
+            var WHC_NvcAddr = Request["WHC_NvcAddr"];
+            var WHC_VcMobile = Request["WHC_VcMobile"];
 
-            //增加一个CustomedCondition条件，根据客户这个条件进行查询
-            string CustomedCondition = Request["CustomedCondition"] ?? "";
-            if (!string.IsNullOrWhiteSpace(CustomedCondition))
+            string NvcVillage = Request["NvcVillage"];
+            string VcBuilding = Request["VcBuilding"];
+
+            sql = "SELECT ROW_NUMBER() OVER ( order by a.IntID DESC) as RowNumber,  a.IntID,a.IntNo,a.NvcName,isnull(c.VcDesc,'无表')VcDesc,a.NvcAddr,a.NvcVillage,a.VcBuilding,a.IntUnitNum,a.IntRoomNum,a.VcNameCode,a.VcAddrCode,a.VcMobile,a.VcTelNo,a.VcIDNo,a.VcContractNo,a.NvcInvName,a.NvcInvAddr,a.IntNumber,b.IntPriceNo,b.IntPriceNo2,a.NvcCustType,a.IntUserID,a.IntStatus,a.VcWechatNo,a.IntAccMode,a.IntHelper,a.DteOpen,a.DteCancel,a.DtCreate,b.IntID bIntID,b.VcAddr bVcAddr,b.NvcName bNvcName ,b.NvcAddr bNvcAddr,b.VcBarCode bVcBarCode,b.VcAssetNo bVcAssetNo,b.NumRatio,b.IntAutoSwitch,j.VcDesc jVcDesc,e.IntID eIntID,e.NvcName eNvcName,b.IntMP ,f.VcDesc fVcDesc,isnull(g.IntNo,0) gIntNo,isnull(g.NvcDesc,0) gNvcDesc,isnull(h.IntNo,0) hIntNo,isnull(h.NvcDesc,0) hNvcDesc  ,d.IntCode YFINtCode,b.IntAccountWay,d.VcDesc YFVcDesc FROM ArcCustomerInfo a  left join ArcMeterInfo b on a.IntNo=b.IntCustNO and b.IntStatus=0  left join DictValveStatus c on c.IntCode=b.IntValveState left join DictAccountWay d on d.IntCode=b.IntAccountWay left join ArcConcentratorInfo e on e.IntID=b.IntConID left join DictMeterStatus f on b.IntStatus=f.IntCode left join PriceProperty g on g.IntNo=b.IntPriceNo left join PriceProperty h on h.IntNo=b.IntPriceNo2  left join DictValveAuto j on b.IntAutoSwitch=j.IntCode where ";
+
+            where = " (1=1) ";
+
+            if (NvcVillage != "")
             {
-                where = CustomedCondition;//直接使用条件
+                if (NvcVillage == "所有小区")
+                {
+                    where += @"  AND NvcVillage =  " + "'" + VcBuilding + "'";
+                }
+                else
+                {
+                    where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
+
+                    if (VcBuilding != "")
+                    {
+                        where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
+
+                    }
+                }
             }
-            else
+
+            if (WHC_IntNo != null && WHC_IntNo != "")
             {
-                #region 根据数据库字段列，对所有可能的参数进行获值，然后构建查询条件
-                SearchCondition condition = new SearchCondition();
-                DataTable dt = baseBLL.GetFieldTypeList();
-                foreach (DataRow dr in dt.Rows)
-                {
-                    string columnName = dr["ColumnName"].ToString();
-                    string dataType = dr["DataType"].ToString();
-
-                    //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
-                    string columnValue = Request["WHC_" + columnName] ?? "";
-                    // columnName = "a." + columnName;
-                    //对于数值型，如果是显示声明相等的，一般是外键引用，需要特殊处理
-                    bool hasEqualValue = columnValue.StartsWith("=");
-
-                    if (IsDateTime(dataType))
-                    {
-                        condition.AddDateCondition(columnName, columnValue);
-                    }
-                    else if (IsNumericType(dataType))
-                    {
-                        //如果数据库是数值类型，而传入的值是true或者false,那么代表数据库的参考值为1,0，需要进行转换
-                        bool boolValue = false;
-                        bool isBoolenValue = bool.TryParse(columnValue, out boolValue);
-                        if (isBoolenValue)
-                        {
-                            condition.AddCondition(columnName, boolValue ? 1 : 0, SqlOperator.Equal);
-                        }
-                        else if (hasEqualValue)
-                        {
-                            columnValue = columnValue.Substring(columnValue.IndexOf("=") + 1);
-                            condition.AddCondition(columnName, columnValue, SqlOperator.Equal);
-                        }
-                        else
-                        {
-                            condition.AddNumberCondition(columnName, columnValue);
-                        }
-                    }
-                    else
-                    {
-                        if (ValidateUtil.IsNumeric(columnValue))
-                        {
-                            condition.AddCondition(columnName, columnValue, SqlOperator.Equal);
-                        }
-                        else
-                        {
-                            condition.AddCondition(columnName, columnValue, SqlOperator.Like);
-                        }
-                    }
-                }
-                #endregion
-
-                #region MyRegion
-                //string SystemType_ID = Request["SystemType_ID"] ?? "";
-                //string LoginName = Request["LoginName"] ?? "";
-                //string FullName = Request["FullName"] ?? "";
-                //string Note = Request["Note"] ?? "";
-                //string IPAddress = Request["IPAddress"] ?? "";
-                //string MacAddress = Request["MacAddress"] ?? "";
-                //string LastUpdated = Request["LastUpdated"] ?? "";
-
-                //SearchCondition condition = new SearchCondition();
-                //condition.AddCondition("SystemType_ID", SystemType_ID, SqlOperator.Like);
-                //condition.AddCondition("LoginName", LoginName, SqlOperator.Like);
-                //condition.AddCondition("FullName", FullName, SqlOperator.Like);
-                //condition.AddCondition("Note", Note, SqlOperator.Like);
-                //condition.AddCondition("IPAddress", IPAddress, SqlOperator.Like);
-                //condition.AddCondition("MacAddress", MacAddress, SqlOperator.Like);
-
-                //condition.AddDateCondition("LastUpdated", LastUpdated); 
-                #endregion
-                var WHC_IntNo = Request["WHC_IntNo"];
-                var WHC_NvcName = Request["WHC_NvcName"];
-                var WHC_NvcAddr = Request["WHC_NvcAddr"];
-                var WHC_VcMobile = Request["WHC_VcMobile"];
-                sql = "SELECT ROW_NUMBER() OVER ( order by a.IntID DESC) as RowNumber,  a.IntID,a.IntNo,a.NvcName,isnull(c.VcDesc,'无表')VcDesc,a.NvcAddr,a.NvcVillage,a.VcBuilding,a.IntUnitNum,a.IntRoomNum,a.VcNameCode,a.VcAddrCode,a.VcMobile,a.VcTelNo,a.VcIDNo,a.VcContractNo,a.NvcInvName,a.NvcInvAddr,a.IntNumber,b.IntPriceNo,b.IntPriceNo2,a.NvcCustType,a.IntUserID,a.IntStatus,a.VcWechatNo,a.IntAccMode,a.IntHelper,a.DteOpen,a.DteCancel,a.DtCreate,b.IntID bIntID,b.VcAddr bVcAddr,b.NvcName bNvcName ,b.NvcAddr bNvcAddr,b.VcBarCode bVcBarCode,b.VcAssetNo bVcAssetNo,b.NumRatio,b.IntAutoSwitch,j.VcDesc jVcDesc,e.IntID eIntID,e.NvcName eNvcName,b.IntMP ,f.VcDesc fVcDesc,isnull(g.IntNo,0) gIntNo,isnull(g.NvcDesc,0) gNvcDesc,isnull(h.IntNo,0) hIntNo,isnull(h.NvcDesc,0) hNvcDesc  ,d.IntCode YFINtCode,b.IntAccountWay,d.VcDesc YFVcDesc FROM ArcCustomerInfo a  left join ArcMeterInfo b on a.IntNo=b.IntCustNO and b.IntStatus=0  left join DictValveStatus c on c.IntCode=b.IntValveState left join DictAccountWay d on d.IntCode=b.IntAccountWay left join ArcConcentratorInfo e on e.IntID=b.IntConID left join DictMeterStatus f on b.IntStatus=f.IntCode left join PriceProperty g on g.IntNo=b.IntPriceNo left join PriceProperty h on h.IntNo=b.IntPriceNo2  left join DictValveAuto j on b.IntAutoSwitch=j.IntCode where ";
-                //where = condition.BuildConditionSql().Replace("Where", "");
-                where = " (1=1) ";
-                if (WHC_IntNo != null && WHC_IntNo != "")
-                {
-                    where += " and a.IntNo=" + WHC_IntNo;
-                }
-                if (WHC_NvcName != null && WHC_NvcName != "")
-                {
-                    where += " and a.NvcName" + WHC_NvcName;
-                }
-                if (WHC_NvcAddr != null && WHC_NvcAddr != "")
-                {
-                    where += " and a.NvcAddr=" + WHC_NvcAddr;
-                }
-                if (WHC_VcMobile != null && WHC_VcMobile != "")
-                {
-                    where += " and a.VcMobile=" + WHC_VcMobile;
-                }
-                var IntID = Request["WHC_IntID"];
-
-                var fuji = Request["WHC_Fuji"];
-                var Text = Request["WHC_Text"];
-                if (IntID != null && IntID != "")
-                {
-                    // if (bolNum(IntID)) { 
-                    where = "  e.IntID=" + IntID;
-                    //}
-
-                }
-                if (fuji != null && fuji != "")
-                {
-                    where = " a.NvcVillage='" + fuji + "'";
-                }
-                if (Text != "" && Text != null)
-                {
-                    where += " and a.VcBuilding='" + Text + "'";
-                }
-                sql = sql + where + "  order by IntMP desc";
+                where += " and a.IntNo=" + WHC_IntNo;
             }
+            if (WHC_NvcName != null && WHC_NvcName != "")
+            {
+                where += " and a.NvcName" + WHC_NvcName;
+            }
+            if (WHC_NvcAddr != null && WHC_NvcAddr != "")
+            {
+                where += " and a.NvcAddr=" + WHC_NvcAddr;
+            }
+            if (WHC_VcMobile != null && WHC_VcMobile != "")
+            {
+                where += " and a.VcMobile=" + WHC_VcMobile;
+            }
+            var IntID = Request["WHC_IntID"];
+
+            var fuji = Request["WHC_Fuji"];
+            var Text = Request["WHC_Text"];
+            if (IntID != null && IntID != "")
+            {
+                // if (bolNum(IntID)) { 
+                where = "  e.IntID=" + IntID;
+                //}
+
+            }
+            if (fuji != null && fuji != "")
+            {
+                where = " a.NvcVillage='" + fuji + "'";
+            }
+            if (Text != "" && Text != null)
+            {
+                where += " and a.VcBuilding='" + Text + "'";
+            }
+            sql = sql + where + "  order by IntMP desc";
+
             var dts = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.SqlTable(sql);
 
             int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
