@@ -13,15 +13,16 @@
 
     <script src="../../Content/My97DatePicker/WdatePicker.js"></script>
     <script src="~/Scripts/dbjs.js"></script>
-
+   
     <script type="text/javascript">
+        var sNvcVillage = "";
+        var sVcBuilding = "";
+
         $(function () {
             initDeptTreeview();
         });
-        var sNvcVillage = "";
-        var sVcBuilding = "";
         function initDeptTreeview() {
-            $("#loading").show();          
+            $("#loading").show();
             $('#treeDept1').tree({
                 url: '/ArcCustomerInfo/TreeCommunity',
                 onBeforeSelect: function (node) {
@@ -29,15 +30,15 @@
 
                 },
                 onClick: function (node) {
-                  
-                    var Text = $("#treeDept1").tree("getParent", node.target);               
+
+                    var Text = $("#treeDept1").tree("getParent", node.target);
                     if (Text == null) {
                         sNvcVillage = "";
                         sVcBuilding = "";
                     } else {
                         sNvcVillage = Text.text;
                         sVcBuilding = node.text;
-                    }   
+                    }
                     var queryData = {
                         "IntCustNO": $("#IntCustNO").val(),
                         "NvcVillage": sNvcVillage,
@@ -48,7 +49,7 @@
             });
             $("#loading").fadeOut(500);
         }
-       
+
 
         function getSelectVcAddr() {
             var rows = $('#gridSettingInfo').datagrid('getChecked');
@@ -71,7 +72,7 @@
             ChrUpTiming = $("#ChrUpTiming").val();
             ChrUpTimingUnit = $("#flag").combobox('getValue');
             ChrUpAmount = $("#ChrUpAmount").val();
-            SettingMeterInfo(sAddr, ChrAllowUsed, ChrFreezeDay, ChrValveMaint, ChrUpTiming, ChrUpTimingUnit, ChrUpAmount);
+            SettingMeterInfo_web(sAddr, ChrAllowUsed, ChrFreezeDay, ChrValveMaint, ChrUpTiming, ChrUpTimingUnit, ChrUpAmount);
         };
 
         function SettingMeterInfo(sAddr, ChrAllowUsed, ChrFreezeDay, ChrValveMaint, ChrUpTiming, ChrUpTimingUnit, ChrUpAmount) {
@@ -91,6 +92,87 @@
                 }
             });
             return false;
+        }
+
+        //补0
+        function pad(num, n) {
+            var len = num.toString().length;
+            while (len < n) {
+                num = "0" + num;
+                len++;
+            }
+            return num;
+        }
+
+        function SettingMeterInfo_web(sAddr, ChrAllowUsed, ChrFreezeDay, ChrValveMaint, ChrUpTiming, ChrUpTimingUnit, ChrUpAmount) {
+            var iUserNo = '@Session["UserID"]';
+            var sConfig = {
+                SamplePoint: 'FF',
+                InitReading: 'FFFFFFFF',
+                AlertVolt: 'FFFF',
+                CloseVolt: 'FFFF',
+                AllowUsed: pad(parseInt(ChrAllowUsed).toString(16), 2),
+                FreezeDay: pad(parseInt(ChrFreezeDay).toString(10), 2),
+                ValveMaint: pad(parseInt(ChrValveMaint).toString(16), 4),
+                UploadTime: pad(parseInt(ChrUpTiming).toString(16), 4),
+                UpTimeUnit: pad(parseInt(ChrUpTimingUnit).toString(16), 2),
+                UpAmount: pad(parseInt(ChrUpAmount).toString(16), 4),
+                ValveRun: 'FF',
+                UpdateTime: 'FFFFFFFFFFFF',
+                MeterAddr: 'FFFFFFFFFFFFFF',
+                StatusWord: 'FFFF'
+            };
+          
+
+            loading.show();
+            //这是我们在第一步中创建的Web服务的地址
+            var URL = "http://118.190.199.54:9009/FrontService/FrontService.asmx";
+            //在这处我们拼接
+            var str = JSON.stringify(sConfig);
+            iUserNo = parseInt(iUserNo)
+            data = '<?xml version="1.0" encoding="utf-8"?>';
+            data = data + '<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">';
+            data = data + '<soap12:Body>';
+            data = data + '<SendMeterConfigCmd xmlns="http://tempuri.org/" >';
+            data = data + '<sAddr>' + sAddr + '</sAddr>';
+            data = data + '<sConfig>' + str + '</sConfig>';
+            data = data + '<iUserNo>' + iUserNo+ '</iUserNo>';
+            data = data + '</SendMeterConfigCmd>';
+            data = data + '</soap12:Body>';
+            data = data + '</soap12:Envelope>';
+
+            alert(data);
+
+
+            try {
+                //创建异步对象
+                var xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                xmlhttp.Open("POST", URL, false);
+                xmlhttp.SetRequestHeader("Content-Type", "application/soap+xml");
+                xmlhttp.Send(data);
+                if (xmlhttp.readyState == 4) {
+                    if (xmlhttp.status == 200) {
+                        var textHTML = xmlhttp.responseText;
+                        alert(textHTML);
+                        var result = jQuery.parseXML(textHTML);
+                        $(result).find('SendMeterConfigCmdResponse').each(function () {
+                            result=$(this).children('SendMeterConfigCmdResult').text();
+                        });
+                        if (result == "0")
+                        {
+                            showTips("指令下发成功！")
+                        } else
+                        {
+                            showError("指令下发失败！",5000)
+                        }
+                    }
+                }
+                loading.hide();
+            }
+            catch (ex) {
+                loading.hide();
+                showError(ex,5000);
+            };
         }
 
 

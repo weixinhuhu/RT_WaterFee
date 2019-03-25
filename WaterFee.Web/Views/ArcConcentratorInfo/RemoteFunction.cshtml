@@ -14,12 +14,14 @@
     <script src="../../Content/My97DatePicker/WdatePicker.js"></script>
     <script src="~/Scripts/dbjs.js"></script>
     <script type="text/javascript">
-
-        $(function () {
-            initDeptTreeview();
-        });
         var sNvcVillage = "";
         var sVcBuilding = "";
+        var username = "";
+        $(function () {
+            initDeptTreeview();
+
+        });
+
         function initDeptTreeview() {
             $("#loading").show();
             $('#treeDept1').tree({
@@ -37,7 +39,7 @@
                     } else {
                         sNvcVillage = Text.text;
                         sVcBuilding = node.text;
-                    }   
+                    }
                     var queryData = {
                         "IntCustNO": $("#IntCustNO").val(),
                         "NvcName": $("#NvcName").val(),
@@ -57,41 +59,26 @@
         //调用webserver
         function setControler(sAddr, iCmdType) {
 
-            //var sendDate = {
-            //    '_sAddr': "100000001",
-            //    'iCmdType': 1
-            //};
-            //try {
-            //    $.ajax({
-            //        type: "POST",  //访问WebService使用post方式请求
-            //        contentType: "application/json",   //WebService会返回json类型
-            //        url: "http://localhost:55555/TestHub/Hello", //调用WebService的地址和方法名称组合                                
-            //        data: "{name:'微信',msg:'你好'}",
-            //        dataType: "json",
-            //        success: function (result) {
-            //            $("#result").html(result.d);
-            //            alert(result.d);
-            //        }
-            //    })
-            //}
-            //catch (ex) {
-            //    alert(ex);
-            //};
-
+            var iUserNo = '@Session["UserID"]';         
             loading.show();
             //这是我们在第一步中创建的Web服务的地址
             var URL = "http://118.190.199.54:9009/FrontService/FrontService.asmx";
             //在这处我们拼接
-            iCmdType = parseInt(iCmdType)
+            iCmdType = parseInt(iCmdType);
+            iUserNo = parseInt(iUserNo);
             data = '<?xml version="1.0" encoding="utf-8"?>';
             data = data + '<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">';
             data = data + '<soap12:Body>';
-            data = data + '<SendMeterConfigCmd xmlns="http://tempuri.org/" >';
-            data = data + '<sAddr>"' + sAddr + '"</sAddr>';
+            data = data + '<SendValveCmd xmlns="http://tempuri.org/" >';
+            data = data + '<sAddr>' + sAddr + '</sAddr>';
             data = data + '<iCmdType>' + iCmdType + '</iCmdType>';
-            data = data + '</SendMeterConfigCmd>';
+            data = data + '<iUserNo>' + iUserNo+ '</iUserNo>';
+            data = data + '</SendValveCmd>';
             data = data + '</soap12:Body>';
             data = data + '</soap12:Envelope>';
+
+            alert(data)
+
             try {
                 //创建异步对象
                 var xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
@@ -100,22 +87,22 @@
                 xmlhttp.Send(data);
                 if (xmlhttp.readyState == 4) {
                     if (xmlhttp.status == 200) {
-                        var textHTML = xmlhttp.responseText;  
-                       // alert(textHTML);
-                        var result = jQuery.parseXML(textHTML);                     
-                        $(result).find('SendMeterConfigCmdResponse').each(function () {
-                            result=$(this).children('SendMeterConfigCmdResult').text();
+                        var textHTML = xmlhttp.responseText;
+                        alert(textHTML);
+                        var result = jQuery.parseXML(textHTML);
+                        $(result).find('SendValveCmdResponse').each(function () {
+                            result = $(this).children('SendValveCmdResult').text();
                         });
                         if (result == "0")
-                        {                            
+                        {
                             showTips("指令下发成功！")
                         } else
-                        {                            
+                        {
                             showError("指令下发失败！",5000)
-                        }                      
-                    }                      
+                        }
+                    }
                 }
-                loading.hide(); 
+                loading.hide();
             }
             catch (ex) {
                 loading.hide();
@@ -154,15 +141,15 @@
                 url: '/ArcMeterInfo/SettingMeterValve',
                 dataType: 'json',
                 data: { sAddr: sAddr, iCmdType: iCmdType },
-                success: function (result) {               
-                    if (result.Success) {   
-                        loading.hide();                      
-                        alert("任务下发成功");                        
-                    } else {   
-                        loading.hide();                   
-                        alert("任务下发失败");                       
+                success: function (result) {
+                    if (result.Success) {
+                        loading.hide();
+                        alert("任务下发成功");
+                    } else {
+                        loading.hide();
+                        alert("任务下发失败");
                     }
-                }                 
+                }
             });
             return false;
         }

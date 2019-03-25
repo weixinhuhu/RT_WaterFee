@@ -12,31 +12,20 @@
 
     <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
     <script src="~/Scripts/ComponentUtil.js"></script>
-    <script src="~/Scripts/SignalR/jquery.
-            -2.2.2.min.js"></script>
-    
-    @Html.Raw(ViewBag.SignalrScript)
     <script src="../../Content/My97DatePicker/WdatePicker.js"></script>
     <script src="~/Scripts/dbjs.js"></script>
     <script type="text/javascript">
           
-        //$(function () {        
-        //    $(document).keydown(function (event) {
-        //        if (event.keyCode == 13) {
-        //            $("#btnSearch").click();
-
-        //            return;
-        //        }
-        //    });
-        //    var queryData = {
-
-        //    };//可添加一些预设条件
-        //    InitGrid(queryData);
-        //    BindSearchEvent();
-        //});
 
         $(function () {
+                 $(document).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    $("#btnSearch").click();
+                    return;
+                }
+            });
             initDeptTreeview();
+            BindSearchEvent();
         });
         var sNvcVillage = "";
         var sVcBuilding = "";
@@ -422,7 +411,6 @@
             $("#getNvcName").html(name);
             $("#getMonSum").html(rows[0].MonSum);
             $("#getMoney").numberbox('setValue', '');
-
             $("#DivGet").dialog('open').dialog('setTitle', '【' + name + '】取款');
         }
 
