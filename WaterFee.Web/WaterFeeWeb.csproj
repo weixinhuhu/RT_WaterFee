@@ -5067,11 +5067,6 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
-    <None Include="Scripts\SignalR\jquery-1.6.4-vsdoc.js" />
-    <Content Include="Scripts\SignalR\jquery-1.6.4.js" />
-    <Content Include="Scripts\SignalR\jquery-1.6.4.min.js" />
-    <Content Include="Scripts\SignalR\jquery.signalR-2.2.2.js" />
-    <Content Include="Scripts\SignalR\jquery.signalR-2.2.2.min.js" />
     <Content Include="安装说明.txt" />
     <Content Include="Content\Template\CRM\客户联系人-模板.xls" />
     <Content Include="Content\JQueryTools\JSON-js\README" />

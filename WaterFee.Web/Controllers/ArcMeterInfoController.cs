@@ -1099,5 +1099,20 @@ namespace WHC.WaterFeeWeb.Controllers
             var commandTimeout = DBLib.Common.ConfigHelper.GetConfigString("CommandTimeout");
             ViewBag.SignalrScript = string.Format(@"<script src=""{0}/signalr/hubs""></script><script>var signalrUrl = ""{0}"";var CommandTimeout={1}*1000;</script>", signalrUrl, commandTimeout);
         }
+
+        public string SetMeterValve() {
+            string res = "";
+
+            try
+            {
+              
+            }
+            catch (Exception ex)
+            {
+                res = ex.ToString();
+            };
+
+            return res;
+        }
     }
 }

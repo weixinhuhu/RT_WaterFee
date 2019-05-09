@@ -65,7 +65,7 @@
                     sAddr += "," + rows[i].VcAddr;
                 }
             }
-            alert(sAddr);
+           // alert(sAddr);
             ChrAllowUsed = $("#ChrAllowUsed").val();
             ChrFreezeDay = $("#ChrFreezeDay").val();
             ChrValveMaint = $("#ChrValveMaint").val();
@@ -106,24 +106,60 @@
 
         function SettingMeterInfo_web(sAddr, ChrAllowUsed, ChrFreezeDay, ChrValveMaint, ChrUpTiming, ChrUpTimingUnit, ChrUpAmount) {
             var iUserNo = '@Session["UserID"]';
+
+            if (ChrAllowUsed != "") {
+                AllowUsed = pad(parseInt(ChrAllowUsed).toString(16), 2);
+            } else {
+                AllowUsed = "FF";
+            }
+             
+            if (ChrFreezeDay != "") {
+                ChrFreezeDay = pad(parseInt(ChrFreezeDay).toString(16), 2);
+            } else {
+                ChrFreezeDay = "FF";
+            }
+
+            if (ChrValveMaint != "") {
+                ChrValveMaint = pad(parseInt(ChrValveMaint).toString(16),4);
+            } else {
+                ChrValveMaint = "FFFF";
+            }
+
+            if (ChrUpTiming != "") {
+                ChrUpTiming = pad(parseInt(ChrUpTiming).toString(16), 4);
+            } else {
+                ChrUpTiming = "FFFF";
+            }
+
+            if (ChrUpTimingUnit != "") {
+                ChrUpTimingUnit = pad(parseInt(ChrUpTimingUnit).toString(16), 2);
+            } else {
+                ChrUpTimingUnit = "FF";
+            }
+
+            if (ChrUpAmount != "") {
+                ChrUpAmount = pad(parseInt(ChrUpAmount).toString(16), 4);
+            } else {
+                ChrUpAmount = "FFFF";
+            }
+
             var sConfig = {
                 SamplePoint: 'FF',
                 InitReading: 'FFFFFFFF',
                 AlertVolt: 'FFFF',
                 CloseVolt: 'FFFF',
-                AllowUsed: pad(parseInt(ChrAllowUsed).toString(16), 2),
-                FreezeDay: pad(parseInt(ChrFreezeDay).toString(10), 2),
-                ValveMaint: pad(parseInt(ChrValveMaint).toString(16), 4),
-                UploadTime: pad(parseInt(ChrUpTiming).toString(16), 4),
-                UpTimeUnit: pad(parseInt(ChrUpTimingUnit).toString(16), 2),
-                UpAmount: pad(parseInt(ChrUpAmount).toString(16), 4),
+                AllowUsed: AllowUsed,
+                FreezeDay: ChrFreezeDay,
+                ValveMaint: ChrValveMaint,
+                UploadTime: ChrUpTiming,
+                UpTimeUnit: ChrUpTimingUnit,
+                UpAmount: ChrUpAmount,
                 ValveRun: 'FF',
                 UpdateTime: 'FFFFFFFFFFFF',
                 MeterAddr: 'FFFFFFFFFFFFFF',
                 StatusWord: 'FFFF'
             };
           
-
             loading.show();
             //这是我们在第一步中创建的Web服务的地址
             var URL = "http://118.190.199.54:9009/FrontService/FrontService.asmx";
@@ -142,7 +178,6 @@
             data = data + '</soap12:Envelope>';
 
             alert(data);
-
 
             try {
                 //创建异步对象
