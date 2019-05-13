@@ -631,12 +631,60 @@ namespace WHC.WaterFeeWeb.Controllers
                 d.text = info.NvcVillage.ToString();
                 d.state = "open";
                 roots.children.Add(d);
+                string BuildingSQL = "select  DISTINCT [VcBuilding],max(IntID)IntID ,max(NvcVillage) NvcVillage ,max(IntNo)IntNo,max(NvcName)NvcName,max(NvcAddr)NvcAddr,max(VcBuilding)VcBuilding,max(IntUnitNum)IntUnitNum,max(IntRoomNum)IntRoomNum,max(VcNameCode)VcNameCode,max(VcAddrCode)VcAddrCode,max(VcMobile)VcMobile,max(VcTelNo)VcTelNo,max(VcIDNo)VcIDNo,max(VcContractNo)VcContractNo,max(NvcInvName)NvcInvName,max(NvcInvAddr)NvcInvAddr ,max(IntNumber)IntNumber,max(IntPriceNo)IntPriceNo,max(NvcCustType)NvcCustType,max(IntUserID)IntUserID,max(IntStatus)IntStatus ,max(VcWechatNo)VcWechatNo,max(IntAccMode)IntAccMode ,max(IntHelper)IntHelper,max(DteOpen)DteOpen,max(DteCancel)DteCancel,max(DtCreate)DtCreate from ArcCustomerInfo where NvcVillage='" + d.text + "' group by [VcBuilding]";
+                var lists = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.GetList(BuildingSQL);
+                foreach (var items in lists)
+                {
+                    EasyTreeData Buildinginfo = new EasyTreeData(items.IntID.ToString(), items.VcBuilding.ToString(), "icon-view");
+                    d.children.Add(Buildinginfo);
+                }
+            }
+            if (isAddRoot)
+                treeList.Add(roots);
+            else
+                treeList = roots.children;
+
+            return ToJsonContentDate(treeList);
+
+        }
+
+        public ActionResult TreeCommunity_3(bool isAddRoot = true)
+        {
+            var treeList = new List<EasyTreeData>();
+            var sqls = "select  DISTINCT NvcVillage,max(IntID)IntID  ,max(IntNo)IntNo,max(NvcName)NvcName,max(NvcAddr)NvcAddr,max(VcBuilding)VcBuilding,max(IntUnitNum)IntUnitNum,max(IntRoomNum)IntRoomNum,max(VcNameCode)VcNameCode,max(VcAddrCode)VcAddrCode,max(VcMobile)VcMobile,max(VcTelNo)VcTelNo,max(VcIDNo)VcIDNo,max(VcContractNo)VcContractNo,max(NvcInvName)NvcInvName,max(NvcInvAddr)NvcInvAddr ,max(IntNumber)IntNumber,max(IntPriceNo)IntPriceNo,max(NvcCustType)NvcCustType,max(IntUserID)IntUserID,max(IntStatus)IntStatus ,max(VcWechatNo)VcWechatNo,max(IntAccMode)IntAccMode ,max(IntHelper)IntHelper,max(DteOpen)DteOpen,max(DteCancel)DteCancel,max(DtCreate)DtCreate from ArcCustomerInfo where NvcVillage <>'' group by NvcVillage";
+            var li = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.GetList(sqls);
+
+            var treeLists = new List<EasyTreeData>();
+
+            var roots = new EasyTreeData();
+            // roots.iconCls = "icon-organ";
+            roots.id = "";
+            roots.text = "所有小区";
+            roots.state = "open";
+
+            roots.children = new List<EasyTreeData>();
+
+            foreach (var info in li)
+            {
+                var d = new EasyTreeData();
+                // d.iconCls = "icon-organ";
+                d.id = info.NvcVillage.ToString();
+                d.text = info.NvcVillage.ToString();
+                d.state = "open";
+                roots.children.Add(d);
                 string BuildingSQL = "select * from ArcCustomerInfo where NvcVillage='" + d.text + "'";
                 var lists = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.GetList(BuildingSQL);
                 foreach (var items in lists)
                 {
                     EasyTreeData Buildinginfo = new EasyTreeData(items.IntID.ToString(), items.VcBuilding.ToString(), "icon-view");
                     d.children.Add(Buildinginfo);
+                    string IntUnitNum = "select * from ArcCustomerInfo where VcBuilding='" + items.VcBuilding.ToString() + "'";
+                    var IntUnitNumlists = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.GetList(IntUnitNum);
+                    foreach (var IntUnitNumItems in lists)
+                    {
+                        EasyTreeData IntUnitNumInfo = new EasyTreeData(IntUnitNumItems.IntID.ToString(), IntUnitNumItems.IntUnitNum.ToString(), "icon-view");
+                        d.children.Add(IntUnitNumInfo);
+                    }
                 }
             }
             if (isAddRoot)

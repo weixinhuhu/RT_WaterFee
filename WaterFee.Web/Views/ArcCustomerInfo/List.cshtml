@@ -14,17 +14,18 @@
 
     <script type="text/javascript">
         var isAddOrEdit = 'add';//标识是新增还是编辑对话框弹出，用于删除附件的操作
-        var sNvcVillage = "";
-        var sVcBuilding = "";
 
         $(function () {
             initDeptTreeview();
-            
+            var queryData = {
+                WHC_Deleted: "0"
+            };//可添加一些预设条件
+            InitGrid(queryData);//初始化Datagrid表格数据
             //价格属性
             InitPriceProperty();
 
             BindSearchEvent();//绑定查询按钮事件
-            
+
             option();
 
             $("#divTab").tabs({
@@ -41,7 +42,30 @@
 
         });
         var isAdd = false;
-       
+        //集中器
+        function InitArcConcentratorInfo() {
+            $('#ddlArcConcentratorInfo').combobox({
+                url: '/ArcConcentratorInfo/GetTreeJson',
+                valueField: 'IntID',
+                textField: 'NvcName',
+                required: true,
+                onSelect: function (record) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/ArcMeterInfo/FindMaxIntMPByIntConID',
+                        dataType: 'json',
+                        data: { IntConID: $('#ddlArcConcentratorInfo').combobox('getValue') },
+                        async: false,
+                        success: function (data) {
+                            if (data.Success && isAdd) {
+                                $("#meterIntMP").numberbox('setValue', data.Data1);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
         function InputNvcName(obj) {
             $("#addNvcInvName").val($(obj).val());
         }
@@ -194,9 +218,7 @@
                     WHC_IntNo: $("#txtIntNo").val(),
                     WHC_NvcName: $("#txtNvcName").val(),
                     WHC_NvcAddr: $("#txtNvcAddr").val(),
-                    WHC_VcMobile: $("#txtVcMobile").val(),
-                    "NvcVillage": sNvcVillage,
-                    "VcBuilding": sVcBuilding
+                    WHC_VcMobile: $("#txtVcMobile").val()
                 }
                 //将值传递给
                 InitGrid(queryData);
@@ -531,7 +553,7 @@
             $("#ddlIntStatus").combobox("setValue", 0);
             $("#meterDtLastUpd").val("");
             $("#meterDtCreate").val("");
-           // show();
+            show();
         }
 
         //水表信息
@@ -558,6 +580,7 @@
             $("#meterDtCreate").val(info.DtCreate);
             $("#ddlPriceProperty").combobox("setValue", info.IntPriceNo);
             $("#YFVcDesc").combobox("setValue", info.YFVcDesc);
+
 
         }
 
@@ -727,9 +750,30 @@
                 }
             });
         }
-    
+        //混合占比触发事件
+        function show() {
+
+        }
         function initDeptTreeview() {
             $("#loading").show();
+
+            var queryData = "";
+            $('#treeDept').tree({
+                url: '/ArcCustomerInfo/TreeArcConcentratorInfo',
+                onBeforeSelect: function (node) {
+                    fujiText = node.text;
+
+                },
+                onClick: function (node) {
+
+                    loadDataByOu(node.id);
+
+                    queryData = { "WHC_IntID": node.id };
+
+                    InitGrid(queryData);
+
+                }
+            });
             $('#treeDept1').tree({
                 url: '/ArcCustomerInfo/TreeCommunity',
                 onBeforeSelect: function (node) {
@@ -737,23 +781,15 @@
 
                 },
                 onClick: function (node) {
+
+                    loadDataByOu(node.id);
+
                     var Text = $("#treeDept1").tree("getParent", node.target);
-                    if (Text == null) {
-                        sNvcVillage = "";
-                        sVcBuilding = "";
-                    } else {
-                        sNvcVillage = Text.text;
-                        sVcBuilding = node.text;
-                    }                
-                    var queryData = {
-                        WHC_IntNo: $("#txtIntNo").val(),
-                        WHC_NvcName: $("#txtNvcName").val(),
-                        WHC_NvcAddr: $("#txtNvcAddr").val(),
-                        WHC_VcMobile: $("#txtVcMobile").val(),
-                        "NvcVillage": sNvcVillage,
-                        "VcBuilding": sVcBuilding
-                    };
+
+                    queryData = { "WHC_Fuji": Text.text, "WHC_Text": node.text };
+
                     InitGrid(queryData);
+
                 }
             });
             $("#loading").fadeOut(500);
@@ -779,7 +815,8 @@
 
     <script>
 
-    </script>
+
+/**/</script>
     <style>
         table.view {
             border: 1px solid #A8CFEB;
@@ -824,12 +861,20 @@
     </div>
 
     <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
-        <div data-options="region:'west',split:true,title:'',iconCls:'icon-book'" style="width: 230px; padding: 1px;">
-            <div class="easyui-tabs" style="width:200px;">             
-                <div title="用户列表" style="padding:10px;">
+        <div data-options="region:'west',split:true,title:'',iconCls:'icon-book'" style="width: 200px; padding: 1px;">
+            <div class="easyui-tabs" style="width:200px;">
+                @*<div title="集中器" style="padding:10px;">
+                        <ul id="treeDept"></ul>
+                    </div>*@
+                <div title="小区" style="padding:10px;">
                     <ul id="treeDept1"></ul>
                 </div>
+
             </div>
+
+            @*<div style="margin: 2px; padding: 5px;">
+                    <ul id="treeDept"></ul>
+                </div>*@
         </div>
         <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding: 5px; height: auto">
             <!-------------------------------搜索框----------------------------------->
@@ -924,7 +969,7 @@
                                     <label for="addNvcVillage">客户小区：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-validatebox" type="text" id="addNvcVillage" name="NvcVillage" style="width: 99%;" data-options="required:true"/>
+                                    <input class="easyui-validatebox" type="text" id="addNvcVillage" name="NvcVillage" style="width: 99%;" data-options="required:true" />
                                 </td>
                             </tr>
                             <tr>
@@ -932,13 +977,13 @@
                                     <label for="addVcBuilding">客户楼栋：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-validatebox" type="text" id="addVcBuilding" name="VcBuilding" style="width: 99%;"data-options="required:true" />
+                                    <input class="easyui-validatebox" type="text" id="addVcBuilding" name="VcBuilding" style="width: 99%;" data-options="required:true" />
                                 </td>
                                 <th>
                                     <label for="addIntUnitNum">单元编号：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-numberbox" type="text" id="addIntUnitNum" name="IntUnitNum:number" style="width: 99%;" data-options="required:true"/>
+                                    <input class="easyui-numberbox" type="text" id="addIntUnitNum" name="IntUnitNum:number" style="width: 99%;" data-options="required:true" />
                                 </td>
                             </tr>
                             <tr>
@@ -946,7 +991,7 @@
                                     <label for="addIntRoomNum">门牌编号：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-numberbox" type="text" id="addIntRoomNum" name="IntRoomNum:number" style="width: 99%;" data-options="required:true"/>
+                                    <input class="easyui-numberbox" type="text" id="addIntRoomNum" name="IntRoomNum:number" style="width: 99%;" data-options="required:true" />
 
                                 </td>
                                 <th>
@@ -1176,6 +1221,8 @@
             </div>
         </div>
     </div>
+
+
 </body>
 
 </html>
