@@ -152,30 +152,40 @@ namespace WHC.WaterFeeWeb.Controllers
             string vcFlag = Request["flag"];
             string NvcVillage = Request["NvcVillage"];
             string VcBuilding = Request["VcBuilding"];
-
             string where = " (1=1) ";
+         
+            var fuji = Request["WHC_Fuji"];
+            var Text = Request["WHC_Text"];
+            var Strlevel = Request["WHC_Treelevel"];
+            var ParentText = Request["WHC_TreePrentText"];
 
-            if (NvcVillage != "")
+            if (Strlevel == "1")
             {
-                if (NvcVillage == "所有小区")
-                {
-                    where += @"  AND NvcVillage =  " + "'" + VcBuilding + "'";
-                }
-                else
-                {
-                    where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
-
-                    if (VcBuilding != "")
-                    {
-                        where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
-
-                    }
-                }
+                where += " and NvcVillage = '所有小区' ";
             }
+
+            if (Strlevel == "2")
+            {
+                where += " and NvcVillage = '" + Text + "' ";
+            }
+
+            if (Strlevel == "3")
+            {
+                where += " and NvcVillage = '" + fuji + "' ";
+                where += "  and VcBuilding='" + Text + "'";
+            }
+
+            if (Strlevel == "4")
+            {
+                where += " and NvcVillage = '" + ParentText + "' ";
+                where += " and VcBuilding = '" + fuji + "' ";
+                where += "  and IntUnitNum='" + Text + "'";
+            }
+            
 
             if (IntCustNO != "")
             {
-                where += " and IntCustNO=" + Convert.ToInt32(IntCustNO);
+                where += " and A.IntCustNO=" + Convert.ToInt32(IntCustNO);
             }
             if (NvcName != "")
             {
@@ -219,27 +229,37 @@ namespace WHC.WaterFeeWeb.Controllers
             string NvcVillage = Request["NvcVillage"];
             string VcBuilding = Request["VcBuilding"];
 
-            if (NvcVillage != "")
+            var fuji = Request["WHC_Fuji"];
+            var Text = Request["WHC_Text"];
+            var Strlevel = Request["WHC_Treelevel"];
+            var ParentText = Request["WHC_TreePrentText"];
+
+            if (Strlevel == "1")
             {
-                if (NvcVillage == "所有小区")
-                {
-                    where += @"  AND NvcVillage =  " + "'" + VcBuilding + "'";
-                }
-                else
-                {
-                    where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
+                where = " and NvcVillage = '所有小区' ";
+            }
 
-                    if (VcBuilding != "")
-                    {
-                        where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
+            if (Strlevel == "2")
+            {
+                where = " and NvcVillage = '" + Text + "' ";
+            }
 
-                    }
-                }
+            if (Strlevel == "3")
+            {
+                where = " and NvcVillage = '" + fuji + "' ";
+                where += "  and VcBuilding='" + Text + "'";
+            }
+
+            if (Strlevel == "4")
+            {
+                where = " and NvcVillage = '" + ParentText + "' ";
+                where += " and VcBuilding = '" + fuji + "' ";
+                where += "  and IntUnitNum='" + Text + "'";
             }
 
             if (WHC_IntCustNo != "")
             {
-                where += @"  AND A.NvcName LIKE  " + "'%" + WHC_IntCustNo + "%'";
+                where += "  AND A.NvcName LIKE  " + "'%" + WHC_IntCustNo + "%'";
                 where += "  OR NvcVillage LIKE  " + "'%" + WHC_IntCustNo + "%'";
                 where += "  OR IntUnitNum LIKE  " + "'%" + WHC_IntCustNo + "%'";
                 where += "  OR IntRoomNum LIKE  " + "'%" + WHC_IntCustNo + "%'";

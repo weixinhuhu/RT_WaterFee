@@ -754,26 +754,24 @@
         function show() {
 
         }
+
+        var easyui_tree_options = {
+		length : 0,  //层数
+		getLevel : function(treeObj, node){	//treeObj为tree的dom对象，node为选中的节点
+			while(node != null){
+				node = $(treeObj).tree('getParent', node.target)
+				easyui_tree_options.length++;
+			}
+			var length1 = easyui_tree_options.length;
+			easyui_tree_options.length = 0;		//重置层数
+			return length1;
+		    }
+	    }
         function initDeptTreeview() {
             $("#loading").show();
 
             var queryData = "";
-            $('#treeDept').tree({
-                url: '/ArcCustomerInfo/TreeArcConcentratorInfo',
-                onBeforeSelect: function (node) {
-                    fujiText = node.text;
-
-                },
-                onClick: function (node) {
-
-                    loadDataByOu(node.id);
-
-                    queryData = { "WHC_IntID": node.id };
-
-                    InitGrid(queryData);
-
-                }
-            });
+       
             $('#treeDept1').tree({
                 url: '/ArcCustomerInfo/TreeCommunity',
                 onBeforeSelect: function (node) {
@@ -782,14 +780,24 @@
                 },
                 onClick: function (node) {
 
-                    loadDataByOu(node.id);
+                    //loadDataByOu(node.id);
 
                     var Text = $("#treeDept1").tree("getParent", node.target);
 
-                    queryData = { "WHC_Fuji": Text.text, "WHC_Text": node.text };
+                    var Treelevel = easyui_tree_options.getLevel(this, node);
+
+                    var ParentText = "";
+                                                               
+                    if (Treelevel == 4) {
+
+                        ParentText = $("#treeDept1").tree("getParent", Text.target)
+
+                    }
+
+                    queryData = { "WHC_Fuji": Text.text, "WHC_Text": node.text, "WHC_Treelevel": Treelevel.toString(),"WHC_TreePrentText":ParentText.text};
 
                     InitGrid(queryData);
-
+                    
                 }
             });
             $("#loading").fadeOut(500);

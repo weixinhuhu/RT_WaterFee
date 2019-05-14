@@ -59,33 +59,39 @@ namespace WHC.WaterFeeWeb.Controllers
         {
             string where = "";
             string sql = "";
-            string pageSizeNum = Request["pageNum"];
-            string pageSize = Request["pageSize"];
-
-            string WHC_VcAddr = Request["WHC_VcAddr"];
-            string WHC_IntCustNo = Request["WHC_IntCustNo"];
+    
+            string WHC_VcAddr = Request["WHC_VcAddr"];          
             string WHC_StartDteFreeze = Request["WHC_StartDteFreeze"];
             string WHC_EndDteFreeze = Request["WHC_EndDteFreeze"];
-            string NvcVillage = Request["NvcVillage"];
-            string VcBuilding = Request["VcBuilding"];
+           
+            var fuji = Request["WHC_Fuji"];
+            var Text = Request["WHC_Text"];
+            var Strlevel = Request["WHC_Treelevel"];
+            var ParentText = Request["WHC_TreePrentText"];
 
-            if (NvcVillage != "")
+            if (Strlevel == "1")
             {
-                if (NvcVillage == "所有小区")
-                {
-                    where += @"  AND NvcVillage =  " + "'" + VcBuilding + "'";
-                }
-                else
-                {
-                    where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
-
-                    if (VcBuilding != "")
-                    {
-                        where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
-
-                    }
-                }
+                where += " and NvcVillage = '所有小区' ";
             }
+
+            if (Strlevel == "2")
+            {
+                where += " and NvcVillage = '" + Text + "' ";
+            }
+
+            if (Strlevel == "3")
+            {
+                where += " and NvcVillage = '" + fuji + "' ";
+                where += "  and VcBuilding='" + Text + "'";
+            }
+
+            if (Strlevel == "4")
+            {
+                where += " and NvcVillage = '" + ParentText + "' ";
+                where += " and VcBuilding = '" + fuji + "' ";
+                where += "  and IntUnitNum='" + Text + "'";
+            }
+
 
             if (WHC_VcAddr != "")
             {
@@ -546,33 +552,39 @@ namespace WHC.WaterFeeWeb.Controllers
             string where = "";
             string sql = "";
 
-
             string IntCustNO = Request["WHC_IntCustNO"];
             string NvcName = Request["WHC_NvcName"];
             string VcAddr = Request["WHC_VcAddr"];
             string NvcAddr = Request["WHC_NvcAddr"];
 
-            string NvcVillage = Request["NvcVillage"];
-            string VcBuilding = Request["VcBuilding"];
+            var fuji = Request["WHC_Fuji"];
+            var Text = Request["WHC_Text"];
+            var Strlevel  = Request["WHC_Treelevel"];
+            var ParentText = Request["WHC_TreePrentText"];
 
-
-            if (NvcVillage != "")
+            if (Strlevel == "1")
             {
-                if (NvcVillage == "所有小区")
-                {
-                    where += @"  AND NvcVillage =  " + "'" + VcBuilding + "'";
-                }
-                else
-                {
-                    where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
-
-                    if (VcBuilding != "")
-                    {
-                        where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
-
-                    }
-                }
+                where = " and NvcVillage = '所有小区' ";
             }
+
+            if (Strlevel == "2")
+            {
+                where = " and NvcVillage = '" + Text + "' ";
+            }
+
+            if (Strlevel == "3")
+            {
+                where = " and NvcVillage = '" + fuji + "' ";
+                where += "  and VcBuilding='" + Text + "'";
+            }
+
+            if (Strlevel == "4")
+            {
+                where = " and NvcVillage = '" + ParentText + "' ";
+                where += " and VcBuilding = '" + fuji + "' ";
+                where += "  and IntUnitNum='" + Text + "'";
+            }
+
 
             if (IntCustNO != null)
             {

@@ -27,39 +27,45 @@ namespace WHC.WaterFeeWeb.Controllers
         }
 
         public ActionResult ListJson()
-        {
-            // return base.FindWithPager();
+        {       
             string where = "";
-            string sql = "";
+            string sql = "";        
             var WHC_IntNo = Request["WHC_IntNo"];
             var WHC_NvcName = Request["WHC_NvcName"];
             var WHC_NvcAddr = Request["WHC_NvcAddr"];
             var WHC_VcMobile = Request["WHC_VcMobile"];
-
-            string NvcVillage = Request["NvcVillage"];
-            string VcBuilding = Request["VcBuilding"];
+            var fuji = Request["WHC_Fuji"];
+            var Text = Request["WHC_Text"];
+            var Strlevel = Request["WHC_Treelevel"];
+            var ParentText = Request["WHC_TreePrentText"];
 
             sql = "SELECT ROW_NUMBER() OVER ( order by a.IntID DESC) as RowNumber,  a.IntID,a.IntNo,a.NvcName,isnull(c.VcDesc,'无表')VcDesc,a.NvcAddr,a.NvcVillage,a.VcBuilding,a.IntUnitNum,a.IntRoomNum,a.VcNameCode,a.VcAddrCode,a.VcMobile,a.VcTelNo,a.VcIDNo,a.VcContractNo,a.NvcInvName,a.NvcInvAddr,a.IntNumber,b.IntPriceNo,b.IntPriceNo2,a.NvcCustType,a.IntUserID,a.IntStatus,a.VcWechatNo,a.IntAccMode,a.IntHelper,a.DteOpen,a.DteCancel,a.DtCreate,b.IntID bIntID,b.VcAddr bVcAddr,b.NvcName bNvcName ,b.NvcAddr bNvcAddr,b.VcBarCode bVcBarCode,b.VcAssetNo bVcAssetNo,b.NumRatio,b.IntAutoSwitch,j.VcDesc jVcDesc,e.IntID eIntID,e.NvcName eNvcName,b.IntMP ,f.VcDesc fVcDesc,isnull(g.IntNo,0) gIntNo,isnull(g.NvcDesc,0) gNvcDesc,isnull(h.IntNo,0) hIntNo,isnull(h.NvcDesc,0) hNvcDesc  ,d.IntCode YFINtCode,b.IntAccountWay,d.VcDesc YFVcDesc FROM ArcCustomerInfo a  left join ArcMeterInfo b on a.IntNo=b.IntCustNO and b.IntStatus=0  left join DictValveStatus c on c.IntCode=b.IntValveState left join DictAccountWay d on d.IntCode=b.IntAccountWay left join ArcConcentratorInfo e on e.IntID=b.IntConID left join DictMeterStatus f on b.IntStatus=f.IntCode left join PriceProperty g on g.IntNo=b.IntPriceNo left join PriceProperty h on h.IntNo=b.IntPriceNo2  left join DictValveAuto j on b.IntAutoSwitch=j.IntCode where ";
 
             where = " (1=1) ";
-
-            if (NvcVillage != "")
+         
+            if (Strlevel == "1")
             {
-                if (NvcVillage == "所有小区")
-                {
-                    where += @"  AND NvcVillage =  " + "'" + VcBuilding + "'";
-                }
-                else
-                {
-                    where += @"  AND NvcVillage =  " + "'" + NvcVillage + "'";
-
-                    if (VcBuilding != "")
-                    {
-                        where += @"  AND VcBuilding =  " + "'" + VcBuilding + "'";
-
-                    }
-                }
+                where = " a.NvcVillage = '所有小区' ";
             }
+
+            if (Strlevel == "2")
+            {
+                where = " a.NvcVillage = '" + Text + "' ";
+            }
+
+            if (Strlevel == "3")
+            {
+                where = " a.NvcVillage = '" + fuji + "' ";
+                where += "  and a.VcBuilding='" + Text + "'";
+            }
+
+            if (Strlevel == "4")
+            {
+                where = " a.NvcVillage = '" + ParentText + "' ";
+                where += " and a.VcBuilding = '" + fuji + "' ";
+                where += "  and a.IntUnitNum='" + Text + "'";
+            }
+
 
             if (WHC_IntNo != null && WHC_IntNo != "")
             {
@@ -77,25 +83,9 @@ namespace WHC.WaterFeeWeb.Controllers
             {
                 where += " and a.VcMobile=" + WHC_VcMobile;
             }
-            var IntID = Request["WHC_IntID"];
 
-            var fuji = Request["WHC_Fuji"];
-            var Text = Request["WHC_Text"];
-            if (IntID != null && IntID != "")
-            {
-                // if (bolNum(IntID)) { 
-                where = "  e.IntID=" + IntID;
-                //}
+           
 
-            }
-            if (fuji != null && fuji != "")
-            {
-                where = " a.NvcVillage='" + fuji + "'";
-            }
-            if (Text != "" && Text != null)
-            {
-                where += " and a.VcBuilding='" + Text + "'";
-            }
             sql = sql + where + "  order by IntMP desc";
 
             var dts = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.SqlTable(sql);
@@ -635,55 +625,18 @@ namespace WHC.WaterFeeWeb.Controllers
                 var lists = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.GetList(BuildingSQL);
                 foreach (var items in lists)
                 {
-                    EasyTreeData Buildinginfo = new EasyTreeData(items.IntID.ToString(), items.VcBuilding.ToString(), "icon-view");
-                    d.children.Add(Buildinginfo);
-                }
-            }
-            if (isAddRoot)
-                treeList.Add(roots);
-            else
-                treeList = roots.children;
-
-            return ToJsonContentDate(treeList);
-
-        }
-
-        public ActionResult TreeCommunity_3(bool isAddRoot = true)
-        {
-            var treeList = new List<EasyTreeData>();
-            var sqls = "select  DISTINCT NvcVillage,max(IntID)IntID  ,max(IntNo)IntNo,max(NvcName)NvcName,max(NvcAddr)NvcAddr,max(VcBuilding)VcBuilding,max(IntUnitNum)IntUnitNum,max(IntRoomNum)IntRoomNum,max(VcNameCode)VcNameCode,max(VcAddrCode)VcAddrCode,max(VcMobile)VcMobile,max(VcTelNo)VcTelNo,max(VcIDNo)VcIDNo,max(VcContractNo)VcContractNo,max(NvcInvName)NvcInvName,max(NvcInvAddr)NvcInvAddr ,max(IntNumber)IntNumber,max(IntPriceNo)IntPriceNo,max(NvcCustType)NvcCustType,max(IntUserID)IntUserID,max(IntStatus)IntStatus ,max(VcWechatNo)VcWechatNo,max(IntAccMode)IntAccMode ,max(IntHelper)IntHelper,max(DteOpen)DteOpen,max(DteCancel)DteCancel,max(DtCreate)DtCreate from ArcCustomerInfo where NvcVillage <>'' group by NvcVillage";
-            var li = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.GetList(sqls);
-
-            var treeLists = new List<EasyTreeData>();
-
-            var roots = new EasyTreeData();
-            // roots.iconCls = "icon-organ";
-            roots.id = "";
-            roots.text = "所有小区";
-            roots.state = "open";
-
-            roots.children = new List<EasyTreeData>();
-
-            foreach (var info in li)
-            {
-                var d = new EasyTreeData();
-                // d.iconCls = "icon-organ";
-                d.id = info.NvcVillage.ToString();
-                d.text = info.NvcVillage.ToString();
-                d.state = "open";
-                roots.children.Add(d);
-                string BuildingSQL = "select * from ArcCustomerInfo where NvcVillage='" + d.text + "'";
-                var lists = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.GetList(BuildingSQL);
-                foreach (var items in lists)
-                {
-                    EasyTreeData Buildinginfo = new EasyTreeData(items.IntID.ToString(), items.VcBuilding.ToString(), "icon-view");
-                    d.children.Add(Buildinginfo);
-                    string IntUnitNum = "select * from ArcCustomerInfo where VcBuilding='" + items.VcBuilding.ToString() + "'";
-                    var IntUnitNumlists = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.GetList(IntUnitNum);
-                    foreach (var IntUnitNumItems in lists)
+                    //EasyTreeData Buildinginfo = new EasyTreeData(items.IntID.ToString(), items.VcBuilding.ToString(), "icon-view");
+                    //d.children.Add(Buildinginfo);
+                    var e = new EasyTreeData();
+                    e.id = items.VcBuilding.ToString();
+                    e.text= items.VcBuilding.ToString();              
+                    d.children.Add(e);
+                    string InitNumSQL = "select  DISTINCT [IntUnitNum],max(IntID)IntID ,max(NvcVillage) NvcVillage ,max(IntNo)IntNo,max(NvcName)NvcName,max(NvcAddr)NvcAddr,max(VcBuilding)VcBuilding,max(VcBuilding)VcBuilding,max(IntRoomNum)IntRoomNum,max(VcNameCode)VcNameCode,max(VcAddrCode)VcAddrCode,max(VcMobile)VcMobile,max(VcTelNo)VcTelNo,max(VcIDNo)VcIDNo,max(VcContractNo)VcContractNo,max(NvcInvName)NvcInvName,max(NvcInvAddr)NvcInvAddr ,max(IntNumber)IntNumber,max(IntPriceNo)IntPriceNo,max(NvcCustType)NvcCustType,max(IntUserID)IntUserID,max(IntStatus)IntStatus ,max(VcWechatNo)VcWechatNo,max(IntAccMode)IntAccMode ,max(IntHelper)IntHelper,max(DteOpen)DteOpen,max(DteCancel)DteCancel,max(DtCreate)DtCreate from ArcCustomerInfo where NvcVillage='" + d.text + "' and VcBuilding ='" + e.text + "' group by [IntUnitNum]";
+                    var InitNumSQLlists = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.GetList(InitNumSQL);
+                    foreach (var s in InitNumSQLlists)
                     {
-                        EasyTreeData IntUnitNumInfo = new EasyTreeData(IntUnitNumItems.IntID.ToString(), IntUnitNumItems.IntUnitNum.ToString(), "icon-view");
-                        d.children.Add(IntUnitNumInfo);
+                        EasyTreeData InitNuminfo = new EasyTreeData(s.IntID.ToString(), s.IntUnitNum.ToString(), "icon-view");
+                        e.children.Add(InitNuminfo);
                     }
                 }
             }

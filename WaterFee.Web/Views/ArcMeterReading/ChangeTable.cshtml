@@ -21,7 +21,20 @@
             initDeptTreeview();
             BindSearchEvent();//绑定查询按钮事件
         });
-     
+
+        var easyui_tree_options = {
+		    length : 0,  //层数
+		    getLevel : function(treeObj, node){	//treeObj为tree的dom对象，node为选中的节点
+			    while(node != null){
+				    node = $(treeObj).tree('getParent', node.target)
+				    easyui_tree_options.length++;
+			    }
+			    var length1 = easyui_tree_options.length;
+			    easyui_tree_options.length = 0;		//重置层数
+			    return length1;
+		    }
+	    }
+    
         function initDeptTreeview() {
             $("#loading").show();
             $('#treeDept1').tree({
@@ -30,23 +43,28 @@
                     fujiText = node.text;
                 },
                 onClick: function (node) {
+                  
                     var Text = $("#treeDept1").tree("getParent", node.target);
-                    if (Text == null) {
-                        sNvcVillage = "";
-                        sVcBuilding = "";
-                    } else {
 
-                        sNvcVillage = Text.text;
-                        sVcBuilding = node.text;
+                    var Treelevel = easyui_tree_options.getLevel(this, node);
+
+                    var ParentText = "";
+                                                               
+                    if (Treelevel == 4) {
+
+                        ParentText = $("#treeDept1").tree("getParent", Text.target)
+
                     }
+                    
                     var queryData = {
                         WHC_IntCustNO: $("#IntCustNO").val(),
                         WHC_NvcName: $("#NvcName").val(),
                         WHC_VcAddr: $("#VcAddr").val(),
                         WHC_NvcAddr: $("#NvcAddr").val(),
-                        "IntCustNO": $("#IntCustNO").val(),
-                        "NvcVillage": sNvcVillage,
-                        "VcBuilding": sVcBuilding
+                        WHC_Fuji: Text.text,
+                        WHC_Text: node.text,
+                        WHC_Treelevel: Treelevel.toString(),
+                        WHC_TreePrentText: ParentText.text
                     };
                     InitGrid(queryData);
                 }

@@ -18,8 +18,23 @@
         var sNvcVillage = "";
         var sVcBuilding = "";
         $(function () {
-            initDeptTreeview(); 
+            initDeptTreeview();      
         });
+
+       
+
+        var easyui_tree_options = {
+		    length : 0,  //层数
+		    getLevel : function(treeObj, node){	//treeObj为tree的dom对象，node为选中的节点
+			    while(node != null){
+				    node = $(treeObj).tree('getParent', node.target)
+				    easyui_tree_options.length++;
+			    }
+			    var length1 = easyui_tree_options.length;
+			    easyui_tree_options.length = 0;		//重置层数
+			    return length1;
+		    }
+	    }
 
         function initDeptTreeview() {
             $("#loading").show();
@@ -32,20 +47,26 @@
                 onClick: function (node) {
 
                     var Text = $("#treeDept1").tree("getParent", node.target);
-                    if (Text == null) {
-                        sNvcVillage = "";
-                        sVcBuilding = "";
-                    } else {
-                        sNvcVillage = Text.text;
-                        sVcBuilding = node.text;
-                    }   
+
+                    var Treelevel = easyui_tree_options.getLevel(this, node);
+
+                    var ParentText = "";
+                                                               
+                    if (Treelevel == 4) {
+
+                        ParentText = $("#treeDept1").tree("getParent", Text.target)
+
+                    }
+                    
                     var queryData = {
                         WHC_VcAddr: $("#VcAddr").val(),
                         WHC_IntCustNo: $("#IntCustNo").val(),
                         WHC_StartDteFreeze: $("#StartDteFreeze").datebox("getValue"),
                         WHC_EndDteFreeze: $("#EndDteFreeze").datebox("getValue"),
-                        "NvcVillage": sNvcVillage,
-                        "VcBuilding": sVcBuilding
+                        WHC_Fuji: Text.text,
+                        WHC_Text: node.text,
+                        WHC_Treelevel: Treelevel.toString(),
+                        WHC_TreePrentText: ParentText.text
                     };
                     InitGrid(queryData);
                 }
@@ -184,8 +205,8 @@
                                 <th style='padding:3px;'><label for="VcAddr">关键词：</label></th>
                                 <td style='padding:3px;'><input type="text" id="VcAddr" class="text-info" style="width:100px" /></td>
                                 <th style='padding:3px;'><label for="DteFreezd">冻结日期：</label></th>
-                                <td style='padding:3px;'><input type="text" class="easyui-datebox" id="StartDteFreeze" style="width:100px" /></td>-
-                                <td style='padding:3px;'><input type="text" class="easyui-datebox" id="EndDteFreeze" style="width:100px" /></td>
+                                <td style='padding:3px;'><input type="text" class="easyui-datebox" id="StartDteFreeze" style="width:100px" value="true"/></td>-
+                                <td style='padding:3px;'><input type="text" class="easyui-datebox" id="EndDteFreeze" style="width:100px"  value="true"/></td>
                                 <td style='padding:3px;text-align:right'>
                                     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch" onclick="SearchEvent()">查询</a>
                                 </td>
