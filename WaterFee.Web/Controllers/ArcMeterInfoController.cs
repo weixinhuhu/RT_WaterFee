@@ -147,11 +147,9 @@ namespace WHC.WaterFeeWeb.Controllers
         {
             string IntCustNO = Request["IntCustNO"];
             string NvcName = Request["NvcName"];
-            string NvcAddr = Request["NvcAddr"];
+            string VcMobile = Request["VcMobile"];
             string VcAddr = Request["VcAddr"];
             string vcFlag = Request["flag"];
-            string NvcVillage = Request["NvcVillage"];
-            string VcBuilding = Request["VcBuilding"];
             string where = " (1=1) ";
          
             var fuji = Request["WHC_Fuji"];
@@ -171,6 +169,7 @@ namespace WHC.WaterFeeWeb.Controllers
 
             if (Strlevel == "3")
             {
+
                 where += " and NvcVillage = '" + fuji + "' ";
                 where += "  and VcBuilding='" + Text + "'";
             }
@@ -185,15 +184,15 @@ namespace WHC.WaterFeeWeb.Controllers
 
             if (IntCustNO != "")
             {
-                where += " and A.IntCustNO=" + Convert.ToInt32(IntCustNO);
+                where += " and A.IntCustNO =" + Convert.ToInt32(IntCustNO);
             }
             if (NvcName != "")
             {
                 where += " and c.NvcName='" + NvcName + "'";
             }
-            if (NvcAddr != "")
+            if (VcMobile != "")
             {
-                where += " and a.NvcAddr like'%" + NvcAddr + "%'";
+                where += " and C.VcMobile like'%" + VcMobile + "%'";
             }
             if (VcAddr != "")
             {
@@ -201,20 +200,49 @@ namespace WHC.WaterFeeWeb.Controllers
             }
             if (vcFlag == "1")
             {
-                where += " and MonSum<=0";
+                where += " and B.Fee<=0";
             }
             else
             {
-                where += " and MonSum>0";
+                where += " and B.Fee>0";
             }
 
             var sb = new System.Text.StringBuilder();
-            sb.Append(" SELECT A.* ");
-            sb.Append(" ,NvcVillage,VcBuilding,IntUnitNum,IntRoomNum,C.NvcName VcCustName,MonSum ");
-            sb.AppendFormat(" FROM ArcMeterInfo A " );
-            sb.AppendFormat(" left join ArcCustomerInfo C on C.IntNo=A.IntCustNo ");
-            sb.AppendFormat(" left join AccDeposit D on D.IntCustNO=A.IntCustNo ");
-            sb.Append(" WHERE  "+where);
+            //sb.Append(" SELECT A.* ");
+            //sb.Append(" ,NvcVillage,VcBuilding,IntUnitNum,IntRoomNum,C.NvcName VcCustName,MonSum ");
+            //sb.AppendFormat(" FROM ArcMeterInfo A " );
+            //sb.AppendFormat(" left join ArcCustomerInfo C on C.IntNo=A.IntCustNo ");
+            //sb.AppendFormat(" left join AccDeposit D on D.IntCustNO=A.IntCustNo ");
+
+            sb.Append(@" SELECT A.IntID,
+                               A.VcAddr,
+                               A.IntCustNO,
+                               C.VcMobile,
+                               C.NvcVillage,
+                               C.VcBuilding,
+                               C.IntUnitNum,
+                               C.IntRoomNum,
+                               C.NvcName VcCustName,
+                               B.Fee
+                        FROM dbo.ArcMeterInfo A
+                            LEFT JOIN dbo.ArcCustomerInfo C
+                                ON C.IntNo = A.IntCustNO,
+                        (
+                            SELECT P.IntCustNO,
+                                   ISNULL(
+                                   (
+                                       SELECT MonSum FROM dbo.AccDeposit WHERE IntCustNO = P.IntCustNO
+                                   ),
+                                   0.00
+                                         ) - ISNULL(
+                                             (
+                                                 SELECT SUM(MonFeeExec) FROM dbo.AccDebt WHERE IntCustNo = P.IntCustNO
+                                             ),
+                                             0.00
+                                                   ) Fee
+                            FROM dbo.ArcMeterInfo P
+                        ) B");
+            sb.Append(" WHERE  " + where+ "  AND A.IntCustNO = B.IntCustNO");
             var dt = BLLFactory<Core.BLL.ArcCustomerInfo>.Instance.SqlTable(sb.ToString());
             return ToJsonContentDate(dt);
         }
@@ -222,13 +250,8 @@ namespace WHC.WaterFeeWeb.Controllers
         public ActionResult SettingMangger()
         {
             string where = "";
-            string sql = "";
-            string pageSizeNum = Request["pageNum"];
-            string pageSize = Request["pageSize"];        
-            string WHC_IntCustNo = Request["IntCustNO"];
-            string NvcVillage = Request["NvcVillage"];
-            string VcBuilding = Request["VcBuilding"];
-
+            string sql;    
+            string WHC_IntCustNo = Request["IntCustNO"];        
             var fuji = Request["WHC_Fuji"];
             var Text = Request["WHC_Text"];
             var Strlevel = Request["WHC_Treelevel"];
@@ -259,16 +282,16 @@ namespace WHC.WaterFeeWeb.Controllers
 
             if (WHC_IntCustNo != "")
             {
-                where += "  AND A.NvcName LIKE  " + "'%" + WHC_IntCustNo + "%'";
-                where += "  OR NvcVillage LIKE  " + "'%" + WHC_IntCustNo + "%'";
-                where += "  OR IntUnitNum LIKE  " + "'%" + WHC_IntCustNo + "%'";
-                where += "  OR IntRoomNum LIKE  " + "'%" + WHC_IntCustNo + "%'";
-                where += "  OR C.VcAddr LIKE  " + "'%" + WHC_IntCustNo + "%'";
-                where += "  OR VcMobile LIKE " + "'%" + WHC_IntCustNo + "%'";
-                where += "  OR A.IntNo LIKE  " + "'%" + WHC_IntCustNo + "%'";
+                where += "  AND ( A.NvcName LIKE  '%" + WHC_IntCustNo + "%'";
+                where += "  OR NvcVillage LIKE  '%" + WHC_IntCustNo + "%'";
+                where += "  OR IntUnitNum LIKE  '%" + WHC_IntCustNo + "%'";
+                where += "  OR IntRoomNum LIKE  '%" + WHC_IntCustNo + "%'";
+                where += "  OR C.VcAddr LIKE   '%" + WHC_IntCustNo + "%'";
+                where += "  OR VcMobile LIKE   '%" + WHC_IntCustNo + "%'";
+                where += "  OR A.IntNo LIKE   '%" + WHC_IntCustNo + "%')";
             }
-
-            //20190312
+            
+            //20190704
             sql = @"  SELECT 
                         A.intId ,
                         A.IntNo ,
@@ -295,10 +318,7 @@ namespace WHC.WaterFeeWeb.Controllers
                  WHERE  1 = 1";
 
             sql += where;
-
-           
-
-
+       
             var dts = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.SqlTable(sql);
             int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
             int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);

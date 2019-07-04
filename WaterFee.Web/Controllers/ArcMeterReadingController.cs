@@ -58,10 +58,8 @@ namespace WHC.WaterFeeWeb.Controllers
         public ActionResult ListJson()
         {
             string where = "";
-            string sql = "";
-    
+            string sql;
             string WHC_VcAddr = Request["WHC_VcAddr"];          
-            string WHC_StartDteFreeze = Request["WHC_StartDteFreeze"];
             string WHC_EndDteFreeze = Request["WHC_EndDteFreeze"];
            
             var fuji = Request["WHC_Fuji"];
@@ -92,50 +90,45 @@ namespace WHC.WaterFeeWeb.Controllers
                 where += "  and IntUnitNum='" + Text + "'";
             }
 
-
             if (WHC_VcAddr != "")
             {
-                where += "  and NvcName like" + "'%" + WHC_VcAddr + "%'";
-                where += " OR VcMobile like" + "'%" + WHC_VcAddr + "%'";
-                where += " OR NvcVillage like" + "'%" + WHC_VcAddr + "%'";
-                where += " OR VcBuilding like" + "'%" + WHC_VcAddr + "%'";
-                where += " OR IntUnitNum like'" + WHC_VcAddr + "'";
-                where += " OR IntRoomNum like" + "'%" + WHC_VcAddr + "%'";
-                where += " OR IntCustNo like" + "'%" + WHC_VcAddr + "%'";
-                where += " OR VcAddr like" + "'%" + WHC_VcAddr + "%'";
+                where += "  AND ( A.NvcName LIKE  '%" + WHC_VcAddr + "%'";
+                where += "  OR NvcVillage LIKE  '%" + WHC_VcAddr + "%'";
+                where += "  OR IntUnitNum LIKE  '%" + WHC_VcAddr + "%'";
+                where += "  OR IntRoomNum LIKE  '%" + WHC_VcAddr + "%'";
+                where += "  OR C.VcAddr LIKE   '%" + WHC_VcAddr + "%'";
+                where += "  OR VcMobile LIKE   '%" + WHC_VcAddr + "%'";
+                where += "  OR A.IntNo LIKE   '%" + WHC_VcAddr + "%')";
             }
 
-            if (WHC_StartDteFreeze != "")
+            if (WHC_EndDteFreeze != "")
             {
-                where += "  and DtLastUpd between  '" + WHC_StartDteFreeze + "' and '" + WHC_EndDteFreeze + "'";
+                where += "  and DteFreeze = '" + WHC_EndDteFreeze + "'";
             }
 
-            //20190312
-            sql = @" SELECT a.IntID ,
-		                NvcName,
-		                VcMobile,
-		                NvcVillage,
-		                VcBuilding,
-		                IntUnitNum, 
-		                IntRoomNum,
-                        VcAddr ,
-                        IntCustNo ,
-                        DteReading ,
-                        a.DteFreeze ,
-                        NumReading ,
-                        VcStatus ,
-                        a.IntStatus ,
-                        DtLastUpd ,
-                        a.DtCreate ,
-                        dbo.uf_TransStatusWord(VcStatus) Word ,
-                        b.VcDesc
-                 FROM   ArcMeterReading a
-                        LEFT JOIN DictMeterReadingFlag b ON a.IntFlag = b.IntCode
-                        LEFT JOIN dbo.ArcCustomerInfo c ON a.IntCustNo = c.IntNo
-                 WHERE  ( 1 = 1 ) ";
+            //20190704
+            sql = @" SELECT DISTINCT C.DteFreeze,
+                           NvcName,
+                           VcMobile,
+                           NvcVillage,
+                           VcBuilding,
+                           IntUnitNum,
+                           IntRoomNum,
+                           VcAddr,
+                           IntCustNo,
+                           DteReading,
+                           NumReading,
+                           a.IntStatus,
+                           dbo.uf_TransStatusWord(VcStatus) Word,
+                           b.VcDesc
+                    FROM ArcMeterReading C
+                        LEFT JOIN DictMeterReadingFlag B
+                            ON C.IntFlag = B.IntCode
+                        LEFT JOIN dbo.ArcCustomerInfo A
+                            ON C.IntCustNo = A.IntNo
+                    WHERE (1 = 1) ";
 
             sql += where + "order by DteFreeze desc";
-
 
             var dts = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.SqlTable(sql);
             int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
@@ -467,37 +460,9 @@ namespace WHC.WaterFeeWeb.Controllers
                             reading.IntStatus = 0;
                             reading.VcAddr = item.VcAddr;
                             reading.VcStatus = item.SW;
-                            // reading.VcStatus = string.Empty;
-
-                            //if (item.VcStatus == null)
-                            //    item.VcStatus = "正常";
-                            //reading.VcStatus = item.VcStatus;
+                      
                             var flg = BLLFactory<Core.DALSQL.ArcMeterReading>.Instance.Insert(reading);
-                            //if (flg)
-                            //{
-                            //    var condition = "VcAddr='{0}' ".FormatWith(item.VcAddr);
-                            //    var calcReading = BLLFactory<Core.DALSQL.ArcCalcReading>.Instance.FindSingle(condition);
-                            //    if (calcReading == null)
-                            //    {
-                            //        calcReading = new Core.Entity.ArcCalcReading();
-                            //        calcReading.NumPrior = calcReading.NumLast = 0;
-                            //    }
-
-                            //    var calc = new Core.Entity.ArcCalcReading();
-                            //    calc.NumLast = item.Amount;
-                            //    calc.NumPrior = calcReading.NumLast;
-                            //    calc.IntStatus = 0;
-                            //    calc.NumUsed = calc.NumLast - calc.NumPrior;
-                            //    calc.IntYearMon = item.Date.ToString("yyyyMM").ToInt();
-                            //    calc.VcAddr = item.VcAddr;
-                            //    calc.DtCreate = DateTime.Now;
-                            //    calc.DteFee = item.Date;
-
-                            //    flg = BLLFactory<Core.DALSQL.ArcCalcReading>.Instance.Insert(calc);
-
-                            //    //if (flg) dbTran.Commit();
-                            //    //else dbTran.Rollback();
-                            //}
+                        
                             if (flg) okCount++;
                             else errCount++;
                         }

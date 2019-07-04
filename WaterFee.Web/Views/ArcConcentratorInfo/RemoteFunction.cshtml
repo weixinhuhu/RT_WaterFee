@@ -58,7 +58,7 @@
                     var queryData = {
                         "IntCustNO": $("#IntCustNO").val(),
                         "NvcName": $("#NvcName").val(),
-                        "NvcAddr": $("#NvcAddr").val(),
+                        "VcMobile": $("#VcMobile").val(),
                         "VcAddr": $("#VcAddr").val(),
                         "flag": $("#flag").combobox("getValue"),
                         WHC_Fuji: Text.text,
@@ -199,14 +199,14 @@
                     { title: '通信地址', field: 'VcAddr', width: 100, sortable: true },
                     { title: '客户编号', field: 'IntCustNO', width: 100, align: 'center', sortable: true },
                     { title: '客户名称', field: 'VcCustName', width: 100, align: 'center', sortable: true },
-                    { title: '用户姓名', field: 'NvcName', width: 80, sortable: true },
+                    { title: '手机号', field: 'VcMobile', width: 80, sortable: true },
                     { title: '用户小区', field: 'NvcVillage', width: 80, sortable: true },
                     { title: '用户楼栋', field: 'VcBuilding', width: 80, sortable: true },
                     { title: '用户单元', field: 'IntUnitNum', width: 80, sortable: true },
                     { title: '用户门牌号', field: 'IntRoomNum', width: 80, sortable: true },
-                    { title: '账户余额', field: 'MonSum', width: 80, sortable: true },
-                    { title: '安装地址', field: 'NvcAddr', width: 120, sortable: true },
-                    { title: '条形码', field: 'VcBarCode', width: 100, align: 'center', sortable: true }
+                    { title: '账户余额', field: 'Fee', width: 80, sortable: true },
+                    //{ title: '安装地址', field: 'NvcAddr', width: 120, sortable: true },
+                    //{ title: '条形码', field: 'VcBarCode', width: 100, align: 'center', sortable: true }
                 ]],
                 onLoadSuccess: function () {
                 },
@@ -219,7 +219,7 @@
             var queryData = {
                 "IntCustNO": $("#IntCustNO").val(),
                 "NvcName": $("#NvcName").val(),
-                "NvcAddr": $("#NvcAddr").val(),
+                "VcMobile": $("#VcMobile").val(),
                 "VcAddr": $("#VcAddr").val(),
                 "flag": $("#flag").combobox("getValue"),
                 "NvcVillage": sNvcVillage,
@@ -270,10 +270,10 @@
                                         <input type="text" id="NvcName" style="width: 100px" />
                                     </td>
                                     <th style='padding: 3px;'>
-                                        <label for="VcAddr">安装地址：</label>
+                                        <label for="VcAddr">手机号：</label>
                                     </th>
                                     <td style='padding: 3px;'>
-                                        <input type="text" id="NvcAddr" style="width: 100px" />
+                                        <input type="text" id="VcMobile" style="width: 100px" />
                                     </td>
                                     <th style='padding: 3px;'>
                                         <label for="VcSimNo">通信地址：</label>

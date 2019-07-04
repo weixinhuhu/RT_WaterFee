@@ -325,8 +325,6 @@
             //隐藏采样点
             $("#meterIntMP").next().hide();
 
-            //isAddOrEdit = 'add';//新增对话框标识
-            ////CKEDITOR.instances.Content.setData('');  //清空编辑器的数据
             $("#ffCustomerInfo").form("clear");
             setMeterInfoDefault();
             $("#DivAdd").dialog('open').dialog('setTitle', '添加信息');
@@ -346,6 +344,11 @@
             $("#btnAddOK").click(Insert);
         }
 
+        //补0
+        function addzone(num, length) {
+        return (Array(length).join('0') + num).slice(-length);
+        }
+
         function Insert() {
 
             var s = $("#txtddlPriceProperty").textbox("getValue");
@@ -354,16 +357,18 @@
                 return $.messager.alert("提示", "价格属性和混合价格不能一致。", 'warning');
             }
 
-
+            //判断表地址长度
+            if ($("#meterVcAddr").val().length < 14) {
+             $("#meterVcAddr").val(addzone($("#meterVcAddr").val(),14));  
+             //return $.messager.alert("提示", "通讯地址长度应为14位。", 'warning')
+            }
+            
             //判断表单的信息是否通过验证
             var validate = $("#ffCustomerInfo").form('validate');
             if (validate == false) {
+                 return $.messager.alert("提示", "请校验数据是否填写完整。", 'warning')
                 return false;
             }
-
-            ////修改控件的值为复选框的值
-            //$("#hIsExpire").val($("#IsExpire").is(':checked'))
-            //$("#hDeleted").val($("#Deleted").is(':checked'))
 
             var customerInfo = JSON.stringify($("#ffCustomerInfo").serializeJSON());
             var meterInfo = JSON.stringify($("#ffMeterInfo").serializeJSON());
@@ -400,19 +405,22 @@
                     return;
                 }
             }
+
+            //判断表地址长度
+            if ($("#meterVcAddr").val().length < 14) {            
+                 $("#meterVcAddr").val(addzone($("#meterVcAddr").val(),14)); 
+                // return $.messager.alert("提示", "通讯地址长度应为14位。", 'warning')
+            }
+
+
             //判断表单的信息是否通过验证
             var validate = $("#ffCustomerInfo").form('validate');
             if (validate == false) {
+                return $.messager.alert("提示", "请校验数据是否填写完整。", 'warning')
                 return false;
             }
 
-            //修改控件的值为复选框的值
-            //$("#hIsExpire").val($("#IsExpire").is(':checked'))
-            //$("#hDeleted").val($("#Deleted").is(':checked'))
-
             var customerInfo = JSON.stringify($("#ffCustomerInfo").serializeJSON());
-
-
             var meterInfo = JSON.stringify($("#ffMeterInfo").serializeJSON());
             var postData = { CustomerInfo: customerInfo, MeterInfo: meterInfo };
             $.post("/ArcCustomerInfo/Update2", postData, function (json) {
@@ -473,7 +481,6 @@
                     }
                 }]
             });
-
         }
         var OldddlPriceProperty;
         //修改或查看明细信息（绑定显示数据）
@@ -498,7 +505,6 @@
 
             //首先取出来用户选择的数据的ID
             var rows = $("#grid").datagrid("getSelections");
-
 
             //首先取出来值判断用户只能选择一个
             if (rows.length == 0) {
@@ -818,7 +824,7 @@
 
             $("#loading").fadeOut(500);
         }
-
+       
     </script>
 
     <script>
@@ -1015,8 +1021,7 @@
                                     <label for="addVcTelNo">固定电话：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-validatebox" type="text" id="addVcTelNo" name="VcTelNo" style="width: 99%;" data-options="validType:'length[7,12]'" />
-                                    <!-- data-options="required:true,validType:'length[1,50]'" -->
+                                    <input class="easyui-validatebox" type="text" id="addVcTelNo" name="VcTelNo" style="width: 99%;" data-options="validType:'length[7,12]'" />                                
                                 </td>
                                 <th>
                                     <label for="addVcIDNo">身份证号：</label>
@@ -1083,8 +1088,7 @@
                                     <label for="addVcAddr">通信地址：</label>
                                 </th>
                                 <td>
-
-                                    <input class="easyui-validatebox" type="text" id="meterVcAddr" name="VcAddr" style="width: 98%;" data-options="required:true,validType:'length[1,20]'" />
+                                    <input class="easyui-validatebox"  type="text" id="meterVcAddr" maxlength="14" name="VcAddr" style="width: 98%;" data-options="required:true, missingMessage:'请输入14位通信地址'" />
                                 </td>
                                 <th>
                                     <label for="addNvcName">名称：</label>
@@ -1103,7 +1107,7 @@
                                 </td>
 
                                 <th>
-                                    <label for="addVcBarCode">条形码：</label>
+                                    <label for="addVcBarCode">IMEI：</label>
                                 </th>
                                 <td>
                                     <input class="easyui-validatebox" type="text" id="meterVcBarCode" name="VcBarCode" style="width: 98%;" data-options="" />
