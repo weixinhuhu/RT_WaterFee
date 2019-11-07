@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 using WHC.Framework.Commons;
 using WHC.Framework.Commons.Collections;
 using WHC.Framework.ControlUtil;
-using WHC.MVCWebMis.Entity;
-using WHC.Pager.Entity;
 using WHC.Security.BLL;
 using WHC.Security.Entity;
-using System.Data;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -222,7 +210,6 @@ namespace WHC.MVCWebMis.Controllers
                     AddChildNode(info.Children, item);
                 }
             }
-
             return ToJsonContent(treeList);
         }
 
@@ -232,7 +219,6 @@ namespace WHC.MVCWebMis.Controllers
             {
                 EasyTreeData item = new EasyTreeData(info.ID, info.Name, "icon-view");
                 fnode.children.Add(item);
-
                 AddChildNode(info.Children, item);
             }
         }

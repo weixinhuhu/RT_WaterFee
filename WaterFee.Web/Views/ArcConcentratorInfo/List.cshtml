@@ -13,26 +13,22 @@
     <script src="~/Scripts/ComponentUtil.js"></script>
 
     <script type="text/javascript">
-        var FactoryCode = "@ViewBag.FactoryCode";
-        var AreaCode = "@ViewBag.AreaCode";
+
+        @*var FactoryCode = @ViewBag.FactoryCode;
+        var AreaCode = @ViewBag.AreaCode;*@
+
+        var FactoryCode = "";
+        var AreaCode = "";
 
         var isAddOrEdit = 'add';//标识是新增还是编辑对话框弹出，用于删除附件的操作
 
         $(function () {
             var queryData = {
                 WHC_Deleted: "0"
-            };//可添加一些预设条件
-            InitGrid(queryData);//初始化Datagrid表格数据
-            //InitDictItem();   //初始化字典信息
-
-            BindSearchEvent();//绑定查询按钮事件
-            //BindSearchDeletedEvent();//查看已删除记录
-            //BindAddEvent();   //绑定添加按钮的事件
-            //BindEditEvent();  //绑定修改按钮的事件
-
-            //bindRootList();
+            };
+            InitGrid(queryData);//初始化Datagrid表格数据          
+            BindSearchEvent();//绑定查询按钮事件        
             initRoleTree();
-
             $(document).click(function () {
                 hideTree();
             });
@@ -57,45 +53,14 @@
             var obj = $("#editIntUpName");
             $("#divTree").css({ left: obj.offset().left + 'px', top: (obj.offset().top + obj.outerHeight()) + 'px', width: obj.width() }).slideDown('fast');
         }
-        function bindRootList() {
-            $("#ddlIntUpID").combobox({
-                url: "/ArcConcentratorInfo/SelectJson",
-                method: "get",
-                valueField: 'id',
-                textField: 'text',
-                onSelect: function (record) { },
-                onLoadSuccess: function () { //加载完成后,设置选中第一项  
-                    $("#ddlIntUpID").combobox('setValue', '0');
-                    //var val = $(this).combobox("getData");
-                    //for (var item in val[0]) {
-                    //    if (item == "id") {
-                    //        $(this).combobox("select", val[0][item]);
-                    //    }
-                    //}
-                }
-            });
-        }
-
-        //初始化字典信息
-        function InitDictItem() {
-
-            //初始化新增状态公司信息，默认公司为当前用户公司
-            //InitAddCompany();
-            //$('#Company_ID').combotree('setValue', '@Session["Company_ID"]');
-
-            //InitAddDeptTree();
-            //$('#Dept_ID').combotree('setValue', '@Session["Dept_ID"]');
-            //InitAddUserManager();
-
-            //编辑状态下仅仅初始化公司
-            //InitEditCompany();
-        }
-
 
         //实现对DataGird控件的绑定操作
         function InitGrid(queryData) {
             $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
-                url: '/ArcConcentratorInfo/ListJson',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                //WebServer 方式调用
+                url: '/ArcConcentratorInfo/ListJson_Server', 
+                 //指向后台的Action来获取当前用户的信息的Json格式的数据
+                //url: '/ArcConcentratorInfo/ListJson',                 
                 title: '采集器档案',
                 iconCls: 'icon-view',
                 height: 650,
@@ -105,8 +70,8 @@
                 striped: true,
                 collapsible: true,
                 pagination: true,
-                pageSize: 50,
-                pageList: [50, 100, 200],
+                pageSize: 1,
+                pageList: [1, 2, 3],
                 rownumbers: true,
                 singleSelect: true,
                 //sortName: 'ID',    //根据某个字段给easyUI排序
@@ -198,6 +163,7 @@
                 //        //ShowMeterList();//实现查看记录详细信息的方法
                 //    }
                 //},
+
                 '-', {
                     id: 'btnReload',
                     text: '刷新',
@@ -346,7 +312,7 @@
                 //$("#hDeleted").val($("#Deleted").is(':checked'))
 
                 var postData = $("#ffAdd").serializeArray();
-                $.post("/ArcConcentratorInfo/Insert", postData, function (json) {
+                $.post("/ArcConcentratorInfo/Insert_server", postData, function (json) {
                     var data = $.parseJSON(json);
                     if (data.Success) {
                         //添加成功  1.关闭弹出层，2.刷新DataGird
@@ -458,13 +424,12 @@
         //绑定编辑详细信息的方法
         function BindEditInfo(row) {
             //首先用户发送一个异步请求去后台实现方法
-            //var ID = $("#grid").datagrid("getSelections")[0].IntID;  //获取到了用用户选择的ID
+           // var ID = $("#grid").datagrid("getSelections")[0].IntID;  //获取到了用用户选择的ID
             isAddOrEdit = 'edit';//新增对话框标识
 
             //$("#ffAdd input[type='text']").val("");
             clearInput();
-
-            $("#editIntID").val(row.IntID);
+          
             $("#editVcAddr").val(row.VcAddr);
             $("#editNvcName").val(row.NvcName);
             $("#editNvcAddr").val(row.NvcAddr);
@@ -486,13 +451,7 @@
 
             BindEditEvent();
             $("#DivAdd").dialog('open').dialog('setTitle', '编辑信息');
-            //$.ajaxSettings.async = false;
-            //$.getJSON("/User/FindByID?r=" + Math.random() + "&id=" + ID, function (info) {
-            //    //赋值有几种方式：.datebox('setValue', info.Birthday);.combobox('setValue', info.Status);.val(info.Name);
-            //
-            //    isAddOrEdit = 'edit';//新增对话框标识
-            //});
-
+       
         }
 
         //绑定查看详细信息的方法
@@ -519,13 +478,10 @@
                     return false;
                 }
 
-                //修改控件的值为复选框的值
-                //$("#hIsExpire").val($("#IsExpire").is(':checked'))
-                //$("#hDeleted").val($("#Deleted").is(':checked'))
-
                 var postData = $("#ffAdd").serializeArray();
-                $.post("/ArcConcentratorInfo/Update?id=id", postData, function (json) {
-                    var data = $.parseJSON(json);
+           
+                $.post("/ArcConcentratorInfo/Update_Server?id=" + $("#grid").datagrid("getSelections")[0].IntID, postData, function (json) {
+                var data = $.parseJSON(json);
                     if (data.Success) {
                         //添加成功  1.关闭弹出层，2.刷新DataGird
                         showTips("编辑成功");

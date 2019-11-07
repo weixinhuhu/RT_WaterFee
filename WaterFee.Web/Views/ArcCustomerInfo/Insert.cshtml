@@ -350,7 +350,7 @@
                     $("#DivAdd").dialog("close");
                     $("#grid").datagrid("reload");
                     $("#ffAdd").form("clear");
-                }
+                }  
                 else {
                     showError("添加失败:" + data.ErrorMessage, 3000);
                 }
@@ -399,8 +399,9 @@
                         showTips("修改成功");
 
                     } else {
-                        showTips(data.ErrorMessage);
+                        showTips(data.ErrorMessage);gffgg
                     }
+
                     $("#DivAdd").dialog("close");
                     $("#grid").datagrid("reload");
                     $("#ffAdd").form("clear");
@@ -564,25 +565,26 @@
                 showTips("数据有误!");
                 return false;
             }
-            $.ajax({
-                type: 'post',
-                url: '/ArcMeterInfo/FindByIntCustNo',
-                async: false,
-                data: { IntCustNO: info.IntNo },
-                dataType: 'json',
-                success: function (result) {
-                    if (result.Success)
-                        BindMeterInfo(result.Obj1);
-                    else {
-                        //showError("获取水表信息出错:" + result.ErrorMessage);
-                        setMeterInfoDefault();
-                    }
-                },
-                error: function () {
-                    showTips("获取水表信息出错,请重试!");
-                    return false;
-                }
-            });
+
+            //$.ajax({
+            //    type: 'post',
+            //    url: '/ArcMeterInfo/FindByIntCustNo',
+            //    async: false,
+            //    data: { IntCustNO: info.IntNo },
+            //    dataType: 'json',
+            //    success: function (result) {
+            //        if (result.Success)
+            //            BindMeterInfo(result.Obj1);
+            //        else {
+            //            //showError("获取水表信息出错:" + result.ErrorMessage);
+            //            setMeterInfoDefault();
+            //        }
+            //    },
+            //    error: function () {
+            //        showTips("获取水表信息出错,请重试!");
+            //        return false;
+            //    }
+            //});
 
 
             $("#meterVcAddr").val(info.bVcAddr);

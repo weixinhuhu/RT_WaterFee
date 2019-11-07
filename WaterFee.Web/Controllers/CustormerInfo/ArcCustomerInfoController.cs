@@ -2,19 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
-using System.Web;
 using System.Web.Mvc;
 using WHC.Attachment.BLL;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
 using WHC.MVCWebMis.Controllers;
-using WHC.Pager.Entity;
-using WHC.Security.BLL;
-using WHC.Security.Entity;
+
+using WHC.WaterFeeWeb.DbServiceReference;
+
 namespace WHC.WaterFeeWeb.Controllers
 {
     public class ArcCustomerInfoController : BusinessController<Core.BLL.ArcCustomerInfo, Core.Entity.ArcCustomerInfo>
@@ -24,6 +21,68 @@ namespace WHC.WaterFeeWeb.Controllers
         {
             ViewBag.Title = "档案列表";
             return View();
+        }
+
+        public ActionResult ListJson_Server() {
+
+            var Strlevel = Request["WHC_Treelevel"];
+            var fuji = Request["WHC_Fuji"];
+            var Text = Request["WHC_Text"];
+            var ParentText = Request["WHC_TreePrentText"];
+
+            var custormerinfo = new Customer()
+            {
+                NvcName = Request["WHC_NvcName"] ?? "",
+                NvcAddr = Request["WHC_NvcAddr"] ?? "",
+                VcMobile = Request["WHC_VcMobile"] ?? ""
+            };
+
+            if (Strlevel == "1")
+            {
+                custormerinfo.NvcVillage = "所有小区";
+            };
+
+            if (Strlevel == "2")
+            {
+                custormerinfo.NvcVillage = Text;
+            }
+
+            if (Strlevel == "3")
+            {
+                custormerinfo.NvcVillage =  fuji ;
+                custormerinfo.VcBuilding =  Text ;
+            }
+
+            if (Strlevel == "4")
+            {
+                custormerinfo.NvcVillage =  ParentText ;
+                custormerinfo.VcBuilding=  fuji ;
+                custormerinfo.VcUnitNum =  Text ;
+            }
+       
+            //调用后台服务获取集中器信息
+            ServiceDbClient DbServer = new ServiceDbClient();
+
+            var dts = DbServer.ArcCustomer_Qry(0, custormerinfo);
+
+            int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
+            int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
+
+            DataTable dat = new DataTable();
+            //复制源的架构和约束
+            dat = dts.Clone();
+            // 清除目标的所有数据
+            dat.Clear();
+            //对数据进行分页
+            for (int i = (page - 1) * rows; i < page * rows && i < dts.Rows.Count; i++)
+            {
+                dat.ImportRow(dts.Rows[i]);
+            }
+            //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
+            int total = dts.Rows.Count;
+            var result = new { total = total, rows = dat };
+
+            return ToJsonContentDate(result);
         }
 
         public ActionResult ListJson()
@@ -106,11 +165,6 @@ namespace WHC.WaterFeeWeb.Controllers
             //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
             int total = dts.Rows.Count;
             var result = new { total = total, rows = dat };
-
-
-
-
-
 
             return ToJsonContentDate(result);
 
@@ -603,14 +657,13 @@ namespace WHC.WaterFeeWeb.Controllers
             var sqls = "select  DISTINCT NvcVillage,max(IntID)IntID  ,max(IntNo)IntNo,max(NvcName)NvcName,max(NvcAddr)NvcAddr,max(VcBuilding)VcBuilding,max(IntUnitNum)IntUnitNum,max(IntRoomNum)IntRoomNum,max(VcNameCode)VcNameCode,max(VcAddrCode)VcAddrCode,max(VcMobile)VcMobile,max(VcTelNo)VcTelNo,max(VcIDNo)VcIDNo,max(VcContractNo)VcContractNo,max(NvcInvName)NvcInvName,max(NvcInvAddr)NvcInvAddr ,max(IntNumber)IntNumber,max(IntPriceNo)IntPriceNo,max(NvcCustType)NvcCustType,max(IntUserID)IntUserID,max(IntStatus)IntStatus ,max(VcWechatNo)VcWechatNo,max(IntAccMode)IntAccMode ,max(IntHelper)IntHelper,max(DteOpen)DteOpen,max(DteCancel)DteCancel,max(DtCreate)DtCreate from ArcCustomerInfo where NvcVillage <>'' group by NvcVillage";
             var li = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.GetList(sqls);
 
-            var treeLists = new List<EasyTreeData>();
+            //var treeLists = new List<EasyTreeData>();
 
             var roots = new EasyTreeData();
             // roots.iconCls = "icon-organ";
             roots.id = "";
             roots.text = "所有小区";
             roots.state = "open";
-
             roots.children = new List<EasyTreeData>();
 
             foreach (var info in li)
@@ -644,9 +697,15 @@ namespace WHC.WaterFeeWeb.Controllers
                 treeList.Add(roots);
             else
                 treeList = roots.children;
-
             return ToJsonContentDate(treeList);
+        }
 
+
+        public ActionResult TreeCommunity_Server(int code)
+        {         
+          var treelist = new ServiceDbClient().ArcCustomer_TreeCommunity(code);
+            
+          return ToJsonContentDate(treelist);
         }
 
         public bool bolNum(string temp)

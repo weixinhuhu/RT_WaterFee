@@ -8,10 +8,12 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Services;
 using WHC.Attachment.BLL;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
 using WHC.Pager.Entity;
+using WHC.WaterFeeWeb.DbServiceReference;
 
 namespace WHC.WaterFeeWeb.Controllers
 {
@@ -57,13 +59,51 @@ namespace WHC.WaterFeeWeb.Controllers
 
         public ActionResult ListJson()
         {
-            string where = GetPagerCondition();
+            //string where = GetPagerCondition();
+            string where = "";
             PagerInfo pagerInfo = GetPagerInfo();
             var list = baseBLL.FindWithPager(where, pagerInfo);
 
             var result = new { total = pagerInfo.RecordCount, rows = list };
 
             return ToJsonContentDate(result);
+        }
+        public ActionResult ListJson_Server()           
+        {
+
+            var info = new Concentrator()
+            {
+                NvcName = Request["WHC_NvcName"] ?? "",
+                NvcAddr = Request["WHC_NvcAddr"] ?? "",
+                VcSimNo = Request["WHC_VcSimNo"] ?? "",
+                VcAddr = Request["WHC_VcAddr"] ?? ""
+            };
+          
+            //调用后台服务获取集中器信息
+            ServiceDbClient DbServer = new ServiceDbClient();
+             
+            var dts = DbServer.ArcConcentrator_Qry(0, info);       
+
+            int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
+
+            int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
+         
+            //复制源的架构和约束
+            var dat = dts.Clone();
+            // 清除目标的所有数据
+            dat.Clear();
+
+            //对数据进行分页
+            for (int i = (page - 1) * rows; i < page * rows && i < dts.Rows.Count; i++)
+            {
+                dat.ImportRow(dts.Rows[i]);
+            }
+            //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
+            int total = dts.Rows.Count;
+            var result = new { total = total, rows = dat };
+
+            return ToJsonContentDate(result);
+
         }
 
         public ActionResult ListByIntUpID(string intUpID)
@@ -102,7 +142,11 @@ namespace WHC.WaterFeeWeb.Controllers
 
         public ActionResult TreeJson()
         {
-            var listAll = BLLFactory<Core.BLL.ArcConcentratorInfo>.Instance.GetAll();
+            //   var listAll = BLLFactory<Core.BLL.ArcConcentratorInfo>.Instance.GetAll();
+
+            //调用后台服务获取集中器信息
+            ServiceDbClient DbServer = new ServiceDbClient();
+            var listAll = DbServer.ArcConcentrator_GetTree_Level(0).ToList();
 
             var children = new List<EasyTreeData>();
             var listFirst = listAll.Where(n => n.IntUpID == 0);
@@ -129,7 +173,7 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContentDate(treeList);
         }
 
-        private List<EasyTreeData> getSubItem(int intUpID, IEnumerable<Core.Entity.ArcConcentratorInfo> listAll)
+        private List<EasyTreeData> getSubItem(int intUpID, IEnumerable<Concentrator> listAll)
         {
             List<EasyTreeData> treeList = new List<EasyTreeData>();
             var arr = listAll.Where(n => n.IntUpID == intUpID);
@@ -608,6 +652,39 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContent(result);
         }
 
+        public  ActionResult Insert_server(Concentrator info)
+        {
+            //检查用户是否有权限，否则抛出MyDenyAccessException异常
+            base.CheckAuthorized(AuthorizeKey.InsertKey);
+
+            CommonResult result = new CommonResult();
+
+            info.IntEndCode = 0;
+
+            try
+            {
+                //调用后台服务获取集中器信息
+                ServiceDbClient DbServer = new ServiceDbClient();
+
+                var flg = DbServer.ArcConcentrator_Ins(info);
+              
+                if (flg=="0")
+                {                                  
+                    result.Success = true;                    
+                }
+                else
+                {
+                   result.ErrorMessage = flg;
+                   result.Success = false;
+                }
+            }
+            catch (Exception ex)
+            {              
+                result.ErrorMessage = ex.Message;
+            }
+            return ToJsonContent(result);
+        }
+
         [HttpPost]
         public new ActionResult Update(string id, Core.Entity.ArcConcentratorInfo info)
         {
@@ -659,6 +736,58 @@ namespace WHC.WaterFeeWeb.Controllers
             }
             return ToJsonContent(result);
         }
+
+        public  ActionResult Update_Server(string id, Concentrator info)
+        {
+            //检查用户是否有权限，否则抛出MyDenyAccessException异常
+            base.CheckAuthorized(AuthorizeKey.UpdateKey);
+
+            //赋值
+            info.IntID = Convert.ToInt32(id);
+           
+            CommonResult result = new CommonResult();
+            if (info.IntUpID == info.IntID)
+            {
+                result.ErrorMessage = "不能选择自己作为父级设备";
+                return ToJsonContent(result);
+            }
+            //判断当前 选择的父级 是否为当前设备下的子级
+            var listChilden = new List<int>();
+            GetChilden(info.IntID.ToString(), ref listChilden);
+            if (listChilden.Contains(info.IntUpID))
+            {
+                result.ErrorMessage = "父级设备不能是当前设备下的子级设备!请重新选择!";
+                return ToJsonContent(result);
+            }
+
+            //厂家编码
+            info.IntEndCode = 0;
+        
+            try
+            {
+                //调用后台服务获取集中器信息
+                ServiceDbClient DbServer = new ServiceDbClient();
+
+                var flg = DbServer.ArcConcentrator_Upd(info);
+
+                if (flg == "0")
+                {
+                    result.Success = true;
+                }
+                else
+                {
+                    result.ErrorMessage = flg;
+                    result.Success = false;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                result.ErrorMessage = ex.Message;
+            }
+            return ToJsonContent(result);
+        }
+
 
         private int GetLayerParent(string intID, DbTransaction dbTransaction)
         {

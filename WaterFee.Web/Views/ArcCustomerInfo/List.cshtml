@@ -19,6 +19,7 @@
             initDeptTreeview();
             var queryData = {
                 WHC_Deleted: "0"
+
             };//可添加一些预设条件
             InitGrid(queryData);//初始化Datagrid表格数据
             //价格属性
@@ -33,7 +34,7 @@
                 }
             });
 
-            InitArcConcentratorInfo();
+          //  InitArcConcentratorInfo();
             txtddlArcConcentratorInfo();
             txtddlPriceProperty();
             txtYFVcDesc();
@@ -42,29 +43,30 @@
 
         });
         var isAdd = false;
+
         //集中器
-        function InitArcConcentratorInfo() {
-            $('#ddlArcConcentratorInfo').combobox({
-                url: '/ArcConcentratorInfo/GetTreeJson',
-                valueField: 'IntID',
-                textField: 'NvcName',
-                required: true,
-                onSelect: function (record) {
-                    $.ajax({
-                        type: 'POST',
-                        url: '/ArcMeterInfo/FindMaxIntMPByIntConID',
-                        dataType: 'json',
-                        data: { IntConID: $('#ddlArcConcentratorInfo').combobox('getValue') },
-                        async: false,
-                        success: function (data) {
-                            if (data.Success && isAdd) {
-                                $("#meterIntMP").numberbox('setValue', data.Data1);
-                            }
-                        }
-                    });
-                }
-            });
-        }
+        //function InitArcConcentratorInfo() {
+        //    $('#ddlArcConcentratorInfo').combobox({
+        //        url: '/ArcConcentratorInfo/GetTreeJson',
+        //        valueField: 'IntID',
+        //        textField: 'NvcName',
+        //        required: true,
+        //        onSelect: function (record) {
+        //            $.ajax({
+        //                type: 'POST',
+        //                url: '/ArcMeterInfo/FindMaxIntMPByIntConID',
+        //                dataType: 'json',
+        //                data: { IntConID: $('#ddlArcConcentratorInfo').combobox('getValue') },
+        //                async: false,
+        //                success: function (data) {
+        //                    if (data.Success && isAdd) {
+        //                        $("#meterIntMP").numberbox('setValue', data.Data1);
+        //                    }
+        //                }
+        //            });
+        //        }
+        //    });
+        //}
 
         function InputNvcName(obj) {
             $("#addNvcInvName").val($(obj).val());
@@ -73,7 +75,7 @@
         //实现对DataGird控件的绑定操作
         function InitGrid(queryData) {
             $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
-                url: '/ArcCustomerInfo/ListJson',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                url: '/ArcCustomerInfo/ListJson_Server',   //指向后台的Action来获取当前用户的信息的Json格式的数据
                 title: '客户档案',
                 iconCls: 'icon-view',
                 height: 650,
@@ -98,8 +100,8 @@
                     { title: '客户编号', field: 'IntNo', width: 80, sortable: true },
                     { title: '客户姓名', field: 'NvcName', width: 100, sortable: true },
                     { title: '通信地址', field: 'bVcAddr', width: 100, sortable: true },
-                    { title: '计量点', field: 'IntMP', width: 100, sortable: true, hidden: true },
-                    { title: '集中器', field: 'eNvcName', width: 100, sortable: true, hidden: true },
+                    //{ title: '计量点', field: 'IntMP', width: 100, sortable: true, hidden: true },
+                    //{ title: '集中器', field: 'eNvcName', width: 100, sortable: true, hidden: true },
                     {
                         title: '阀门状态', field: 'VcDesc', width: 80, sortable: true
                     },
@@ -124,7 +126,7 @@
 
                     },
                     {
-                        title: '状态', field: 'IntStatus', width: 80, sortable: true, formatter: function (val, rowdata, index) {
+                        title: '状态', field: 'IntStatus', width: 80, sortable: true, formatter: function (val) {
                             //客户状态0:未开户 1.开户 2.用水 3.停用 4.销户
                             if (val == 0) return "未开户";
                             if (val == 1) return "开户";
@@ -136,14 +138,15 @@
                     },
                     { title: '操作员', field: 'IntUserID', width: 80, sortable: true },
                     { title: '开户日期', field: 'DteOpen', width: 100, sortable: true },
-                    { title: '销户日期', field: 'DteCancel', width: 100, sortable: true },
+                    {
+                        title: '销户日期', field: 'DteCancel', width: 100,  align: 'center',sortable: true, formatter: function (val) {                           
+                            return val = "9999-09-09 00:00:00" ? "-" : val;
+                        }
+                    },
                     { title: '建立时间', field: 'DtCreate', width: 100, sortable: true }
                     //,{ title: '', field: 'IntHelper', width: 80, sortable: true }
                 ]],
-                onLoadSuccess: function () {
-
-                },
-
+               
                 toolbar: [{
                     id: 'btnAdd',
                     text: '添加',
@@ -190,19 +193,12 @@
                 valueField: 'id',
                 textField: 'text',
                 required: true,
-                onSelect: function (record) {
-
-                }
             });
             $('#ddlPriceProperty2').combobox({
                 url: '/PriceProperty/GetTreeJson',
                 valueField: 'id',
                 textField: 'text',
                 required: true,
-
-                onSelect: function (record) {
-
-                }
             });
         }
 
@@ -319,7 +315,6 @@
             $("#txtddlPriceProperty2").next(".numberbox").hide();
             //隐藏阀门策略编码
             $("#txtIntAutoSwitch").next(".numberbox").hide();
-
             //隐藏集中器
             $("#ddlArcConcentratorInfo").next().hide();
             //隐藏采样点
@@ -391,13 +386,9 @@
         }
 
         function Update() {
-
-            var s = $("#txtddlPriceProperty").textbox("getValue");
-            var c = $("#txtddlPriceProperty2").numberbox("getValue");
-            if (s == c) {
+            if ( $("#txtddlPriceProperty").textbox("getValue") == $("#txtddlPriceProperty2").numberbox("getValue")) {
                 return $.messager.alert("提示", "价格属性和混合价格不能一致。", 'warning');
             }
-
             var ddlPriceProperty = $("#ddlPriceProperty").combobox("getText");
             if (ddlPriceProperty != OldddlPriceProperty) {
                 con = confirm("确定修改价格属性？？？");
@@ -408,10 +399,8 @@
 
             //判断表地址长度
             if ($("#meterVcAddr").val().length < 14) {            
-                 $("#meterVcAddr").val(addzone($("#meterVcAddr").val(),14)); 
-                // return $.messager.alert("提示", "通讯地址长度应为14位。", 'warning')
+                 $("#meterVcAddr").val(addzone($("#meterVcAddr").val(),14));                
             }
-
 
             //判断表单的信息是否通过验证
             var validate = $("#ffCustomerInfo").form('validate');
@@ -486,7 +475,7 @@
         //修改或查看明细信息（绑定显示数据）
         function ShowEditOrViewDialog(view) {
             //隐藏混合价格属性
-            $("#HHddlPriceProperty").next(".combo").hide();
+            $("#HHddlPriceProperty").next(".combo").hide(); 
             //隐藏采集器编码
             $("#txtddlArcConcentratorInfo").next().hide();
             //隐藏价格属性编码
@@ -703,6 +692,7 @@
                     $("#txtddlPriceProperty2").numberbox("setValue", $("#ddlPriceProperty2").combobox("getValue"));
                 }
             });
+
             $("#IntAutoSwitch").combobox({
                 "onChange": function () {
                     $("#txtIntAutoSwitch").numberbox("setValue", $("#IntAutoSwitch").combobox("getValue"));
@@ -777,12 +767,14 @@
             $("#loading").show();
 
             var queryData = "";
-       
+
+            //厂家编码
+            var code = 0;
+
             $('#treeDept1').tree({
-                url: '/ArcCustomerInfo/TreeCommunity',
+                url: '/ArcCustomerInfo/TreeCommunity_Server?code='+code,
                 onBeforeSelect: function (node) {
                     fujiText = node.text;
-
                 },
                 onClick: function (node) {
 
@@ -827,10 +819,6 @@
        
     </script>
 
-    <script>
-
-
-/**/</script>
     <style>
         table.view {
             border: 1px solid #A8CFEB;

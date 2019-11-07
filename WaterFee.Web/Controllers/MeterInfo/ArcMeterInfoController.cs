@@ -1115,6 +1115,7 @@ namespace WHC.WaterFeeWeb.Controllers
             sb.AppendFormat(OrdertType + ",");
             sb.AppendFormat(" '" + DteStart + "','" + DteEnd + "',@sReturn output ");
             var dt = BLLFactory<Core.BLL.ArcCustomerInfo>.Instance.SqlTable(sb.ToString());
+
             int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
             int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
 

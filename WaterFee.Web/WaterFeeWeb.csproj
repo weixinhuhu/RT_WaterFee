@@ -222,25 +222,30 @@
     <Compile Include="Commons\Report\LocalReportPrinter.cs" />
     <Compile Include="Commons\Report\ProcessingThread.cs" />
     <Compile Include="Commons\Report\ReportHelper.cs" />
-    <Compile Include="Controllers\DepartmentController.cs" />
-    <Compile Include="Controllers\AccessController.cs" />
-    <Compile Include="Controllers\AccDepositDetailController.cs" />
-    <Compile Include="Controllers\AccDepositController.cs" />
-    <Compile Include="Controllers\AccPaymentController.cs" />
-    <Compile Include="Controllers\ArcCalcReadingController.cs" />
-    <Compile Include="Controllers\CountFeeController.cs" />
-    <Compile Include="Controllers\AccDebtController.cs" />
-    <Compile Include="Controllers\MessageController.cs" />
-    <Compile Include="Controllers\PriceCalcController.cs" />
-    <Compile Include="Controllers\StatController.cs" />
-    <Compile Include="Controllers\SysManageController.cs" />
-    <Compile Include="Controllers\FeeController.cs" />
-    <Compile Include="Controllers\PriceListController.cs" />
-    <Compile Include="Controllers\PriceTypeController.cs" />
-    <Compile Include="Controllers\PricePropertyController.cs" />
-    <Compile Include="Controllers\ArcConcentratorInfoController.cs" />
-    <Compile Include="Controllers\ArcMeterReadingController.cs" />
-    <Compile Include="Controllers\ArcMeterInfoController.cs" />
+    <Compile Include="Connected Services\DbServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\CustormerInfo\DepartmentController.cs" />
+    <Compile Include="Controllers\Utils\AccessController.cs" />
+    <Compile Include="Controllers\FeeInfo\AccDepositDetailController.cs" />
+    <Compile Include="Controllers\FeeInfo\AccDepositController.cs" />
+    <Compile Include="Controllers\FeeInfo\AccPaymentController.cs" />
+    <Compile Include="Controllers\Utils\ArcCalcReadingController.cs" />
+    <Compile Include="Controllers\FeeInfo\CountFeeController.cs" />
+    <Compile Include="Controllers\FeeInfo\AccDebtController.cs" />
+    <Compile Include="Controllers\Utils\MessageController.cs" />
+    <Compile Include="Controllers\PriceInfo\PriceCalcController.cs" />
+    <Compile Include="Controllers\Utils\StatController.cs" />
+    <Compile Include="Controllers\Utils\SysManageController.cs" />
+    <Compile Include="Controllers\FeeInfo\FeeController.cs" />
+    <Compile Include="Controllers\PriceInfo\PriceListController.cs" />
+    <Compile Include="Controllers\PriceInfo\PriceTypeController.cs" />
+    <Compile Include="Controllers\PriceInfo\PricePropertyController.cs" />
+    <Compile Include="Controllers\ConcentratorInfo\ArcConcentratorInfoController.cs" />
+    <Compile Include="Controllers\MeterInfo\ArcMeterReadingController.cs" />
+    <Compile Include="Controllers\MeterInfo\ArcMeterInfoController.cs" />
     <Compile Include="Controllers\Base\BaseControllerNew.cs" />
     <Compile Include="Controllers\Base\BusinessControllerNew.cs" />
     <Compile Include="Controllers\Base\IconController.cs" />
@@ -251,18 +256,18 @@
     <Compile Include="Controllers\CRM\ContactController.cs" />
     <Compile Include="Controllers\CRM\ContactGroupController.cs" />
     <Compile Include="Controllers\CRM\CustomerController.cs" />
-    <Compile Include="Controllers\ArcCustomerInfoController.cs" />
-    <Compile Include="Controllers\DaClientInfoController.cs" />
+    <Compile Include="Controllers\CustormerInfo\ArcCustomerInfoController.cs" />
+    <Compile Include="Controllers\Utils\DaClientInfoController.cs" />
     <Compile Include="Controllers\DictData\CityController.cs" />
     <Compile Include="Controllers\DictData\DictDataController.cs" />
     <Compile Include="Controllers\DictData\DictTypeController.cs" />
     <Compile Include="Controllers\Base\ErrorController.cs" />
     <Compile Include="Controllers\DictData\DistrictController.cs" />
     <Compile Include="Controllers\DictData\ProvinceController.cs" />
-    <Compile Include="Controllers\FileUploadController.cs" />
+    <Compile Include="Controllers\Utils\FileUploadController.cs" />
     <Compile Include="Controllers\Security\FunctionController.cs" />
     <Compile Include="Controllers\Base\HomeController.cs" />
-    <Compile Include="Controllers\InformationController.cs" />
+    <Compile Include="Controllers\Utils\InformationController.cs" />
     <Compile Include="Controllers\Security\LoginController.cs" />
     <Compile Include="Controllers\Security\LoginLogController.cs" />
     <Compile Include="Controllers\Security\MenuController.cs" />
@@ -278,7 +283,7 @@
     <Compile Include="Models\MenuData.cs" />
     <Compile Include="Models\TreeData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Controllers\Sqlhelp.cs" />
+    <Compile Include="Controllers\Utils\Sqlhelp.cs" />
     <Compile Include="UserDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -289,6 +294,13 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <None Include="Connected Services\DbServiceReference\Service.disco" />
+    <None Include="Connected Services\DbServiceReference\configuration91.svcinfo" />
+    <None Include="Connected Services\DbServiceReference\configuration.svcinfo" />
+    <None Include="Connected Services\DbServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Content\icons-customed\16\001%281%29.gif" />
     <Content Include="Content\icons-customed\16\001%282%29.gif" />
     <Content Include="Content\icons-customed\16\001.gif" />
@@ -5062,7 +5074,30 @@
     <Content Include="Content\layui\font\iconfont.eot" />
     <Content Include="Content\layui\font\iconfont.ttf" />
     <Content Include="Content\layui\font\iconfont.woff" />
+    <None Include="Connected Services\DbServiceReference\Service.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\DbServiceReference\Service1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\DbServiceReference\Service2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\DbServiceReference\Service3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\DbServiceReference\Service4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\DbServiceReference\ServiceDb.wsdl" />
+    <Content Include="Connected Services\DbServiceReference\WHC.WaterFeeWeb.DbServiceReference.Concentrator.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\DbServiceReference\WHC.WaterFeeWeb.DbServiceReference.EasyTreeData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
     <None Include="Content\zTree_v3-3.5.28.zip" />
+    <Content Include="Properties\DataSources\System.Data.DataTable.datasource" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -5262,6 +5297,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Report\WHC.UserReport.rdlc" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\DbServiceReference\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
