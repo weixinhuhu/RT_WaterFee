@@ -18,7 +18,7 @@ namespace WHC.WaterFeeWeb
         {
             public const string CustomerNoNotExist = "ERR-2001:客户编号不存在!<br/>";
             public const string ConcentratorNoNotExist = "ERR-2002:采集器编号不存在!<br/>";
-            public const string ArcMeterInfoNotExist = "ERR-2003:电表不存在!<br/>";
+            public const string ArcMeterInfoNotExist = "ERR-2003:表不存在!<br/>";
 
         }
 

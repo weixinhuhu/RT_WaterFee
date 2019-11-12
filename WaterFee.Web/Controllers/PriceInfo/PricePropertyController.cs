@@ -12,6 +12,7 @@ using WHC.Attachment.BLL;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
 using WHC.Pager.Entity;
+using WHC.WaterFeeWeb.DbServiceReference;
 
 namespace WHC.WaterFeeWeb.Controllers
 {
@@ -49,30 +50,25 @@ namespace WHC.WaterFeeWeb.Controllers
                     text = item.NvcDesc,
                     data = item
                 });
-            }
-           // tree.Add(new TreeData { id="0",text="0"});
+            }        
             return ToJsonContentDate(tree);
+        }
+
+        public ActionResult GetTreeJson_Server(){
+            ServiceDbClient DbServer = new ServiceDbClient();
+            var list = DbServer.PriceProperty_GetTreeJson();                      
+            return ToJsonContentDate(list);
         }
 
         public override ActionResult Insert(Core.Entity.PriceProperty info)
         {
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.InsertKey);
-
-            CommonResult result = new CommonResult();
+            Framework.Commons.CommonResult result = new Framework.Commons.CommonResult();
             try
-            {
-                //string filter = string.Format("Name='{0}' ", info.Name);
-                //bool isExist = BLLFactory<User>.Instance.IsExistRecord(filter);
-                //if (isExist)
-                //{
-                //    result.ErrorMessage = "指定用户名重复，请重新输入！";
-                //}
-                //else
-                //{
+            {             
                 info.IntNo = BLLFactory<Core.BLL.PriceProperty>.Instance.GetMaxIntNo();
-                result.Success = baseBLL.Insert(info);
-                //}
+                result.Success = baseBLL.Insert(info);                
             }
             catch (Exception ex)
             {
@@ -88,7 +84,7 @@ namespace WHC.WaterFeeWeb.Controllers
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.UpdateKey);
 
-            CommonResult result = new CommonResult();
+            Framework.Commons.CommonResult result = new Framework.Commons.CommonResult();
             try
             {
                 result.Success = baseBLL.Update(info, info.IntNo);
@@ -126,7 +122,7 @@ where PriceCalc.IntPropertyNo=" + IntPropertyNo;
 
         public ActionResult AddOrUpdate(Core.Entity.PriceProperty info)
         {
-            CommonResult result = new CommonResult();
+            Framework.Commons.CommonResult result = new Framework.Commons.CommonResult();
             var dbTran = BLLFactory<Core.BLL.PriceProperty>.Instance.CreateTransaction();
             try
             {

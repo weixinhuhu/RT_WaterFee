@@ -24,10 +24,11 @@
   <Metadata>
     <MetadataFile FileName="Service.disco" MetadataType="Disco" ID="91a716e1-86e7-45fd-86eb-b0c554e2edac" SourceId="1" SourceUrl="http://118.190.199.54:9009/DbServer/Service.svc?disco" />
     <MetadataFile FileName="Service.xsd" MetadataType="Schema" ID="837ca5e9-da86-4c66-bdf1-dc02b1d157f6" SourceId="1" SourceUrl="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd1" />
-    <MetadataFile FileName="Service1.xsd" MetadataType="Schema" ID="8e7c6ef7-9773-4e05-99cd-55dba0d51201" SourceId="1" SourceUrl="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd3" />
-    <MetadataFile FileName="Service2.xsd" MetadataType="Schema" ID="0198819f-f51a-4ea2-94b8-f7818062a79d" SourceId="1" SourceUrl="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd2" />
     <MetadataFile FileName="ServiceDb.wsdl" MetadataType="Wsdl" ID="bc493cde-fcac-450e-ac60-54c9fa28af40" SourceId="1" SourceUrl="http://118.190.199.54:9009/DbServer/Service.svc?wsdl" />
+    <MetadataFile FileName="Service2.xsd" MetadataType="Schema" ID="0198819f-f51a-4ea2-94b8-f7818062a79d" SourceId="1" SourceUrl="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd2" />
+    <MetadataFile FileName="Service5.xsd" MetadataType="Schema" ID="c266264b-26b7-4c27-bdd3-c0ba78205f9a" SourceId="1" SourceUrl="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd5" />
     <MetadataFile FileName="Service3.xsd" MetadataType="Schema" ID="f3b039e2-8bf3-4144-b9ac-98fec210a2df" SourceId="1" SourceUrl="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd0" />
+    <MetadataFile FileName="Service1.xsd" MetadataType="Schema" ID="8e7c6ef7-9773-4e05-99cd-55dba0d51201" SourceId="1" SourceUrl="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd3" />
     <MetadataFile FileName="Service4.xsd" MetadataType="Schema" ID="7917c8d6-20a2-479d-b34d-b5960d197504" SourceId="1" SourceUrl="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd4" />
   </Metadata>
   <Extensions>

@@ -5089,11 +5089,20 @@
     <None Include="Connected Services\DbServiceReference\Service4.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\DbServiceReference\Service5.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Connected Services\DbServiceReference\ServiceDb.wsdl" />
     <Content Include="Connected Services\DbServiceReference\WHC.WaterFeeWeb.DbServiceReference.Concentrator.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
     <Content Include="Connected Services\DbServiceReference\WHC.WaterFeeWeb.DbServiceReference.EasyTreeData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\DbServiceReference\WHC.WaterFeeWeb.DbServiceReference.PricePropertyTree.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\DbServiceReference\WHC.WaterFeeWeb.DbServiceReference.CommonResult.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
     <None Include="Content\zTree_v3-3.5.28.zip" />

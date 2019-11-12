@@ -17,7 +17,7 @@
 
         $(function () {
 
-            $('#addIntConID').next(".numberbox").hide();
+          
             var queryData = {
 
             };//可添加一些预设条件
@@ -27,30 +27,14 @@
             InitPriceProperty();
             //集中器
             InitArcConcentratorInfo();
-
-            BindSearchEvent();//绑定查询按钮事件
-            //BindSearchDeletedEvent();//查看已删除记录
-            //BindAddEvent();   //绑定添加按钮的事件
-            //BindEditEvent();  //绑定修改按钮的事件
+            BindSearchEvent();//绑定查询按钮事件           
         });
-        //集中器
-        function InitArcConcentratorInfo() {
-            $('#ddlArcConcentratorInfo').combobox({
-                url: '/ArcConcentratorInfo/GetTreeJson',
-                valueField: 'IntID',
-                textField: 'NvcName',
-                required: true,
-                onSelect: function (record) {
-
-                }
-            });
-        }
-
+       
         //实现对DataGird控件的绑定操作
         var pageSize;
         function InitGrid(queryData) {
             $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
-                url: '/ArcMeterInfo/ListJson',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                url: '/ArcMeterInfo/ListJson_Server',   //指向后台的Action来获取当前用户的信息的Json格式的数据
                 title: '水表档案',
                 iconCls: 'icon-view',
                 height: 650,
@@ -208,11 +192,6 @@
             });
         }
 
-        //绑定选择按钮的事件
-        function ShowDeletedList() {
-
-        }
-
         //实现删除数据的方法
         function Delete() {
             //得到用户选择的数据的ID
@@ -260,8 +239,6 @@
         //弹出新增对话框
         function ShowAddDialog() {
             isAddOrEdit = 'add';//新增对话框标识
-            //CKEDITOR.instances.Content.setData('');  //清空编辑器的数据
-
             setMeterInfoDefault();
             $("#DivAdd").dialog('open').dialog('setTitle', '添加信息');
             BindAddEvent();

@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Services;
-using WHC.Attachment.BLL;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
 using WHC.Pager.Entity;
 using WHC.WaterFeeWeb.DbServiceReference;
+using CommonResult = WHC.Framework.Commons.CommonResult;
 
 namespace WHC.WaterFeeWeb.Controllers
 {
@@ -357,7 +354,7 @@ namespace WHC.WaterFeeWeb.Controllers
 
         public ActionResult ValidateData()
         {
-            CommonResult result = new CommonResult() { Success = true };
+            Framework.Commons.CommonResult result = new Framework.Commons.CommonResult() { Success = true };
             try
             {
                 var fn = Request["fn"];
@@ -392,7 +389,7 @@ namespace WHC.WaterFeeWeb.Controllers
             }
             return ToJsonContent(result);
         }
-
+    
         private List<SqlParameter> GetParams(string fn, int order)
         {
             var listPara = new List<SqlParameter>();

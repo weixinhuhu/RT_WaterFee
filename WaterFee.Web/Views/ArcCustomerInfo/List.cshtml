@@ -13,60 +13,29 @@
     <script src="~/Scripts/ComponentUtil.js"></script>
 
     <script type="text/javascript">
-        var isAddOrEdit = 'add';//标识是新增还是编辑对话框弹出，用于删除附件的操作
+        //标识是新增还是编辑对话框弹出，用于删除附件的操作
+        var isAddOrEdit = 'add';
 
-        $(function () {
-            initDeptTreeview();
-            var queryData = {
-                WHC_Deleted: "0"
-
-            };//可添加一些预设条件
-            InitGrid(queryData);//初始化Datagrid表格数据
+        $(function () {       
+            //初始化导航树
+            initDeptTreeview();  
+            var queryData = {};
+            //初始化Datagrid表格数据
+            InitGrid(queryData);
             //价格属性
             InitPriceProperty();
-
-            BindSearchEvent();//绑定查询按钮事件
-
-            option();
-
-            $("#divTab").tabs({
-                onSelect: function (tab, index) {
-                }
-            });
-
-          //  InitArcConcentratorInfo();
-            txtddlArcConcentratorInfo();
             txtddlPriceProperty();
+            //账务方式,阀门策略
+            option();           
+            //账务编码        
             txtYFVcDesc();
+            //价格属性事件
             meterIntChannal();
             $("#grid").datagrid("");
-
+            //绑定查询按钮事件
+            BindSearchEvent();
         });
         var isAdd = false;
-
-        //集中器
-        //function InitArcConcentratorInfo() {
-        //    $('#ddlArcConcentratorInfo').combobox({
-        //        url: '/ArcConcentratorInfo/GetTreeJson',
-        //        valueField: 'IntID',
-        //        textField: 'NvcName',
-        //        required: true,
-        //        onSelect: function (record) {
-        //            $.ajax({
-        //                type: 'POST',
-        //                url: '/ArcMeterInfo/FindMaxIntMPByIntConID',
-        //                dataType: 'json',
-        //                data: { IntConID: $('#ddlArcConcentratorInfo').combobox('getValue') },
-        //                async: false,
-        //                success: function (data) {
-        //                    if (data.Success && isAdd) {
-        //                        $("#meterIntMP").numberbox('setValue', data.Data1);
-        //                    }
-        //                }
-        //            });
-        //        }
-        //    });
-        //}
 
         function InputNvcName(obj) {
             $("#addNvcInvName").val($(obj).val());
@@ -74,8 +43,9 @@
 
         //实现对DataGird控件的绑定操作
         function InitGrid(queryData) {
-            $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
-                url: '/ArcCustomerInfo/ListJson_Server',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+            $('#grid').datagrid({
+                //指向后台的Action来获取当前用户的信息的Json格式的数据
+                url: '/ArcCustomerInfo/ListJson_Server',            
                 title: '客户档案',
                 iconCls: 'icon-view',
                 height: 650,
@@ -88,12 +58,15 @@
                 pageSize: 50,
                 pageList: [50, 100, 200],
                 rownumbers: true,
-                //sortName: 'ID',    //根据某个字段给easyUI排序
+                //根据某个字段给easyUI排序
+                //sortName: 'ID',    
                 sortOrder: 'asc',
                 remoteSort: false,
                 singleSelect: true,
-                //idField: 'ID', //不设置idField，翻页不会记录选择
-                queryParams: queryData,  //异步查询的参数
+                //不设置idField，翻页不会记录选择
+                //idField: 'ID',
+                //异步查询的参数
+                queryParams: queryData,  
                 columns: [[
                     //{ field: 'ck', checkbox: true },   //选择
                     { title: 'ID', field: 'IntID', width: 80, sortable: true, hidden: true },
@@ -108,8 +81,8 @@
                     { title: '客户地址', field: 'NvcAddr', width: 120, sortable: true },
                     { title: '客户小区', field: 'NvcVillage', width: 80, sortable: true },
                     { title: '客户楼栋', field: 'VcBuilding', width: 80, sortable: true },
-                    { title: '单元编号', field: 'IntUnitNum', width: 80, sortable: true },
-                    { title: '门牌编号', field: 'IntRoomNum', width: 80, sortable: true },
+                    { title: '单元编号', field: 'VcUnitNum', width: 80, sortable: true },
+                    { title: '门牌编号', field: 'VcRoomNum', width: 80, sortable: true },
                     { title: '姓名查询码', field: 'VcNameCode', width: 80, sortable: true },
                     { title: '地址查询码', field: 'VcAddrCode', width: 80, sortable: true },
                     { title: '移动电话', field: 'VcMobile', width: 80, sortable: true },
@@ -139,14 +112,14 @@
                     { title: '操作员', field: 'IntUserID', width: 80, sortable: true },
                     { title: '开户日期', field: 'DteOpen', width: 100, sortable: true },
                     {
-                        title: '销户日期', field: 'DteCancel', width: 100,  align: 'center',sortable: true, formatter: function (val) {                           
+                        title: '销户日期', field: 'DteCancel', width: 100, align: 'center', sortable: true, formatter: function (val) {
                             return val = "9999-09-09 00:00:00" ? "-" : val;
                         }
                     },
                     { title: '建立时间', field: 'DtCreate', width: 100, sortable: true }
                     //,{ title: '', field: 'IntHelper', width: 80, sortable: true }
                 ]],
-               
+
                 toolbar: [{
                     id: 'btnAdd',
                     text: '添加',
@@ -159,7 +132,6 @@
                     text: '修改',
                     iconCls: 'icon-edit',
                     handler: function () {
-
                         ShowEditOrViewDialog();//实现修改记录的方法
                     }
                 },
@@ -175,6 +147,7 @@
                 onDblClickRow: function (rowIndex, rowData) {
                     $('#grid').datagrid('uncheckAll');
                     $('#grid').datagrid('checkRow', rowIndex);
+                   
                     ShowEditOrViewDialog();
                 }
             });
@@ -189,27 +162,24 @@
 
         function InitPriceProperty() {
             $('#ddlPriceProperty').combobox({
-                url: '/PriceProperty/GetTreeJson',
+                url: '/PriceProperty/GetTreeJson_Server',
                 valueField: 'id',
                 textField: 'text',
                 required: true,
             });
             $('#ddlPriceProperty2').combobox({
-                url: '/PriceProperty/GetTreeJson',
-                valueField: 'id',
-                textField: 'text',
-                required: true,
-            });
+                            url: '/PriceProperty/GetTreeJson_Server',
+                            valueField: 'id',
+                            textField: 'text',
+                            required: true,
+                        });    
         }
 
         //绑定搜索按钮的的点击事件
         function BindSearchEvent() {
             //按条件进行查询数据，首先我们得到数据的值
             $("#btnSearch").click(function () {
-                //得到用户输入的参数
-                //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
-                //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
-
+                //得到用户输入的参数            
                 var queryData = {
                     WHC_IntNo: $("#txtIntNo").val(),
                     WHC_NvcName: $("#txtNvcName").val(),
@@ -221,90 +191,9 @@
                 return false;
             });
         }
-        //绑定搜索按钮的的点击事件
-        function BindSearchDeletedEvent() {
-            //按条件进行查询数据，首先我们得到数据的值
-            $("#btnSearchDeleted").click(function () {
-                var queryData = {
-                    WHC_Deleted: "1"
-                }
-                //将值传递给
-                InitGrid(queryData);
-                return false;
-            });
-        }
-
-        //绑定选择按钮的事件
-        function ShowDeletedList() {
-            $.showWindow({
-                title: '用户删除记录',
-                useiframe: true,
-                width: 1024,
-                height: 600,
-                content: 'url:/User/DeletedList',
-                data: { datagrid: $('#grid') },
-                buttons: [{
-                    text: '关闭',
-                    iconCls: 'icon-ok',
-                    handler: 'doOK' //此方法在弹出页面中
-                }, {
-                    text: '取消',
-                    iconCls: 'icon-cancel',
-                    handler: function (win) {
-                        win.close();
-                    }
-                }]
-            });
-        }
-
-        //实现删除数据的方法
-        function Delete() {
-            //得到用户选择的数据的ID
-            var rows = $("#grid").datagrid("getSelections");
-            if (rows.length >= 1) {
-                //遍历出用户选择的数据的信息，这就是用户用户选择删除的用户ID的信息
-                var ids = "";   //1,2,3,4,5
-                for (var i = 0; i < rows.length; i++) {
-                    ids += rows[i].ID + ",";
-                }
-                //最后去掉最后的那一个,
-                ids = ids.substring(0, ids.length - 1);
-                var postData = { Ids: ids };
-
-                //然后确认发送异步请求的信息到后台删除数据
-                $.messager.confirm("删除确认", "您确认删除选定的记录吗？", function (action) {
-                    if (action) {
-                        $.ajax({
-                            type: 'POST',
-                            url: '/User/DeletebyIds',
-                            dataType: 'json',
-                            data: postData,
-                            success: function (data) {
-                                if (data.Success) {
-                                    showTips("删除选定的记录成功");
-
-                                    $("#grid").datagrid("reload");
-                                    //当删除完成之后，第二次删除的时候还记得上次的信息，这样是不可以的，所以我们需要清除第一次的信息
-                                    rows.length = "";//第一种方法
-                                    $("#grid").datagrid("clearSelections");//第二种方法
-                                }
-                                else {
-                                    showError("操作失败：" + data.ErrorMessage, 3000);
-                                }
-                            }
-                        });
-                    }
-                });
-            }
-            else {
-                $.messager.alert("提示", "请选择你要删除的数据");
-            }
-        }
-
+        
         //弹出新增对话框
         function ShowAddDialog() {
-            //隐藏混合价格属性
-            $("#HHddlPriceProperty").next(".combo").hide();
             //隐藏采集器编码
             $("#txtddlArcConcentratorInfo").next().hide();
             //隐藏价格属性编码
@@ -322,15 +211,13 @@
 
             $("#ffCustomerInfo").form("clear");
             setMeterInfoDefault();
+             //允许修改通讯地址
+            $('#meterVcAddr').validatebox('enableValidation');
+            $("#meterVcAddr").attr("readonly", false);
             $("#DivAdd").dialog('open').dialog('setTitle', '添加信息');
-            //$("#DivAdd").window('open') ;
             BindAddEvent();
-            //隐藏混合价格属性
-            $("#HHddlPriceProperty").next(".combo").hide();
-
             isAdd = true;
             return;
-
         }
 
         //绑定添加按钮的事件
@@ -341,11 +228,10 @@
 
         //补0
         function addzone(num, length) {
-        return (Array(length).join('0') + num).slice(-length);
+            return (Array(length).join('0') + num).slice(-length);
         }
 
         function Insert() {
-
             var s = $("#txtddlPriceProperty").textbox("getValue");
             var c = $("#txtddlPriceProperty2").numberbox("getValue");
             if (s == c) {
@@ -354,21 +240,19 @@
 
             //判断表地址长度
             if ($("#meterVcAddr").val().length < 14) {
-             $("#meterVcAddr").val(addzone($("#meterVcAddr").val(),14));  
-             //return $.messager.alert("提示", "通讯地址长度应为14位。", 'warning')
+                $("#meterVcAddr").val(addzone($("#meterVcAddr").val(), 14));
             }
-            
+
             //判断表单的信息是否通过验证
             var validate = $("#ffCustomerInfo").form('validate');
             if (validate == false) {
-                 return $.messager.alert("提示", "请校验数据是否填写完整。", 'warning')
+                return $.messager.alert("提示", "请校验数据是否填写完整。", 'warning')
                 return false;
             }
-
             var customerInfo = JSON.stringify($("#ffCustomerInfo").serializeJSON());
             var meterInfo = JSON.stringify($("#ffMeterInfo").serializeJSON());
             var postData = { CustomerInfo: customerInfo, MeterInfo: meterInfo };
-            $.post("/ArcCustomerInfo/Insert2", postData, function (json) {
+            $.post("/ArcCustomerInfo/Insert_Server", postData, function (json) {
                 var data = $.parseJSON(json);
                 if (data.Success) {
                     //添加成功  1.关闭弹出层，2.刷新DataGird
@@ -386,7 +270,7 @@
         }
 
         function Update() {
-            if ( $("#txtddlPriceProperty").textbox("getValue") == $("#txtddlPriceProperty2").numberbox("getValue")) {
+            if ($("#txtddlPriceProperty").textbox("getValue") == $("#txtddlPriceProperty2").numberbox("getValue")) {
                 return $.messager.alert("提示", "价格属性和混合价格不能一致。", 'warning');
             }
             var ddlPriceProperty = $("#ddlPriceProperty").combobox("getText");
@@ -398,8 +282,8 @@
             }
 
             //判断表地址长度
-            if ($("#meterVcAddr").val().length < 14) {            
-                 $("#meterVcAddr").val(addzone($("#meterVcAddr").val(),14));                
+            if ($("#meterVcAddr").val().length < 14) {
+                $("#meterVcAddr").val(addzone($("#meterVcAddr").val(), 14));
             }
 
             //判断表单的信息是否通过验证
@@ -412,7 +296,7 @@
             var customerInfo = JSON.stringify($("#ffCustomerInfo").serializeJSON());
             var meterInfo = JSON.stringify($("#ffMeterInfo").serializeJSON());
             var postData = { CustomerInfo: customerInfo, MeterInfo: meterInfo };
-            $.post("/ArcCustomerInfo/Update2", postData, function (json) {
+            $.post("/ArcCustomerInfo/Update_Server", postData, function (json) {
                 var data = $.parseJSON(json);
                 if (data.Success) {
                     //添加成功  1.关闭弹出层，2.刷新DataGird
@@ -436,46 +320,11 @@
             });
         }
 
-        //修改或查看明细信息（绑定显示数据）
-        function ShowMeterList() {
-            //首先取出来用户选择的数据的ID
-            var rows = $("#grid").datagrid("getSelections");
-            //首先取出来值判断用户只能选择一个
-            if (rows.length == 0) {
-                $.messager.alert("提示", "请选择一条记录", "error");
-                return;
-            }
-            else if (rows.length > 1) {
-                $.messager.alert("提示", "每次只能修改/查看一条记录，你已经选择了<font color='red'  size='6'>" + rows.length + "</font>条", "error");
-                return;
-            }
-
-            //处理查看详细
-            parent.$.showWindow({
-                title: '查看采集器下的电表',
-                useiframe: true,
-                width: '88%',
-                height: '98%',
-                content: 'url:/CustomerInfo/ShowMeterList',
-                data: { datagrid: $('#grid') },
-                buttons: [{
-                    text: '关闭',
-                    iconCls: 'icon-ok',
-                    handler: 'doOK' //此方法在弹出页面中
-                }, {
-                    text: '取消',
-                    iconCls: 'icon-cancel',
-                    handler: function (win) {
-                        win.close();
-                    }
-                }]
-            });
-        }
         var OldddlPriceProperty;
         //修改或查看明细信息（绑定显示数据）
         function ShowEditOrViewDialog(view) {
             //隐藏混合价格属性
-            $("#HHddlPriceProperty").next(".combo").hide(); 
+            $("#HHddlPriceProperty").next(".combo").hide();
             //隐藏采集器编码
             $("#txtddlArcConcentratorInfo").next().hide();
             //隐藏价格属性编码
@@ -491,6 +340,7 @@
             $("#ddlArcConcentratorInfo").next().hide();
             //隐藏采样点
             $("#meterIntMP").next().hide();
+        
 
             //首先取出来用户选择的数据的ID
             var rows = $("#grid").datagrid("getSelections");
@@ -503,25 +353,14 @@
             else if (rows.length > 1) {
                 $.messager.alert("提示", "每次只能修改/查看一条记录，你已经选择了<font color='red'  size='6'>" + rows.length + "</font>条", "error");
                 return;
-            }
-            if (view == null) {
-                //处理修改的信息
-                //$("#DivEdit").dialog('open').dialog('setTitle', '修改信息');
-                //绑定修改详细信息的方法
-                isAdd = false;
-                BindEditInfo(rows[0]);
-
-                $("#DivAdd").dialog('open').dialog('setTitle', '修改信息');
-                BindEditEvent();
-            }
-            else {
-                //处理查看详细
-                $("#DivView").dialog('open').dialog('setTitle', '查看详细信息');
-                //绑定查看详细信息方法
-                BindViewInfo();
-            }
-
-
+            }                        
+            isAdd = false;
+            BindEditInfo(rows[0]);
+            $("#DivAdd").dialog('open').dialog('setTitle', '修改信息');
+            //不允许修改通讯地址
+            $('#meterVcAddr').validatebox('disableValidation');
+            $("#meterVcAddr").attr("readonly",true);
+            BindEditEvent();                     
             OldddlPriceProperty = $("#ddlPriceProperty").combobox("getText");
         }
 
@@ -540,76 +379,22 @@
             $("#meterIntOrig").numberbox("setValue", 0);
             $("#meterIntReadFlag").val("");
             $("#meterIntValveState").val("");
-            //$("#meterIntConID").numberbox("setValue", info.IntConID);
-            //$("#ddlArcConcentratorInfo").combobox('setValue', info.IntConID)
             $("#meterIntChannal").numberbox("setValue", 1);
-            //$("#meterIntCustNO").numberbox("setValue", info.IntCustNO);
+            $('#ddlPriceProperty2').combobox('disableValidation');
             $("#meterIntMP").numberbox("setValue", value.rows[0].IntMP + 1);
             $("#ddlIntStatus").combobox("setValue", 0);
             $("#meterDtLastUpd").val("");
-            $("#meterDtCreate").val("");
-            show();
+            $("#meterDtCreate").val("");                       
         }
-
-        //水表信息
-        function BindMeterInfo(info) {
-            $("#ffMeterInfo").form('clear');
-            $("#meterIntID").val(info.IntID);
-            $("#meterVcAddr").val(info.VcAddr);
-            $("#meterNvcName").val(info.NvcName);
-            $("#meterNvcAddr").val(info.NvcAddr);
-            $("#meterVcBarCode").val(info.VcBarCode);
-            $("#meterVcAssetNo").val(info.VcAssetNo);
-            $("#meterIntProtocol").numberbox("setValue", info.IntProtocol);
-            $("#meterIntCycle").numberbox("setValue", info.IntCycle);
-            $("#meterIntOrig").numberbox("setValue", info.IntOrig);
-            $("#meterIntReadFlag").val(info.IntReadFlag);
-            $("#meterIntValveState").val(info.IntValveState);
-            //$("#meterIntConID").numberbox("setValue", info.IntConID);
-            $("#ddlArcConcentratorInfo").combobox('setValue', info.IntConID)
-            $("#meterIntChannal").numberbox("setValue", info.IntChannal);
-            $("#meterIntCustNO").numberbox("setValue", info.IntCustNO);
-            $("#meterIntMP").numberbox("setValue", info.IntMP);
-            $("#ddlIntStatus").combobox("setValue", info.IntStatus);
-            $("#meterDtLastUpd").val(info.DtLastUpd);
-            $("#meterDtCreate").val(info.DtCreate);
-            $("#ddlPriceProperty").combobox("setValue", info.IntPriceNo);
-            $("#YFVcDesc").combobox("setValue", info.YFVcDesc);
-
-
-        }
-
-
+       
         //绑定编辑详细信息的方法
         function BindEditInfo(info) {
             if (info == null) {
                 showTips("数据有误!");
                 return false;
             }
-            $.ajax({
-                type: 'post',
-                url: '/ArcMeterInfo/FindByIntCustNo',
-                async: false,
-                data: { IntCustNO: info.IntNo },
-                dataType: 'json',
-                success: function (result) {
-                    if (result.Success)
-                        BindMeterInfo(result.Obj1);
-                    else {
-                        //showError("获取水表信息出错:" + result.ErrorMessage);
-                        setMeterInfoDefault();
-                    }
-                },
-                error: function () {
-                    showTips("获取水表信息出错,请重试!");
-                    return false;
-                }
-            });
-
-
             $("#meterVcAddr").val(info.bVcAddr);
             $("#meterIntID").val(info.bIntID);
-
             $("#meterVcBarCode").val(info.bVcBarCode);
             $("#meterVcAssetNo").val(info.bVcAssetNo);
             $("#ddlArcConcentratorInfo").combobox("setValue", info.eNvcName);
@@ -629,22 +414,19 @@
             $("#meterNvcAddr").val(info.bNvcAddr);
             $("#addNvcVillage").val(info.NvcVillage);
             $("#addVcBuilding").val(info.VcBuilding);
-            $("#addIntUnitNum").numberbox("setValue", info.IntUnitNum);
-            $("#addIntRoomNum").numberbox("setValue", info.IntRoomNum);
-            //$("#addVcNameCode").val(info.VcNameCode);
-            //$("#addVcAddrCode").val(info.VcAddrCode);
+            $("#addIntUnitNum").val(info.VcUnitNum);
+            $("#addIntRoomNum").val(info.VcRoomNum);
             $("#addVcMobile").val(info.VcMobile);
             $("#addVcTelNo").val(info.VcTelNo);
             $("#addVcIDNo").val(info.VcIDNo);
             $("#addVcContractNo").val(info.VcContractNo);
             $("#addNvcInvName").val(info.NvcInvName);
             $("#addNvcInvAddr").val(info.NvcInvAddr);
-            $("#addIntNumber").numberbox("setValue", info.IntNumber);
             $("#addIntPriceNo").val(info.IntPriceNo);
             $("#addNvcCustType").val(info.NvcCustType);
             $("#addIntUserID").val(info.IntUserID);
             $("#addIntStatus").val(info.IntStatus);
-            $("#addIntAccMode").val(info.IntAccMode);
+            $("#addIntAccMode").val(info.IntAccMode);            
             $("#addDteOpen").val(info.DteOpen);
             $("#addDteCancel").val(info.DteCancel);
             $("#addDtCreate").val(info.DtCreate);
@@ -654,15 +436,13 @@
             $("#txtYFVcDesc").numberbox("setValue", text);
             $("#txtddlPriceProperty2").numberbox("setValue", info.IntPriceNo2);
             $("#txtIntAutoSwitch").numberbox("setValue", info.IntAutoSwitch);
-        }
 
-        //绑定查看详细信息的方法
-        function BindViewInfo() {
-            var ID = $("#grid").datagrid('getSelections')[0].ID;
-            //发送请求
-            $.getJSON("/User/FindByID?r=" + Math.random() + "&id=" + ID, function (info) {
-                $("#ID2").text(info.ID);
-            });
+            //协议类型
+            $("#meterIntProtocol").numberbox("setValue", info.IntProtocol);
+            //原始读数
+            $("#meterIntOrig").numberbox("setValue", info.IntOrig);
+            //校表周期
+            $("#meterIntCycle").numberbox("setValue", info.IntCycle);                
         }
 
         //绑定修改按钮的事件
@@ -679,6 +459,7 @@
                 }
             });
         }
+
         //价格属性在字段值发生更改的时候触发
         function txtddlPriceProperty() {
             $("#ddlPriceProperty").combobox({
@@ -699,20 +480,20 @@
                 }
             })
         }
-        function meterIntChannal() {//混合占比触发事件
+
+        //混合占比触发事件
+        function meterIntChannal() {
             $("#meterIntChannal").numberbox({
                 "onChange": function (num) {
-                    //var num = $("#meterIntChannal").numberbox("getValue");
                     if (num == 1) {
-                        $("#ddlPriceProperty2").combobox("disable");
-
                         $("#txtddlPriceProperty2").numberbox("setValue", 0);
+                        $('#ddlPriceProperty2').combobox('disableValidation');
+                        $("#ddlPriceProperty2").combobox("disable");             
                     }
                     else {
+                        $('#ddlPriceProperty2').combobox('enableValidation');
                         $("#ddlPriceProperty2").combobox("enable");
-
                     }
-
                 }
             });
         }
@@ -728,96 +509,55 @@
         //绑定账务方式及阀门策略
         function option() {
             $('#YFVcDesc').combobox({
-                url: '/ArcCustomerInfo/DictAccountWay',
+                url: '/ArcCustomerInfo/DictAccountWay_Server',
                 valueField: 'IntCode',
                 textField: 'VcDesc',
-                required: true,
-                onSelect: function (record) {
-
-                }
+                required: true,               
             });
             $('#IntAutoSwitch').combobox({
-                url: '/ArcCustomerInfo/IntAutoSwitch',
+                url: '/ArcCustomerInfo/IntAutoSwitch_Server',
                 valueField: 'IntCode',
                 textField: 'VcDesc',
-                required: true,
-                onSelect: function (record) {
-
-                }
+                required: true,                
             });
         }
-        //混合占比触发事件
-        function show() {
-
-        }
-
+     
         var easyui_tree_options = {
-		length : 0,  //层数
-		getLevel : function(treeObj, node){	//treeObj为tree的dom对象，node为选中的节点
-			while(node != null){
-				node = $(treeObj).tree('getParent', node.target)
-				easyui_tree_options.length++;
-			}
-			var length1 = easyui_tree_options.length;
-			easyui_tree_options.length = 0;		//重置层数
-			return length1;
-		    }
-	    }
+            length: 0,  //层数
+            getLevel: function (treeObj, node) {	//treeObj为tree的dom对象，node为选中的节点
+                while (node != null) {
+                    node = $(treeObj).tree('getParent', node.target)
+                    easyui_tree_options.length++;
+                }
+                var length1 = easyui_tree_options.length;
+                easyui_tree_options.length = 0;		//重置层数
+                return length1;
+            }
+        }
         function initDeptTreeview() {
             $("#loading").show();
-
             var queryData = "";
-
             //厂家编码
             var code = 0;
-
             $('#treeDept1').tree({
-                url: '/ArcCustomerInfo/TreeCommunity_Server?code='+code,
+                url: '/ArcCustomerInfo/TreeCommunity_Server?code=' + code,
                 onBeforeSelect: function (node) {
                     fujiText = node.text;
                 },
                 onClick: function (node) {
-
-                    //loadDataByOu(node.id);
-
                     var Text = $("#treeDept1").tree("getParent", node.target);
-
                     var Treelevel = easyui_tree_options.getLevel(this, node);
-
                     var ParentText = "";
-                                                               
                     if (Treelevel == 4) {
-
                         ParentText = $("#treeDept1").tree("getParent", Text.target)
-
                     }
-
-                    queryData = { "WHC_Fuji": Text.text, "WHC_Text": node.text, "WHC_Treelevel": Treelevel.toString(),"WHC_TreePrentText":ParentText.text};
-
+                    queryData = { "WHC_Fuji": Text.text, "WHC_Text": node.text, "WHC_Treelevel": Treelevel.toString(), "WHC_TreePrentText": ParentText.text };
                     InitGrid(queryData);
-                    
                 }
             });
             $("#loading").fadeOut(500);
         }
-
-
-        // 根据机构加载指定列表
-        function loadDataByOu(id) {
-            $("#loading").show();
-
-            //赋值给特殊字段，公司和部门查询的时候选择其中一个
-            var queryParams = $('#grid').datagrid('options').queryParams;
-            queryParams.Role_ID = ""; //必须清空
-            queryParams.Dept_ID = id; //设置值
-
-            $("#grid").datagrid("reload");
-            $('#grid').datagrid('uncheckAll');
-
-            $("#loading").fadeOut(500);
-        }
-       
-    </script>
+</script>
 
     <style>
         table.view {
@@ -985,7 +725,7 @@
                                     <label for="addIntUnitNum">单元编号：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-numberbox" type="text" id="addIntUnitNum" name="IntUnitNum:number" style="width: 99%;" data-options="required:true" />
+                                    <input class="easyui-validatebox" type="text" id="addIntUnitNum" name="VcUnitNum" style="width: 99%;" data-options="required:true" />
                                 </td>
                             </tr>
                             <tr>
@@ -993,7 +733,7 @@
                                     <label for="addIntRoomNum">门牌编号：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-numberbox" type="text" id="addIntRoomNum" name="IntRoomNum:number" style="width: 99%;" data-options="required:true" />
+                                    <input class="easyui-validatebox" type="text" id="addIntRoomNum" name="VcRoomNum" style="width: 99%;" data-options="required:true" />
 
                                 </td>
                                 <th>
@@ -1009,7 +749,7 @@
                                     <label for="addVcTelNo">固定电话：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-validatebox" type="text" id="addVcTelNo" name="VcTelNo" style="width: 99%;" data-options="validType:'length[7,12]'" />                                
+                                    <input class="easyui-validatebox" type="text" id="addVcTelNo" name="VcTelNo" style="width: 99%;" data-options="validType:'length[7,12]'" />
                                 </td>
                                 <th>
                                     <label for="addVcIDNo">身份证号：</label>
@@ -1070,13 +810,15 @@
                         <input type="hidden" id="meterIntValveState" name="IntValveState:number" />
                         <input type="hidden" id="meterDtLastUpd" name="DtLastUpd" />
                         <input type="hidden" id="meterDtCreate" name="DtCreate" />
+                        
+
                         <table id="tbMeterInfo" class="view">
                             <tr>
                                 <th>
                                     <label for="addVcAddr">通信地址：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-validatebox"  type="text" id="meterVcAddr" maxlength="14" name="VcAddr" style="width: 98%;" data-options="required:true, missingMessage:'请输入14位通信地址'" />
+                                    <input class="easyui-validatebox" type="text" id="meterVcAddr" maxlength="14" name="VcAddr" style="width: 98%;" data-options="required:true, missingMessage:'请输入14位通信地址'" />
                                 </td>
                                 <th>
                                     <label for="addNvcName">名称：</label>
@@ -1136,7 +878,7 @@
                                     <label for="ddlIntStatus" style="color:red">使用状态：</label>
                                 </th>
                                 <td>
-                                    <select id="ddlIntStatus" class="easyui-combobox" name="IntStatus:number" style="width: 50%; color:red" data-options="required:true">
+                                    <select id="ddlIntStatus" class="easyui-combobox" name="IntStatus:number" style="width: 98%; color:red" data-options="required:true">
                                         <option value="0" style="color:red">在用</option>
                                         <option value="-1" style="color:red">停用</option>
                                     </select>
@@ -1153,7 +895,7 @@
                                     <label for="ddlPriceProperty">价格属性：</label>
                                 </th>
                                 <td>
-                                    <select id="ddlPriceProperty" class="easyui-combobox" style="background-color: white;width:100px" data-options="required:true,editable:false,panelHeight:'auto'"></select>
+                                    <select id="ddlPriceProperty" class="easyui-combobox" style="background-color: white;width:98%" data-options="required:true,editable:false,panelHeight:'auto'"></select>
 
                                     <input class="easyui-textbox" id="txtddlPriceProperty" name="IntPriceNo:number" style="width:98%;" />
 
@@ -1162,7 +904,7 @@
                                     <label for="YFVcDesc">账务方式：</label>
                                 </th>
                                 <td>
-                                    <select id="YFVcDesc" class="easyui-combobox" name="" style="width: 50%" data-options="required:true,editable:false,panelHeight:'auto'"></select>
+                                    <select id="YFVcDesc" class="easyui-combobox" name="" style="width: 98%" data-options="required:true,editable:false,panelHeight:'auto'"></select>
                                     <input class="easyui-numberbox" id="txtYFVcDesc" name="IntAccountWay:number" style="width:98%;" />
                                 </td>
                             </tr>
@@ -1171,14 +913,14 @@
                                     <label for="ddlPriceProperty2">混合价格：</label>
                                 </th>
                                 <td>
-                                    <select id="ddlPriceProperty2" class="easyui-combobox" style="background-color: white;width:100px" data-options="required:true,editable:false,panelHeight:'auto'"></select>
+                                    <select id="ddlPriceProperty2" class="easyui-combobox" style="background-color: white;width:98%" data-options="editable:false,panelHeight:'auto'"></select>
                                     <input class="easyui-numberbox" id="txtddlPriceProperty2" name="IntPriceNo2:number" style="width:98%;" />
                                 </td>
                                 <th>
                                     <label for="IntAutoSwitch">阀门策略：</label>
                                 </th>
                                 <td>
-                                    <select id="IntAutoSwitch" class="easyui-combobox" style="background-color: white;width:100px" data-options="required:true,editable:false,panelHeight:'auto'"></select>
+                                    <select id="IntAutoSwitch" class="easyui-combobox" style="background-color: white;width:98%" data-options="required:true,editable:false,panelHeight:'auto'"></select>
                                     <input class="easyui-numberbox" id="txtIntAutoSwitch" name="IntAutoSwitch:number" style="width:98%;" />
 
                                 </td>

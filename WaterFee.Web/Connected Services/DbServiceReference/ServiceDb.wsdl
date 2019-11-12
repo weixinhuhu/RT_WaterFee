@@ -7,6 +7,7 @@
       <xsd:import schemaLocation="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/DbServer.DTO" />
       <xsd:import schemaLocation="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/System.Data" />
       <xsd:import schemaLocation="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/DbServer.Model" />
+      <xsd:import schemaLocation="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IServiceDb_ArcConcentrator_Qry_InputMessage">
@@ -63,6 +64,54 @@
   <wsdl:message name="IServiceDb_ArcCustMeter_Upd_OutputMessage">
     <wsdl:part name="parameters" element="tns:ArcCustMeter_UpdResponse" />
   </wsdl:message>
+  <wsdl:message name="IServiceDb_FindMaxIntMPByIntConID_InputMessage">
+    <wsdl:part name="parameters" element="tns:FindMaxIntMPByIntConID" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_FindMaxIntMPByIntConID_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FindMaxIntMPByIntConIDResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_FindByIntCustNo_InputMessage">
+    <wsdl:part name="parameters" element="tns:FindByIntCustNo" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_FindByIntCustNo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FindByIntCustNoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_GetDictAccountWay_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDictAccountWay" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_GetDictAccountWay_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDictAccountWayResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_GetDictValveAuto_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDictValveAuto" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_GetDictValveAuto_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDictValveAutoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_GetDictMeterReplaceType_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDictMeterReplaceType" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_GetDictMeterReplaceType_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDictMeterReplaceTypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_GetMeterReplaceList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMeterReplaceList" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_GetMeterReplaceList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMeterReplaceListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_ArcMeter_Replace_InputMessage">
+    <wsdl:part name="parameters" element="tns:ArcMeter_Replace" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_ArcMeter_Replace_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ArcMeter_ReplaceResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceProperty_GetTreeJson_InputMessage">
+    <wsdl:part name="parameters" element="tns:PriceProperty_GetTreeJson" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceProperty_GetTreeJson_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PriceProperty_GetTreeJsonResponse" />
+  </wsdl:message>
   <wsdl:portType name="IServiceDb">
     <wsdl:operation name="ArcConcentrator_Qry">
       <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/ArcConcentrator_Qry" message="tns:IServiceDb_ArcConcentrator_Qry_InputMessage" />
@@ -99,6 +148,38 @@
     <wsdl:operation name="ArcCustMeter_Upd">
       <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/ArcCustMeter_Upd" message="tns:IServiceDb_ArcCustMeter_Upd_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/ArcCustMeter_UpdResponse" message="tns:IServiceDb_ArcCustMeter_Upd_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FindMaxIntMPByIntConID">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/FindMaxIntMPByIntConID" message="tns:IServiceDb_FindMaxIntMPByIntConID_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/FindMaxIntMPByIntConIDResponse" message="tns:IServiceDb_FindMaxIntMPByIntConID_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FindByIntCustNo">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/FindByIntCustNo" message="tns:IServiceDb_FindByIntCustNo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/FindByIntCustNoResponse" message="tns:IServiceDb_FindByIntCustNo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDictAccountWay">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/GetDictAccountWay" message="tns:IServiceDb_GetDictAccountWay_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/GetDictAccountWayResponse" message="tns:IServiceDb_GetDictAccountWay_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDictValveAuto">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/GetDictValveAuto" message="tns:IServiceDb_GetDictValveAuto_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/GetDictValveAutoResponse" message="tns:IServiceDb_GetDictValveAuto_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDictMeterReplaceType">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/GetDictMeterReplaceType" message="tns:IServiceDb_GetDictMeterReplaceType_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/GetDictMeterReplaceTypeResponse" message="tns:IServiceDb_GetDictMeterReplaceType_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMeterReplaceList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/GetMeterReplaceList" message="tns:IServiceDb_GetMeterReplaceList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/GetMeterReplaceListResponse" message="tns:IServiceDb_GetMeterReplaceList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ArcMeter_Replace">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/ArcMeter_Replace" message="tns:IServiceDb_ArcMeter_Replace_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/ArcMeter_ReplaceResponse" message="tns:IServiceDb_ArcMeter_Replace_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PriceProperty_GetTreeJson">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/PriceProperty_GetTreeJson" message="tns:IServiceDb_PriceProperty_GetTreeJson_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/PriceProperty_GetTreeJsonResponse" message="tns:IServiceDb_PriceProperty_GetTreeJson_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IServiceDb" type="tns:IServiceDb">
@@ -177,6 +258,78 @@
     </wsdl:operation>
     <wsdl:operation name="ArcCustMeter_Upd">
       <soap:operation soapAction="http://tempuri.org/IServiceDb/ArcCustMeter_Upd" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FindMaxIntMPByIntConID">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/FindMaxIntMPByIntConID" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FindByIntCustNo">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/FindByIntCustNo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDictAccountWay">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/GetDictAccountWay" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDictValveAuto">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/GetDictValveAuto" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDictMeterReplaceType">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/GetDictMeterReplaceType" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMeterReplaceList">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/GetMeterReplaceList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ArcMeter_Replace">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/ArcMeter_Replace" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PriceProperty_GetTreeJson">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/PriceProperty_GetTreeJson" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

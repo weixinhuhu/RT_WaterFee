@@ -1,22 +1,18 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using WHC.Attachment.BLL;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
 using WHC.MVCWebMis.Controllers;
-using WHC.Pager.Entity;
-
-
+using WHC.WaterFeeWeb.DbServiceReference;
+using CommonResult = WHC.Framework.Commons.CommonResult;
 namespace WHC.WaterFeeWeb.Controllers
 {
     public class ArcMeterInfoController : BusinessController<Core.BLL.ArcMeterInfo, Core.Entity.ArcMeterInfo>
@@ -34,101 +30,61 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContent(list);
         }
 
-        public ActionResult ListJson()
+        public ActionResult ListJson_Server()
         {
-            string where = "";
-            string sql = "";
-            string pageSize = Request["pageSize"];
-            //增加一个CustomedCondition条件，根据客户这个条件进行查询
-            string CustomedCondition = Request["CustomedCondition"] ?? "";
-            if (!string.IsNullOrWhiteSpace(CustomedCondition))
+            var Strlevel = Request["WHC_Treelevel"];
+            var fuji = Request["WHC_Fuji"];
+            var Text = Request["WHC_Text"];
+            var ParentText = Request["WHC_TreePrentText"];
+            var QryCondi = new MeterReplaceQryCondition()
             {
-                where = CustomedCondition;//直接使用条件
-            }
-            else
+                NvcName = Request["WHC_NvcName"] ?? "",
+                NvcAddr = Request["WHC_NvcAddr"] ?? "",
+                IntCustNo =Convert.ToInt32( Request["IntCustNO"] ?? "0"),
+                VcMeterAddr = Request["WHC_VcAddr"] ?? ""
+            };
+
+            if (Strlevel == "1")
             {
-                #region 根据数据库字段列，对所有可能的参数进行获值，然后构建查询条件
-                SearchCondition condition = new SearchCondition();
-                DataTable dt = baseBLL.GetFieldTypeList();
-                foreach (DataRow dr in dt.Rows)
-                {
-                    string columnName = dr["ColumnName"].ToString();
-                    string dataType = dr["DataType"].ToString();
-
-                    //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
-                    string columnValue = Request["WHC_" + columnName] ?? "";
-                    columnName = "a." + columnName;
-                    //对于数值型，如果是显示声明相等的，一般是外键引用，需要特殊处理
-                    bool hasEqualValue = columnValue.StartsWith("=");
-
-                    if (IsDateTime(dataType))
-                    {
-                        condition.AddDateCondition(columnName, columnValue);
-                    }
-                    else if (IsNumericType(dataType))
-                    {
-                        //如果数据库是数值类型，而传入的值是true或者false,那么代表数据库的参考值为1,0，需要进行转换
-                        bool boolValue = false;
-                        bool isBoolenValue = bool.TryParse(columnValue, out boolValue);
-                        if (isBoolenValue)
-                        {
-                            condition.AddCondition(columnName, boolValue ? 1 : 0, SqlOperator.Equal);
-                        }
-                        else if (hasEqualValue)
-                        {
-                            columnValue = columnValue.Substring(columnValue.IndexOf("=") + 1);
-                            condition.AddCondition(columnName, columnValue, SqlOperator.Equal);
-                        }
-                        else
-                        {
-                            condition.AddNumberCondition(columnName, columnValue);
-                        }
-                    }
-                    else
-                    {
-                        if (ValidateUtil.IsNumeric(columnValue))
-                        {
-                            condition.AddCondition(columnName, columnValue, SqlOperator.Equal);
-                        }
-                        else
-                        {
-                            condition.AddCondition(columnName, columnValue, SqlOperator.Like);
-                        }
-                    }
-                }
-                #endregion
-
-                #region MyRegion
-                //string SystemType_ID = Request["SystemType_ID"] ?? "";
-                //string LoginName = Request["LoginName"] ?? "";
-                //string FullName = Request["FullName"] ?? "";
-                //string Note = Request["Note"] ?? "";
-                //string IPAddress = Request["IPAddress"] ?? "";
-                //string MacAddress = Request["MacAddress"] ?? "";
-                //string LastUpdated = Request["LastUpdated"] ?? "";
-
-                //SearchCondition condition = new SearchCondition();
-                //condition.AddCondition("SystemType_ID", SystemType_ID, SqlOperator.Like);
-                //condition.AddCondition("LoginName", LoginName, SqlOperator.Like);
-                //condition.AddCondition("FullName", FullName, SqlOperator.Like);
-                //condition.AddCondition("Note", Note, SqlOperator.Like);
-                //condition.AddCondition("IPAddress", IPAddress, SqlOperator.Like);
-                //condition.AddCondition("MacAddress", MacAddress, SqlOperator.Like);
-
-                //condition.AddDateCondition("LastUpdated", LastUpdated); 
-                #endregion
-
-                sql = " SELECT ROW_NUMBER() OVER ( order by a.IntID DESC) as RowNumber,  a.IntID,a.VcAddr,a.NvcName,a.NvcAddr,a.VcBarCode,a.VcAssetNo,a.IntProtocol,a.IntCycle,a.IntOrig,a.IntReadFlag,a.IntValveState,a.IntConID ,b.NvcName as NvcNames,c.NvcDesc,a.IntMP,a.IntCustNO,a.IntStatus,a.DtLastUpd,a.DtCreate,a.IntAutoSwitch,a.IntOnline,a.DtOnline,a.IntPriceNo,a.IntTopConID  FROM ArcMeterInfo a,ArcConcentratorInfo b ,PriceProperty c Where ";
-                where = condition.BuildConditionSql().Replace("Where", "");
-                sql = sql + where + " and a.IntTopConID = b.IntID and c.IntNo=a.IntPriceNo ";
-
-
+                QryCondi.NvcVillage = "所有小区";
+            };
+            if (Strlevel == "2")
+            {
+                QryCondi.NvcVillage = Text;
             }
-            var dts = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.SqlTable(sql);
-            return ToJsonContentDate(dts);
-            // return base.FindWithPager();
+            if (Strlevel == "3")
+            {
+                QryCondi.NvcVillage = fuji;
+                QryCondi.VcBuilding = Text;
+            }
+            if (Strlevel == "4")
+            {
+                QryCondi.NvcVillage = ParentText;
+                QryCondi.VcBuilding = fuji;
+                QryCondi.VcUnitNum = Text;
+            }
+            //调用后台服务获取集中器信息          
+            var dts = new ServiceDbClient().GetMeterReplaceList(QryCondi);
+
+            int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
+            int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
+
+            DataTable dat = new DataTable();
+            //复制源的架构和约束
+            dat = dts.Clone();
+            // 清除目标的所有数据
+            dat.Clear();
+            //对数据进行分页
+            for (int i = (page - 1) * rows; i < page * rows && i < dts.Rows.Count; i++)
+            {
+                dat.ImportRow(dts.Rows[i]);
+            }
+            //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
+            int total = dts.Rows.Count;
+            var result = new { total = total, rows = dat };
+
+            return ToJsonContentDate(result);
         }
-  
 
         public ActionResult ListByIntConID(string WHC_IntConID)
         {
@@ -495,6 +451,20 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContent(result);
         }
 
+        public ActionResult FindByIntCustNo_Server(string IntCustNo)
+        {
+           DbServiceReference.CommonResult result = new DbServiceReference.CommonResult();
+            try
+            {
+                result = new ServiceDbClient().FindByIntCustNo(IntCustNo);                          
+            }
+            catch (Exception ex)
+            {
+                LogTextHelper.Error(ex);//错误记录
+                result.ErrorMsg = ex.Message;
+            }
+            return ToJsonContent(result);
+        }
 
         public ActionResult FindByIntCustNo(string IntCustNo)
         {
@@ -503,16 +473,12 @@ namespace WHC.WaterFeeWeb.Controllers
             {
                 var listMeterInfo = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.Find(" IntCustNO=" + IntCustNo);
 
-                //var VcAddr = listMeterInfos[1].VcAddr;
-                //var sql = "select a.[IntID],a.[VcAddr],a.[NvcName],a.[NvcAddr],a.[VcBarCode],a.[VcAssetNo],a.[IntProtocol],a.[IntCycle],a.[IntOrig],a.[IntReadFlag],b.VcDesc,a.[IntConID],a.[IntChannal],a.[IntMP],a.[IntRate],a.[IntCustNO],a.[IntStatus],a.[DtLastUpd],a.[DtCreate],a.[IntAutoSwitch],a.[IntNetFlag],a.[IntOnline],a.[DtOnline],a.[IntPriceNo],a.[IntTopConID] from[ArcMeterInfo] a,[DictValveStatus] b where b.IntCode=a.IntValveState and a.VcAddr=" + VcAddr;
-                //var listMeterInfo = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.SqlTable(sql);
-
                 if (listMeterInfo.Count == 0)
                 {
                     result.ErrorMessage = ERR.ArcMeterInfo.ArcMeterInfoNotExist;
                     return ToJsonContent(result);
                 }
-                result.Obj1 = listMeterInfo.FirstOrDefault(); ;
+                result.Obj1 = listMeterInfo.FirstOrDefault();
                 result.Success = true;
 
             }
@@ -720,7 +686,6 @@ namespace WHC.WaterFeeWeb.Controllers
         [HttpPost]
         public ActionResult submit()
         {
-
             string IntCustNO = Request["IntCustNO"];
             string NvcName = Request["NvcName"];
             string NvcAddr = Request["NvcAddr"];
@@ -1007,6 +972,32 @@ namespace WHC.WaterFeeWeb.Controllers
                     return "";
             }
         }
+
+        public ActionResult ChangeTBL_Server(MeterReplaceInfo MeterReplace)
+        {
+            CommonResult result = new CommonResult();      
+            MeterReplace.VcUserID= Session["Identity"].ToString();
+            MeterReplace.IntEndCode = 0;
+            try
+            {
+                var flg = new ServiceDbClient().ArcMeter_Replace(MeterReplace);
+                if (flg == "0")
+                {
+                    result.Success = true;
+                }
+                else
+                {
+                    result.ErrorMessage = flg;
+                    result.Success = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMessage = ex.Message;
+            }
+            return ToJsonContent(result);            
+        }
+
 
         public ActionResult ChangeTBL()
         {

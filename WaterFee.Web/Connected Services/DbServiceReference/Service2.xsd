@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/DbServer.DTO" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/DbServer.DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/DbServer.Model" />
   <xs:complexType name="Concentrator">
     <xs:sequence>
       <xs:element minOccurs="0" name="DtLastUpd" type="xs:dateTime" />
@@ -31,11 +33,14 @@
   <xs:element name="ArrayOfConcentrator" nillable="true" type="tns:ArrayOfConcentrator" />
   <xs:complexType name="Customer">
     <xs:sequence>
-      <xs:element minOccurs="0" name="DteCancel" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DtCreate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DteCancel" nillable="true" type="xs:dateTime" />
       <xs:element minOccurs="0" name="DteOpen" nillable="true" type="xs:dateTime" />
       <xs:element minOccurs="0" name="IntAccMode" type="xs:int" />
       <xs:element minOccurs="0" name="IntAvgUsed" type="xs:int" />
       <xs:element minOccurs="0" name="IntEndCode" type="xs:int" />
+      <xs:element minOccurs="0" name="IntHelper" type="xs:int" />
+      <xs:element minOccurs="0" name="IntID" type="xs:int" />
       <xs:element minOccurs="0" name="IntNo" type="xs:int" />
       <xs:element minOccurs="0" name="IntNumber" type="xs:int" />
       <xs:element minOccurs="0" name="IntPriceNo" type="xs:int" />
@@ -62,15 +67,16 @@
   <xs:element name="Customer" nillable="true" type="tns:Customer" />
   <xs:complexType name="Meter">
     <xs:sequence>
+      <xs:element minOccurs="0" name="DtCreate" type="xs:dateTime" />
       <xs:element minOccurs="0" name="DtLastUpd" type="xs:dateTime" />
       <xs:element minOccurs="0" name="DtOnline" type="xs:dateTime" />
       <xs:element minOccurs="0" name="IntAccountWay" type="xs:int" />
       <xs:element minOccurs="0" name="IntAutoSwitch" type="xs:int" />
       <xs:element minOccurs="0" name="IntConID" type="xs:int" />
-      <xs:element minOccurs="0" name="IntCustCode" nillable="true" type="xs:int" />
       <xs:element minOccurs="0" name="IntCustNO" type="xs:int" />
       <xs:element minOccurs="0" name="IntCycle" type="xs:int" />
       <xs:element minOccurs="0" name="IntEndCode" type="xs:int" />
+      <xs:element minOccurs="0" name="IntID" type="xs:int" />
       <xs:element minOccurs="0" name="IntMP" type="xs:int" />
       <xs:element minOccurs="0" name="IntOnline" type="xs:int" />
       <xs:element minOccurs="0" name="IntOrig" type="xs:int" />
@@ -90,4 +96,90 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="Meter" nillable="true" type="tns:Meter" />
+  <xs:complexType name="CommonResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ErrorMsg" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IsSuccess" type="xs:boolean" />
+      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LstObj" nillable="true" type="q1:ArrayOfanyType" />
+      <xs:element minOccurs="0" name="Obj1" nillable="true" type="xs:anyType" />
+      <xs:element minOccurs="0" name="Obj2" nillable="true" type="xs:anyType" />
+      <xs:element minOccurs="0" name="StrData1" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="StrData2" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="StrData3" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CommonResult" nillable="true" type="tns:CommonResult" />
+  <xs:complexType name="MeterReplaceQryCondition">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="IntCustNo" type="xs:int" />
+      <xs:element minOccurs="0" name="IntEndNo" type="xs:int" />
+      <xs:element minOccurs="0" name="NvcAddr" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcVillage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcBuilding" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcMeterAddr" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcUnitNum" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MeterReplaceQryCondition" nillable="true" type="tns:MeterReplaceQryCondition" />
+  <xs:complexType name="MeterReplaceInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DtReplace" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IntCustNo" type="xs:int" />
+      <xs:element minOccurs="0" name="IntEndCode" type="xs:int" />
+      <xs:element minOccurs="0" name="IntNewAccountWay" type="xs:int" />
+      <xs:element minOccurs="0" name="IntNewConID" type="xs:int" />
+      <xs:element minOccurs="0" name="IntNewCycle" type="xs:int" />
+      <xs:element minOccurs="0" name="IntNewMP" type="xs:int" />
+      <xs:element minOccurs="0" name="IntNewOrig" type="xs:int" />
+      <xs:element minOccurs="0" name="IntNewPrice1" type="xs:int" />
+      <xs:element minOccurs="0" name="IntNewPrice2" type="xs:int" />
+      <xs:element minOccurs="0" name="IntNewProtocol" type="xs:int" />
+      <xs:element minOccurs="0" name="IntNewStatus" type="xs:int" />
+      <xs:element minOccurs="0" name="IntNewValveTactic" type="xs:int" />
+      <xs:element minOccurs="0" name="IntReplaceType" type="xs:int" />
+      <xs:element minOccurs="0" name="NumNewRatio" type="xs:float" />
+      <xs:element minOccurs="0" name="NumOldLastReading" type="xs:float" />
+      <xs:element minOccurs="0" name="VcNewAddr" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcNewAssetNo" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcNewBarCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcNewMeterAddr" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcNewName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcOldAddr" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcReplaceDesc" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcUserID" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MeterReplaceInfo" nillable="true" type="tns:MeterReplaceInfo" />
+  <xs:complexType name="ArrayOfPricePropertyTree">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PricePropertyTree" nillable="true" type="tns:PricePropertyTree" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPricePropertyTree" nillable="true" type="tns:ArrayOfPricePropertyTree" />
+  <xs:complexType name="PricePropertyTree">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q2="http://schemas.datacontract.org/2004/07/DbServer.Model" base="q2:EasyTreeData">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Data" nillable="true" type="tns:PriceProperty" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="PricePropertyTree" nillable="true" type="tns:PricePropertyTree" />
+  <xs:complexType name="PriceProperty">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DtCreate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DteEnd" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DteStart" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IntInterval" type="xs:int" />
+      <xs:element minOccurs="0" name="IntNo" type="xs:int" />
+      <xs:element minOccurs="0" name="IntStep" type="xs:int" />
+      <xs:element minOccurs="0" name="IntStepNum" type="xs:int" />
+      <xs:element minOccurs="0" name="IntUserNo" type="xs:int" />
+      <xs:element minOccurs="0" name="NvcDesc" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcStatType" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PriceProperty" nillable="true" type="tns:PriceProperty" />
 </xs:schema>

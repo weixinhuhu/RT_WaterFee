@@ -70,8 +70,8 @@
                 striped: true,
                 collapsible: true,
                 pagination: true,
-                pageSize: 1,
-                pageList: [1, 2, 3],
+                pageSize: 20,
+                pageList: [20, 50, 100],
                 rownumbers: true,
                 singleSelect: true,
                 //sortName: 'ID',    //根据某个字段给easyUI排序
@@ -242,50 +242,7 @@
             });
         }
 
-        //实现删除数据的方法
-        function Delete() {
-            //得到用户选择的数据的ID
-            var rows = $("#grid").datagrid("getSelections");
-            if (rows.length >= 1) {
-                //遍历出用户选择的数据的信息，这就是用户用户选择删除的用户ID的信息
-                var ids = "";   //1,2,3,4,5
-                for (var i = 0; i < rows.length; i++) {
-                    ids += rows[i].ID + ",";
-                }
-                //最后去掉最后的那一个,
-                ids = ids.substring(0, ids.length - 1);
-                var postData = { Ids: ids };
-
-                //然后确认发送异步请求的信息到后台删除数据
-                $.messager.confirm("删除确认", "您确认删除选定的记录吗？", function (action) {
-                    if (action) {
-                        $.ajax({
-                            type: 'POST',
-                            url: '/User/DeletebyIds',
-                            dataType: 'json',
-                            data: postData,
-                            success: function (data) {
-                                if (data.Success) {
-                                    showTips("删除选定的记录成功");
-
-                                    $("#grid").datagrid("reload");
-                                    //当删除完成之后，第二次删除的时候还记得上次的信息，这样是不可以的，所以我们需要清除第一次的信息
-                                    rows.length = "";//第一种方法
-                                    $("#grid").datagrid("clearSelections");//第二种方法
-                                }
-                                else {
-                                    showError("操作失败：" + data.ErrorMessage, 3000);
-                                }
-                            }
-                        });
-                    }
-                });
-            }
-            else {
-                $.messager.alert("提示", "请选择你要删除的数据");
-            }
-        }
-
+     
         //弹出新增对话框
         function ShowAddDialog() {
             isAddOrEdit = 'add';//新增对话框标识
@@ -306,11 +263,6 @@
                 if (validate == false) {
                     return false;
                 }
-
-                //修改控件的值为复选框的值
-                //$("#hIsExpire").val($("#IsExpire").is(':checked'))
-                //$("#hDeleted").val($("#Deleted").is(':checked'))
-
                 var postData = $("#ffAdd").serializeArray();
                 $.post("/ArcConcentratorInfo/Insert_server", postData, function (json) {
                     var data = $.parseJSON(json);
@@ -380,10 +332,7 @@
                 $.messager.alert("提示", "每次只能修改/查看一条记录，你已经选择了<font color='red'  size='6'>" + rows.length + "</font>条", "error");
                 return;
             }
-            if (view == null) {
-                //处理修改的信息
-                //$("#DivEdit").dialog('open').dialog('setTitle', '修改信息');
-                //绑定修改详细信息的方法
+            if (view == null) {              
                 BindEditInfo(rows[0]);
             }
             else {
@@ -396,10 +345,8 @@
         function resetForm() {
             document.getElementById("ffAdd").reset();
         }
-        function clearInput() {
-            //document.getElementById("ffAdd").reset();
+        function clearInput() {        
             $("#ffAdd").form("clear");
-
         }
 
         function setDefault() {

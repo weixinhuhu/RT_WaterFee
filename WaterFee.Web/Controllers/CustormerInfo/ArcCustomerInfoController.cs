@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -11,6 +10,7 @@ using WHC.Framework.ControlUtil;
 using WHC.MVCWebMis.Controllers;
 
 using WHC.WaterFeeWeb.DbServiceReference;
+using CommonResult = WHC.Framework.Commons.CommonResult;
 
 namespace WHC.WaterFeeWeb.Controllers
 {
@@ -85,91 +85,6 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContentDate(result);
         }
 
-        public ActionResult ListJson()
-        {       
-            string where = "";
-            string sql = "";        
-            var WHC_IntNo = Request["WHC_IntNo"];
-            var WHC_NvcName = Request["WHC_NvcName"];
-            var WHC_NvcAddr = Request["WHC_NvcAddr"];
-            var WHC_VcMobile = Request["WHC_VcMobile"];
-            var fuji = Request["WHC_Fuji"];
-            var Text = Request["WHC_Text"];
-            var Strlevel = Request["WHC_Treelevel"];
-            var ParentText = Request["WHC_TreePrentText"];
-
-            sql = "SELECT ROW_NUMBER() OVER ( order by a.IntID DESC) as RowNumber,  a.IntID,a.IntNo,a.NvcName,isnull(c.VcDesc,'无表')VcDesc,a.NvcAddr,a.NvcVillage,a.VcBuilding,a.IntUnitNum,a.IntRoomNum,a.VcNameCode,a.VcAddrCode,a.VcMobile,a.VcTelNo,a.VcIDNo,a.VcContractNo,a.NvcInvName,a.NvcInvAddr,a.IntNumber,b.IntPriceNo,b.IntPriceNo2,a.NvcCustType,a.IntUserID,a.IntStatus,a.VcWechatNo,a.IntAccMode,a.IntHelper,a.DteOpen,a.DteCancel,a.DtCreate,b.IntID bIntID,b.VcAddr bVcAddr,b.NvcName bNvcName ,b.NvcAddr bNvcAddr,b.VcBarCode bVcBarCode,b.VcAssetNo bVcAssetNo,b.NumRatio,b.IntAutoSwitch,j.VcDesc jVcDesc,e.IntID eIntID,e.NvcName eNvcName,b.IntMP ,f.VcDesc fVcDesc,isnull(g.IntNo,0) gIntNo,isnull(g.NvcDesc,0) gNvcDesc,isnull(h.IntNo,0) hIntNo,isnull(h.NvcDesc,0) hNvcDesc  ,d.IntCode YFINtCode,b.IntAccountWay,d.VcDesc YFVcDesc FROM ArcCustomerInfo a  left join ArcMeterInfo b on a.IntNo=b.IntCustNO and b.IntStatus=0  left join DictValveStatus c on c.IntCode=b.IntValveState left join DictAccountWay d on d.IntCode=b.IntAccountWay left join ArcConcentratorInfo e on e.IntID=b.IntConID left join DictMeterStatus f on b.IntStatus=f.IntCode left join PriceProperty g on g.IntNo=b.IntPriceNo left join PriceProperty h on h.IntNo=b.IntPriceNo2  left join DictValveAuto j on b.IntAutoSwitch=j.IntCode where ";
-
-            where = " (1=1) ";
-         
-            if (Strlevel == "1")
-            {
-                where = " a.NvcVillage = '所有小区' ";
-            }
-
-            if (Strlevel == "2")
-            {
-                where = " a.NvcVillage = '" + Text + "' ";
-            }
-
-            if (Strlevel == "3")
-            {
-                where = " a.NvcVillage = '" + fuji + "' ";
-                where += "  and a.VcBuilding='" + Text + "'";
-            }
-
-            if (Strlevel == "4")
-            {
-                where = " a.NvcVillage = '" + ParentText + "' ";
-                where += " and a.VcBuilding = '" + fuji + "' ";
-                where += "  and a.IntUnitNum='" + Text + "'";
-            }
-
-
-            if (WHC_IntNo != null && WHC_IntNo != "")
-            {
-                where += " and a.IntNo=" + WHC_IntNo;
-            }
-            if (WHC_NvcName != null && WHC_NvcName != "")
-            {
-                where += " and a.NvcName" + WHC_NvcName;
-            }
-            if (WHC_NvcAddr != null && WHC_NvcAddr != "")
-            {
-                where += " and a.NvcAddr=" + WHC_NvcAddr;
-            }
-            if (WHC_VcMobile != null && WHC_VcMobile != "")
-            {
-                where += " and a.VcMobile=" + WHC_VcMobile;
-            }
-
-           
-
-            sql = sql + where + "  order by IntMP desc";
-
-            var dts = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.SqlTable(sql);
-
-            int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
-            int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
-
-            DataTable dat = new DataTable();
-            //复制源的架构和约束
-            dat = dts.Clone();
-            // 清除目标的所有数据
-            dat.Clear();
-            //对数据进行分页
-            for (int i = (page - 1) * rows; i < page * rows && i < dts.Rows.Count; i++)
-            {
-                dat.ImportRow(dts.Rows[i]);
-            }
-            //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
-            int total = dts.Rows.Count;
-            var result = new { total = total, rows = dat };
-
-            return ToJsonContentDate(result);
-
-        }
-
         public ActionResult ShowListByConcentratorID(string id)
         {
             //base.CheckAuthorized(AuthorizeKey.ListKey);
@@ -191,19 +106,12 @@ namespace WHC.WaterFeeWeb.Controllers
             return base.FindWithPager();
         }
 
-        public ActionResult Insert()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Insert2(Core.Entity.ArcCustomerInfo CustomerInfo, Core.Entity.ArcMeterInfo MeterInfo)
+        public ActionResult Insert_Server(Customer CustomerInfo,Meter MeterInfo)
         {
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.InsertKey);
-
             CommonResult result = new CommonResult();
-            var dbTran = BLLFactory<Core.BLL.ArcCustomerInfo>.Instance.CreateTransaction();
+
             try
             {
                 var cInfo = Request["CustomerInfo"];
@@ -212,101 +120,86 @@ namespace WHC.WaterFeeWeb.Controllers
                 {
                     NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore
                 };
-                CustomerInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Core.Entity.ArcCustomerInfo>(cInfo, setting);
-                MeterInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Core.Entity.ArcMeterInfo>(mInfo, setting);
-
-                var info = ReflectionHelper.ReplacePropertyValue(CustomerInfo, typeof(string), null, string.Empty);
+                CustomerInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(cInfo, setting);
+                MeterInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Meter>(mInfo, setting);
+                CustomerInfo = ReflectionHelper.ReplacePropertyValue(CustomerInfo, typeof(string), null, string.Empty);
                 MeterInfo = ReflectionHelper.ReplacePropertyValue(MeterInfo, typeof(string), null, string.Empty);
+                CustomerInfo.IntUserID = CurrentUser.ID;
+                CustomerInfo.IntStatus = 1;
+                CustomerInfo.DteOpen = DateTime.Now;
+                CustomerInfo.DteCancel = DateTime.Now;
+                MeterInfo.IntCustNO = CustomerInfo.IntNo;
+                CustomerInfo.VcAddrCode = DBLib.PinYinHelper.GetInitials(CustomerInfo.NvcAddr);
+                CustomerInfo.VcNameCode = DBLib.PinYinHelper.GetInitials(CustomerInfo.NvcName);
 
-                info.IntUserID = CurrentUser.ID;
-                info.IntStatus = 1;
-                info.DteOpen = DateTime.Now;
-                //info.DteCancel = DateTime.MaxValue;
-                info.DtCreate = DateTime.Now;
-                info.IntHelper = 0;
-
-                info.VcAddrCode = DBLib.PinYinHelper.GetInitials(info.NvcAddr);
-                info.VcNameCode = DBLib.PinYinHelper.GetInitials(info.NvcName);
-
-                result.Success = BLLFactory<Core.BLL.ArcCustomerInfo>.Instance.Insert(info, dbTran);
-              
-                if (result.Success)
+                //调用后台服务获取集中器信息
+                ServiceDbClient DbServer = new ServiceDbClient();
+                var flg = DbServer.ArcCustMeter_Ins(CustomerInfo, MeterInfo);
+                if (flg == "0")
                 {
-                    MeterInfo.IntCustNO = info.IntNo;
-                    result.Success = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.Insert(MeterInfo, dbTran);
-                    if (result.Success)
-                    {
-                        dbTran.Commit();
-                    }
-                    else dbTran.Rollback();
+                    result.Success = true;
                 }
-                else dbTran.Rollback();
+                else
+                {
+                    result.ErrorMessage = flg;
+                    result.Success = false;
+                }
             }
             catch (Exception ex)
             {
-                dbTran.Rollback();
-                LogTextHelper.Error(ex);//错误记录
                 result.Success = false;
                 result.ErrorMessage = ex.Message;
             }
+
             return ToJsonContent(result);
         }
+        public ActionResult Update_Server(Customer CustomerInfo, Meter MeterInfo) {
 
-        [HttpPost]
-        public ActionResult Update2(Core.Entity.ArcCustomerInfo CustomerInfo, Core.Entity.ArcMeterInfo MeterInfo)
-        {
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.InsertKey);
-
             CommonResult result = new CommonResult();
-            var dbTran = BLLFactory<Core.BLL.ArcCustomerInfo>.Instance.CreateTransaction();
             try
             {
                 var cInfo = Request["CustomerInfo"];
                 var mInfo = Request["MeterInfo"];
-
                 var setting = new Newtonsoft.Json.JsonSerializerSettings
                 {
                     NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore
                 };
-                CustomerInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Core.Entity.ArcCustomerInfo>(cInfo, setting);
-                MeterInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Core.Entity.ArcMeterInfo>(mInfo, setting);
-
-                var info = ReflectionHelper.ReplacePropertyValue(CustomerInfo, typeof(string), null, string.Empty);
+                CustomerInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Customer>(cInfo, setting);
+                MeterInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Meter>(mInfo, setting);
+                CustomerInfo = ReflectionHelper.ReplacePropertyValue(CustomerInfo, typeof(string), null, string.Empty);
                 MeterInfo = ReflectionHelper.ReplacePropertyValue(MeterInfo, typeof(string), null, string.Empty);
 
-                ////判断计量点是否重复
-                //var existMP = BLLFactory<Core.BLL.ArcMeterInfo>.Instance
-                //        .IsExistRecord("IntConID={0} and IntMP={1} and IntID!={2}".FormatWith(MeterInfo.IntConID, MeterInfo.IntMP, MeterInfo.IntID));
-                //if (existMP)
-                //{
-                //    result.ErrorMessage = "同一采集器下的计量点不能重复!";
-                //    return ToJsonContent(result);
-                //}
+                CustomerInfo.IntUserID = CurrentUser.ID;
+                CustomerInfo.IntStatus = 1;
 
-                info.VcAddrCode = DBLib.PinYinHelper.GetInitials(info.NvcAddr);
-                info.VcNameCode = DBLib.PinYinHelper.GetInitials(info.NvcName);
+                CustomerInfo.DteCancel = DateTime.Now;
+                CustomerInfo.DteOpen = DateTime.Now;
+                MeterInfo.DtCreate = DateTime.Now;
+                MeterInfo.DtOnline = DateTime.Now;
 
-                result.Success = baseBLL.Update(info, dbTran);
-                if (result.Success)
+                MeterInfo.IntCustNO = CustomerInfo.IntNo;
+                CustomerInfo.VcAddrCode = DBLib.PinYinHelper.GetInitials(CustomerInfo.NvcAddr);
+                CustomerInfo.VcNameCode = DBLib.PinYinHelper.GetInitials(CustomerInfo.NvcName);
+         
+
+                //调用后台服务获取集中器信息
+                ServiceDbClient DbServer = new ServiceDbClient();
+                var flg = DbServer.ArcCustMeter_Upd(CustomerInfo, MeterInfo);
+                if (flg == "0")
                 {
-                    MeterInfo.IntCustNO = info.IntNo;
-                    if (MeterInfo.IntID == 0)
-                        result.Success = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.Insert(MeterInfo, dbTran);
-                    else
-                        result.Success = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.Update(MeterInfo, dbTran);
-                    if (result.Success)
-                    {
-                        dbTran.Commit();
-                    }
-                    else dbTran.Rollback();
+                    result.Success = true;
                 }
-                else dbTran.Rollback();
+                else
+                {
+                    result.ErrorMessage = flg;
+                    result.Success = false;
+                }
             }
             catch (Exception ex)
             {
-                dbTran.Rollback();
-                LogTextHelper.Error(ex);//错误记录
+                result.Success = false;
                 result.ErrorMessage = ex.Message;
             }
             return ToJsonContent(result);
@@ -439,6 +332,7 @@ namespace WHC.WaterFeeWeb.Controllers
                         //@sClientIP VARCHAR(64), --< !--客户端IP-- >
                         //@iConcFlag  INTEGER, --< !--采集器标志0:如果已存在相同采集器，则提示错误，终止导入档案信息 1:如果已存在同地址采集器，将客户与表信息导入，表挂接在同地址采集器下-- >
                         //@iMeterFlag INTEGER,    --< !--一户多表标志0:一户一表，MidCustomerMeter.IntCustCode唯一 1:一户多表，MidCustomerMeter.IntCustCode相同的记录认为是同一客户-- >
+
                         List<SqlParameter> param = new List<SqlParameter>();
                         param.Add(new SqlParameter("@sClientIP", SqlDbType.VarChar, 64) { Value = clientIP });
                         param.Add(new SqlParameter("@iConcFlag", SqlDbType.VarChar, 64) { Value = 1 });
@@ -472,12 +366,7 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContent(result);
         }
 
-        // GET: CustomerInfo/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
+  
         // GET: CustomerInfo/Create
         public ActionResult Create()
         {
@@ -543,72 +432,27 @@ namespace WHC.WaterFeeWeb.Controllers
                 return View();
             }
         }
-        [HttpPost]
-        public ActionResult DictAccountWay()
+       
+        public ActionResult DictAccountWay_Server()
         {
-
-            string sql = "select * from DictAccountWay";
-            var dt = BLLFactory<Core.BLL.ArcCustomerInfo>.Instance.SqlTable(sql);
+            ServiceDbClient DbServer = new ServiceDbClient();
+            var dt = DbServer.GetDictAccountWay();
             return ToJsonContentDate(dt);
         }
-        public ActionResult GetTreeJson()
+      
+        public ActionResult IntAutoSwitch_Server()
         {
-            string sql = "select * from PriceProperty";
-            var list = BLLFactory<Core.BLL.PriceProperty>.Instance.SqlTable(sql);
+            ServiceDbClient DbServer = new ServiceDbClient();
+            var list = DbServer.GetDictValveAuto();
+            return ToJsonContentDate(list); 
+        }
+        public ActionResult IntReplaceType_Server()
+        {
+            ServiceDbClient DbServer = new ServiceDbClient();
+            var list = DbServer.GetDictMeterReplaceType();
             return ToJsonContentDate(list);
         }
-        public ActionResult IntAutoSwitch()
-        {
 
-            string sql = "select * from DictValveAuto";
-            var list = BLLFactory<Core.BLL.PriceProperty>.Instance.SqlTable(sql);
-            return ToJsonContentDate(list);
-        }
-        [HttpPost]
-        public ActionResult PdIntAutoSwitch()
-        {
-            var IntCustNo = Request["IntCustNo"];
-            string sql = "select  top(1)IntAutoSwitch from ArcMeterInfo  where IntCustNO=" + IntCustNo + " order by DtLastUpd desc";
-            var list = BLLFactory<Core.BLL.PriceProperty>.Instance.SqlTable(sql);
-            return ToJsonContentDate(list);
-
-        }
-
-        //public ActionResult TreeArcConcentratorInfo(bool isAddRoot = true)
-        //{
-        //    //bool isAddRoot = true
-        //    //string num = "";
-        //    //if (isAddRoot) { 
-        //    //  num = "0";
-        //    //}
-        //     var list = BLLFactory<Core.DALSQL.ArcConcentratorInfo>.Instance.GetAll();
-        //    //string sql = "select * from ArcConcentratorInfo where IntUpID=" + num;
-        //   // var list = BLLFactory<Core.DALSQL.ArcConcentratorInfo>.Instance.GetList(sql);
-        //    var treeList = new List<EasyTreeData>();
-
-        //    var root = new EasyTreeData();
-        //    root.iconCls = "icon-organ";
-        //    root.id = "";
-        //    root.text = "所有集中器";
-        //    root.state = "open";
-        //    root.children = new List<EasyTreeData>();
-        //    foreach (var item in list)
-        //    {
-        //        var d = new EasyTreeData();
-        //        d.iconCls = "icon-organ";
-        //        d.id = item.IntID.ToString();
-        //        d.text = item.NvcName;
-
-        //        d.state = "open";
-
-        //        root.children.Add(d);
-        //    }
-        //    if (isAddRoot)
-        //        treeList.Add(root);
-        //    else
-        //        treeList = root.children;
-        //    return ToJsonContentDate(treeList);
-        //}
         public ActionResult TreeArcConcentratorInfo(bool isAddRoot = true)
         {
             //bool isAddRoot = true
@@ -650,56 +494,6 @@ namespace WHC.WaterFeeWeb.Controllers
                 treeList = root.children;
             return ToJsonContentDate(treeList);
         }
-
-        public ActionResult TreeCommunity(bool isAddRoot = true)
-        {
-            var treeList = new List<EasyTreeData>();
-            var sqls = "select  DISTINCT NvcVillage,max(IntID)IntID  ,max(IntNo)IntNo,max(NvcName)NvcName,max(NvcAddr)NvcAddr,max(VcBuilding)VcBuilding,max(IntUnitNum)IntUnitNum,max(IntRoomNum)IntRoomNum,max(VcNameCode)VcNameCode,max(VcAddrCode)VcAddrCode,max(VcMobile)VcMobile,max(VcTelNo)VcTelNo,max(VcIDNo)VcIDNo,max(VcContractNo)VcContractNo,max(NvcInvName)NvcInvName,max(NvcInvAddr)NvcInvAddr ,max(IntNumber)IntNumber,max(IntPriceNo)IntPriceNo,max(NvcCustType)NvcCustType,max(IntUserID)IntUserID,max(IntStatus)IntStatus ,max(VcWechatNo)VcWechatNo,max(IntAccMode)IntAccMode ,max(IntHelper)IntHelper,max(DteOpen)DteOpen,max(DteCancel)DteCancel,max(DtCreate)DtCreate from ArcCustomerInfo where NvcVillage <>'' group by NvcVillage";
-            var li = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.GetList(sqls);
-
-            //var treeLists = new List<EasyTreeData>();
-
-            var roots = new EasyTreeData();
-            // roots.iconCls = "icon-organ";
-            roots.id = "";
-            roots.text = "所有小区";
-            roots.state = "open";
-            roots.children = new List<EasyTreeData>();
-
-            foreach (var info in li)
-            {
-                var d = new EasyTreeData();
-                // d.iconCls = "icon-organ";
-                d.id = info.NvcVillage.ToString();
-                d.text = info.NvcVillage.ToString();
-                d.state = "open";
-                roots.children.Add(d);
-                string BuildingSQL = "select  DISTINCT [VcBuilding],max(IntID)IntID ,max(NvcVillage) NvcVillage ,max(IntNo)IntNo,max(NvcName)NvcName,max(NvcAddr)NvcAddr,max(VcBuilding)VcBuilding,max(IntUnitNum)IntUnitNum,max(IntRoomNum)IntRoomNum,max(VcNameCode)VcNameCode,max(VcAddrCode)VcAddrCode,max(VcMobile)VcMobile,max(VcTelNo)VcTelNo,max(VcIDNo)VcIDNo,max(VcContractNo)VcContractNo,max(NvcInvName)NvcInvName,max(NvcInvAddr)NvcInvAddr ,max(IntNumber)IntNumber,max(IntPriceNo)IntPriceNo,max(NvcCustType)NvcCustType,max(IntUserID)IntUserID,max(IntStatus)IntStatus ,max(VcWechatNo)VcWechatNo,max(IntAccMode)IntAccMode ,max(IntHelper)IntHelper,max(DteOpen)DteOpen,max(DteCancel)DteCancel,max(DtCreate)DtCreate from ArcCustomerInfo where NvcVillage='" + d.text + "' group by [VcBuilding]";
-                var lists = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.GetList(BuildingSQL);
-                foreach (var items in lists)
-                {
-                    //EasyTreeData Buildinginfo = new EasyTreeData(items.IntID.ToString(), items.VcBuilding.ToString(), "icon-view");
-                    //d.children.Add(Buildinginfo);
-                    var e = new EasyTreeData();
-                    e.id = items.VcBuilding.ToString();
-                    e.text= items.VcBuilding.ToString();              
-                    d.children.Add(e);
-                    string InitNumSQL = "select  DISTINCT [IntUnitNum],max(IntID)IntID ,max(NvcVillage) NvcVillage ,max(IntNo)IntNo,max(NvcName)NvcName,max(NvcAddr)NvcAddr,max(VcBuilding)VcBuilding,max(VcBuilding)VcBuilding,max(IntRoomNum)IntRoomNum,max(VcNameCode)VcNameCode,max(VcAddrCode)VcAddrCode,max(VcMobile)VcMobile,max(VcTelNo)VcTelNo,max(VcIDNo)VcIDNo,max(VcContractNo)VcContractNo,max(NvcInvName)NvcInvName,max(NvcInvAddr)NvcInvAddr ,max(IntNumber)IntNumber,max(IntPriceNo)IntPriceNo,max(NvcCustType)NvcCustType,max(IntUserID)IntUserID,max(IntStatus)IntStatus ,max(VcWechatNo)VcWechatNo,max(IntAccMode)IntAccMode ,max(IntHelper)IntHelper,max(DteOpen)DteOpen,max(DteCancel)DteCancel,max(DtCreate)DtCreate from ArcCustomerInfo where NvcVillage='" + d.text + "' and VcBuilding ='" + e.text + "' group by [IntUnitNum]";
-                    var InitNumSQLlists = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.GetList(InitNumSQL);
-                    foreach (var s in InitNumSQLlists)
-                    {
-                        EasyTreeData InitNuminfo = new EasyTreeData(s.IntID.ToString(), s.IntUnitNum.ToString(), "icon-view");
-                        e.children.Add(InitNuminfo);
-                    }
-                }
-            }
-            if (isAddRoot)
-                treeList.Add(roots);
-            else
-                treeList = roots.children;
-            return ToJsonContentDate(treeList);
-        }
-
 
         public ActionResult TreeCommunity_Server(int code)
         {         
