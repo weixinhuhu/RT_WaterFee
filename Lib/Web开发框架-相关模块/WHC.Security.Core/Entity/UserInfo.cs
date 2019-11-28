@@ -46,6 +46,7 @@ namespace WHC.Security.Entity
         private string m_CurrentLoginIP; //当前登录IP          
         private DateTime m_CurrentLoginTime; //当前登录时间          
         private string m_CurrentMacAddress; //当前Mac地址    
+        private int endcode; //最终用户    
         #endregion    
 
         #region Property Members
@@ -563,6 +564,21 @@ namespace WHC.Security.Entity
             }
         }
 
+        /// <summary>
+        /// 最终用户
+        /// </summary>
+        [DataMember]
+        public virtual int Endcode
+        {
+            get
+            {
+                return this.endcode;
+            }
+            set
+            {
+                this.endcode = value;
+            }
+        }
         #endregion
 
     }

@@ -12,7 +12,6 @@ using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
 using WHC.MVCWebMis.Controllers;
 using WHC.Pager.Entity;
-
 namespace WHC.WaterFeeWeb.Controllers
 {
     public class FeeController : BusinessController<Core.BLL.AccDebt, Core.Entity.AccDebt>
@@ -189,48 +188,30 @@ namespace WHC.WaterFeeWeb.Controllers
         }
 
         /// <summary>
-        /// 获取未收财务
+        /// 查看扣费记录
         /// </summary>
-        /// <returns></returns>
-        public ActionResult GetAccDebtByIntCustNo(int intCustNo)
+        /// <returns></returns>       
+        public ActionResult GetAccDebtByIntCustNo_Server()
         {
-            PagerInfo pagerInfo = GetPagerInfo();
-
-            var where = " IntCustNo=" + intCustNo;
-
-            var list = baseBLL.FindWithPager(where, pagerInfo);
-
-            if (list.Count > 0)
+            var custno = Request["WHC_IntCustNo"] ?? "0";
+            var endcode = Session["EndCode"] ?? "0";
+            DbServiceReference.ServiceDbClient DbServer = new DbServiceReference.ServiceDbClient();
+            var dts = DbServer.Account_GetDebtByCustNo(endcode.ToString().ToInt32(), custno.ToInt32());
+            int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
+            int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
+            DataTable dat = new DataTable();
+            //复制源的架构和约束
+            dat = dts.Clone();
+            // 清除目标的所有数据
+            dat.Clear();
+            //对数据进行分页
+            for (int i = (page - 1) * rows; i < page * rows && i < dts.Rows.Count; i++)
             {
-                var ids = string.Join(",", list.Select(n => n.IntCustNo).ToArray());
-                where = " IntNo in ({0}) ".FormatWith(ids);
-                pagerInfo.CurrenetPageIndex = 1;
-                var customerList = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.FindWithPager(where, pagerInfo);
-                if (customerList.Count > 0)
-                {
-                    foreach (var item in list)
-                    {
-                        item.ArcCustomerInfo = customerList.Where(n => n.IntNo == item.IntCustNo).FirstOrDefault();
-                    }
-                }
-                foreach (var item in list)
-                {
-                    string ret = null;
-                    var ds = QueryBill(item.IntCustNo, out ret);
-                    if (ret == "0")
-                    {
-                        var row = ds.Tables[1].Select("费用编号=" + item.IntFeeID);
-                        if (row.Count() > 0)
-                        {
-                            item.MonPenalty = row[0]["违约金"].ToString().ToDecimalOrZero();
-                        }
-                    }
-                }
-                list = list.OrderBy(n => n.IntFeeID).ToList();
+                dat.ImportRow(dts.Rows[i]);
             }
-
-            var result = new { total = pagerInfo.RecordCount, rows = list };
-
+            //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
+            int total = dts.Rows.Count;
+            var result = new { total, rows = dat };
             return ToJsonContentDate(result);
         }
 
@@ -274,9 +255,7 @@ namespace WHC.WaterFeeWeb.Controllers
                     }
                 }
             }
-
             var result = new { total = pagerInfo.RecordCount, rows = list };
-
             return ToJsonContentDate(result);
         }
 
@@ -354,157 +333,40 @@ namespace WHC.WaterFeeWeb.Controllers
             ViewBag.SignalrScript = string.Format(@"<script src=""{0}/signalr/hubs""></script><script>var signalrUrl = ""{0}"";var CommandTimeout={1}*1000;</script>", signalrUrl, commandTimeout);
 
         }
-        //存取预存款
-        public ActionResult PayGetMoneyPrint(string flowNo)
-        {
-            var FeeInfo = BLLFactory<Core.BLL.AccDepositDetail>.Instance.Find("VcFlowNo='" + flowNo + "'");
-            if (FeeInfo.Count > 0)
-            {
-                var model = FeeInfo.First();
-                var custInfo = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.Find(" IntNo=" + model.IntCustNo);
-
-                ViewBag.FeeInfo = model;
-                ViewBag.DteAccount = model.DteAccount.ToYyyyMMdd();
-                //var s = "";
-                //switch (model.IntType)
-                //{
-                //    case 0: s = "存入"; break;
-                //    case 1: s = "提取"; break;
-                //    case 2: s = "销账"; break;
-                //    default: s = "未知业务代码:" + model.IntType; break;
-                //}
-                //ViewBag.IntType = s;
-                ViewBag.CustInfo = custInfo.Count > 0 ? custInfo.First() : new Core.Entity.ArcCustomerInfo();
-            }
-            else
-            {
-                ViewBag.DteAccount = "";
-                //ViewBag.IntType = "";
-                ViewBag.FeeInfo = new Core.Entity.AccDepositDetail();
-                ViewBag.CustInfo = new Core.Entity.ArcCustomerInfo();
-            }
-            return View();
-        }
-
         /// <summary>
-        /// 存款
+        /// 存取款
         /// </summary>
-        /// <param name="custNo"></param>
+        /// <param name="custNo">客户编号</param>
         /// <returns></returns>
-        [HttpPost]
-        public ActionResult PayGetMoney_Pay(string custNo)
+        public ActionResult PayGetMoney_Server(string custNo)
         {
             CommonResult result = new CommonResult();
             try
             {
-                //var sFlowNo = Request["flowNo"];
-                var payMoney = Request["payMoney"];
-
-                //预付费模式预存款操作
-                //CREATEPROCEDURE[dbo].[up_DepositAccess]
-                //@iCustNo INTEGER,--< !--客户号-- >
-                //@sFlowNo    VARCHAR(32),--< !--存取流水号-- >
-                //@MonAmount  NUMERIC(9, 2),--< !--存取款金额-- >
-                //@sDesc      VARCHAR(32),--< !--原因描述-- >
-                //@sUserID    VARCHAR(8),--< !--用户工号-- >
-                //@sReceNo    VARCHAR(32),--< !--收据号码-- >
-                //@sSumAmount VARCHAR(16)OUTPUT,--< !--当前总额-- >
-                //@sLstUpd    VARCHAR(32)OUTPUT,--< !--最后更新时间戳-- >
-                //@sReturn    VARCHAR(MAX)OUTPUT-- < !--0:成功，其它为错误描述-- >
-
-
-                lock (objLock)
+                var endcode = Session["EndCode"] ?? "0";
+                var payMoney = Request["payMoney"] ?? "0";
+                var sRemark = "";
+                var iUserID = CurrentUser.ID;
+                var sReceiptNo = "";
+                DbServiceReference.ServiceDbClient DbServer = new DbServiceReference.ServiceDbClient();
+                var flag = DbServer.Account_DepositOperate(endcode.ToString().ToInt32(), custNo.ToInt32(), payMoney.ToDouble(), sRemark, iUserID, sReceiptNo);
+                if (flag.IsSuccess)
                 {
-                    var sFlowNo = GetFlowNo();
-                    List<SqlParameter> param = new List<SqlParameter>();
-                    param.Add(new SqlParameter("@iCustNo", SqlDbType.Int) { Value = custNo });
-                    param.Add(new SqlParameter("@sFlowNo", SqlDbType.VarChar, 32) { Value = sFlowNo });
-                    param.Add(new SqlParameter("@MonAmount", SqlDbType.Decimal) { Value = payMoney });
-                    param.Add(new SqlParameter("@sDesc", SqlDbType.VarChar, 32) { Value = "存入" });
-                    param.Add(new SqlParameter("@sUserID", SqlDbType.VarChar, 8) { Value = UserInfo.ID });
-                    param.Add(new SqlParameter("@sReceNo", SqlDbType.VarChar, 32) { Value = "" });
-                    param.Add(new SqlParameter("@sSumAmount", SqlDbType.VarChar, 16) { Direction = ParameterDirection.Output });
-                    param.Add(new SqlParameter("@sLstUpd", SqlDbType.VarChar, 32) { Direction = ParameterDirection.Output });
-                    param.Add(new SqlParameter("@sReturn", SqlDbType.VarChar, 256) { Direction = ParameterDirection.Output });
-
-                    BLLFactory<Core.BLL.AccPayment>.Instance.ExecStoreProc("up_DepositAccess", param);
-                    if (param[param.Count - 1].Value.ToString() == "0")
-                    {
-                        result.Success = true;
-                        result.Data1 = sFlowNo;
-                    }
-                    else
-                    {
-                        result.ErrorMessage = "存款失败!错误如下:" + param[param.Count - 1].Value;
-                    }
+                    result.Success = true;
+                    result.Data1 = flag.StrData1;
+                }
+                else
+                {
+                    result.ErrorMessage = flag.ErrorMsg;
+                    result.Success = false;
                 }
             }
             catch (Exception ex)
             {
-                result.ErrorMessage = "存款失败!错误如下:" + ex.Message;
+                result.Success = false;
+                result.ErrorMessage = ex.Message;
             }
-            return ToJsonContent(result);
-        }
-
-
-        /// <summary>
-        /// 取款
-        /// </summary>
-        /// <param name="custNo"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public ActionResult PayGetMoney_Get(string custNo)
-        {
-            CommonResult result = new CommonResult();
-            try
-            {
-                //var sFlowNo = Request["flowNo"];
-                var payMoney = Request["payMoney"];
-
-                //预付费模式预存款操作
-                //CREATEPROCEDURE[dbo].[up_DepositAccess]
-                //@iCustNo INTEGER,--< !--客户号-- >
-                //@sFlowNo    VARCHAR(32),--< !--存取流水号-- >
-                //@MonAmount  NUMERIC(9, 2),--< !--存取款金额-- >
-                //@sDesc      VARCHAR(32),--< !--原因描述-- >
-                //@sUserID    VARCHAR(8),--< !--用户工号-- >
-                //@sReceNo    VARCHAR(32),--< !--收据号码-- >
-                //@sSumAmount VARCHAR(16)OUTPUT,--< !--当前总额-- >
-                //@sLstUpd    VARCHAR(32)OUTPUT,--< !--最后更新时间戳-- >
-                //@sReturn    VARCHAR(MAX)OUTPUT-- < !--0:成功，其它为错误描述-- >
-
-
-                lock (objLock)
-                {
-                    var sFlowNo = GetFlowNo();
-                    List<SqlParameter> param = new List<SqlParameter>();
-                    param.Add(new SqlParameter("@iCustNo", SqlDbType.Int) { Value = custNo });
-                    param.Add(new SqlParameter("@sFlowNo", SqlDbType.VarChar, 32) { Value = sFlowNo });
-                    param.Add(new SqlParameter("@MonAmount", SqlDbType.Decimal) { Value = payMoney });
-                    param.Add(new SqlParameter("@sDesc", SqlDbType.VarChar, 32) { Value = "取出" });
-                    param.Add(new SqlParameter("@sUserID", SqlDbType.VarChar, 8) { Value = UserInfo.ID });
-                    param.Add(new SqlParameter("@sReceNo", SqlDbType.VarChar, 32) { Value = "" });
-                    param.Add(new SqlParameter("@sSumAmount", SqlDbType.VarChar, 16) { Direction = ParameterDirection.Output });
-                    param.Add(new SqlParameter("@sLstUpd", SqlDbType.VarChar, 32) { Direction = ParameterDirection.Output });
-                    param.Add(new SqlParameter("@sReturn", SqlDbType.VarChar, 256) { Direction = ParameterDirection.Output });
-
-                    BLLFactory<Core.BLL.AccPayment>.Instance.ExecStoreProc("up_DepositAccess", param);
-                    if (param[param.Count - 1].Value.ToString() == "0")
-                    {
-                        result.Success = true;
-                        result.Data1 = sFlowNo;
-                    }
-                    else
-                    {
-                        result.ErrorMessage = "取款失败!错误如下:" + param[param.Count - 1].Value;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                result.ErrorMessage = "取款失败!错误如下:" + ex.Message;
-            }
-            return ToJsonContent(result);
+            return ToJsonContentDate(result);
         }
 
         public DataSet QueryBill(object custNo, out string result)
@@ -672,6 +534,33 @@ namespace WHC.WaterFeeWeb.Controllers
         {
             return View();
         }
+        /// <summary>
+        ///  打印存取款收据
+        /// </summary>           
+        public ActionResult PayGetMoneyPrint(string flowNo)
+        {
+            var endcode = Session["EndCode"] ?? "0";
+            var dt = new DbServiceReference.ServiceDbClient().Account_GetDepositInvoiceInfo(endcode.ToString().ToInt32(), flowNo);
+            if (dt.Rows.Count > 0)
+            {
+                ViewBag.IntCustNo = dt.Rows[0]["IntCustNo"].ToString();
+                ViewBag.NvcName = dt.Rows[0]["NvcName"].ToString();
+                ViewBag.VcRoomNum = dt.Rows[0]["VcRoomNum"].ToString();
+                ViewBag.NvcVillage = dt.Rows[0]["NvcVillage"].ToString();
+                ViewBag.NvcAddr = dt.Rows[0]["NvcAddr"].ToString();
+                ViewBag.VcType = dt.Rows[0]["VcType"].ToString();
+                ViewBag.MonAmount = dt.Rows[0]["MonAmount"].ToString();
+                ViewBag.DteAccount = dt.Rows[0]["DteAccount"].ToString();
+                ViewBag.VcFlowNo = dt.Rows[0]["VcFlowNo"].ToString();
+                ViewBag.UserName = dt.Rows[0]["UserName"].ToString();
+            }
+            return View();
+        }
+        /// <summary>
+        /// 打印扣费信息
+        /// </summary>
+        /// <param name="IntFeeID">客户编号</param>
+        /// <returns></returns>
         public ActionResult PrintTicketDetail(int IntFeeID)
         {
             var model = BLLFactory<Core.DALSQL.AccPayment>.Instance.FindByID(IntFeeID);

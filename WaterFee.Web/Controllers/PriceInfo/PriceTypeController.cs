@@ -12,6 +12,7 @@ using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
 using WHC.Pager.Entity;
 
+
 namespace WHC.WaterFeeWeb.Controllers
 {
     public class PriceTypeController : BusinessControllerNew<Core.BLL.PriceType, Core.Entity.PriceType>
@@ -28,47 +29,83 @@ namespace WHC.WaterFeeWeb.Controllers
             return base.FindWithPager();
         }
 
+        public ActionResult ListJson_Server()
+        {
+            var endcode = Session["EndCode"] ?? "0";
+            //调用后台服务获取集中器信息
+            DbServiceReference.ServiceDbClient DbServer = new DbServiceReference.ServiceDbClient();
+
+            var dts = DbServer.PriceType_Qry(endcode.ToString().ToInt32());
+
+            return ToJsonContentDate(dts);
+        }
+
         public ActionResult GetTreeJson()
         {
             //System.Threading.Thread.Sleep(2000);
             var list = BLLFactory<Core.BLL.PriceType>.Instance.GetAll(" IntNo ");
             return ToJsonContentDate(list);
         }
+        public ActionResult GetTreeJson_Server()
+        {
+            var endcode = Session["EndCode"] ?? "0";
+            //调用后台服务获取集中器信息
+            DbServiceReference.ServiceDbClient DbServer = new DbServiceReference.ServiceDbClient();
 
-        public override ActionResult Insert(Core.Entity.PriceType info)
+            var dts = DbServer.PriceType_GetTreeJson(endcode.ToString().ToInt32());
+
+            return ToJsonContentDate(dts);
+        }
+
+        public ActionResult Insert_Server(DbServiceReference.PriceType info)
         {
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.InsertKey);
-
             CommonResult result = new CommonResult();
             try
             {
-                info.IntNo = BLLFactory<Core.BLL.PriceType>.Instance.GetMaxIntNo();
-                info.IntUserNo = CurrentUser.ID;
-                result.Success = baseBLL.Insert(info);
+                var endcode = Session["EndCode"] ?? "0";
+                //调用后台服务获取集中器信息
+                DbServiceReference.ServiceDbClient DbServer = new DbServiceReference.ServiceDbClient();
+                var flag = DbServer.PriceType_Ins(endcode.ToString().ToInt32(), info);
+                if (flag == "0")
+                {
+                    result.Success = true;
+                }
+                else {
+                    result.ErrorMessage = flag;
+                }
             }
             catch (Exception ex)
             {
-                LogTextHelper.Error(ex);//错误记录
-                result.ErrorMessage = ex.Message;
+                LogTextHelper.Error(ex);//错误记录              
             }
             return ToJsonContent(result);
         }
 
         [HttpPost]
-        public ActionResult Update(Core.Entity.PriceType info)
+        public ActionResult Update_Server(DbServiceReference.PriceType info)
         {
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.UpdateKey);
-
             CommonResult result = new CommonResult();
             try
             {
-                result.Success = baseBLL.Update(info, info.IntNo);
+                //调用后台服务获取集中器信息
+                DbServiceReference.ServiceDbClient DbServer = new DbServiceReference.ServiceDbClient();
+                var flag = DbServer.PriceType_Upd(info);
+                if (flag == "0")
+                {
+                    result.Success = true;
+                }
+                else
+                {
+                    result.ErrorMessage = flag;
+                }
             }
             catch (Exception ex)
             {
-                LogTextHelper.Error(ex);//错误记录
+                LogTextHelper.Error(ex);//错误记录 
                 result.ErrorMessage = ex.Message;
             }
             return ToJsonContent(result);

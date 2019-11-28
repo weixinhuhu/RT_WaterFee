@@ -15,7 +15,6 @@
     <script type="text/javascript">
         //标识是新增还是编辑对话框弹出，用于删除附件的操作
         var isAddOrEdit = 'add';
-
         $(function () {       
             //初始化导航树
             initDeptTreeview();  
@@ -36,11 +35,9 @@
             BindSearchEvent();
         });
         var isAdd = false;
-
         function InputNvcName(obj) {
             $("#addNvcInvName").val($(obj).val());
         }
-
         //实现对DataGird控件的绑定操作
         function InitGrid(queryData) {
             $('#grid').datagrid({
@@ -48,7 +45,7 @@
                 url: '/ArcCustomerInfo/ListJson_Server',            
                 title: '客户档案',
                 iconCls: 'icon-view',
-                height: 650,
+                height: document.body.clientHeight * 0.9 ,
                 width: function () { return document.body.clientWidth * 0.9 },//自动宽度
                 nowrap: true,
                 autoRowHeight: true,
@@ -110,16 +107,19 @@
                         }
                     },
                     { title: '操作员', field: 'IntUserID', width: 80, sortable: true },
-                    { title: '开户日期', field: 'DteOpen', width: 100, sortable: true },
+                    {
+                        title: '开户日期', field: 'DteOpen', width: 100, align: 'center', sortable: true, formatter: function (val) {
+                            return val == "9999-09-09 00:00:00" ? "-" : val.substring(0, 10);
+                        }                       
+                    },
                     {
                         title: '销户日期', field: 'DteCancel', width: 100, align: 'center', sortable: true, formatter: function (val) {
-                            return val = "9999-09-09 00:00:00" ? "-" : val;
+                            return val == "9999-09-09 00:00:00" ? "-" : val.substring(0, 10);
                         }
                     },
                     { title: '建立时间', field: 'DtCreate', width: 100, sortable: true }
                     //,{ title: '', field: 'IntHelper', width: 80, sortable: true }
                 ]],
-
                 toolbar: [{
                     id: 'btnAdd',
                     text: '添加',
@@ -159,7 +159,6 @@
                 $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
             });
         };
-
         function InitPriceProperty() {
             $('#ddlPriceProperty').combobox({
                 url: '/PriceProperty/GetTreeJson_Server',
@@ -174,7 +173,6 @@
                             required: true,
                         });    
         }
-
         //绑定搜索按钮的的点击事件
         function BindSearchEvent() {
             //按条件进行查询数据，首先我们得到数据的值
@@ -190,8 +188,7 @@
                 InitGrid(queryData);
                 return false;
             });
-        }
-        
+        }      
         //弹出新增对话框
         function ShowAddDialog() {
             //隐藏采集器编码
@@ -219,30 +216,25 @@
             isAdd = true;
             return;
         }
-
         //绑定添加按钮的事件
         function BindAddEvent() {
             $("#btnAddOK").unbind("click");
             $("#btnAddOK").click(Insert);
         }
-
         //补0
         function addzone(num, length) {
             return (Array(length).join('0') + num).slice(-length);
         }
-
         function Insert() {
             var s = $("#txtddlPriceProperty").textbox("getValue");
             var c = $("#txtddlPriceProperty2").numberbox("getValue");
             if (s == c) {
                 return $.messager.alert("提示", "价格属性和混合价格不能一致。", 'warning');
             }
-
             //判断表地址长度
             if ($("#meterVcAddr").val().length < 14) {
                 $("#meterVcAddr").val(addzone($("#meterVcAddr").val(), 14));
             }
-
             //判断表单的信息是否通过验证
             var validate = $("#ffCustomerInfo").form('validate');
             if (validate == false) {
@@ -268,7 +260,6 @@
                 $.messager.alert("提示", "您未被授权使用该功能，请联系管理员进行处理。", 'warning');
             });
         }
-
         function Update() {
             if ($("#txtddlPriceProperty").textbox("getValue") == $("#txtddlPriceProperty2").numberbox("getValue")) {
                 return $.messager.alert("提示", "价格属性和混合价格不能一致。", 'warning');
@@ -280,19 +271,16 @@
                     return;
                 }
             }
-
             //判断表地址长度
             if ($("#meterVcAddr").val().length < 14) {
                 $("#meterVcAddr").val(addzone($("#meterVcAddr").val(), 14));
             }
-
             //判断表单的信息是否通过验证
             var validate = $("#ffCustomerInfo").form('validate');
             if (validate == false) {
                 return $.messager.alert("提示", "请校验数据是否填写完整。", 'warning')
                 return false;
             }
-
             var customerInfo = JSON.stringify($("#ffCustomerInfo").serializeJSON());
             var meterInfo = JSON.stringify($("#ffMeterInfo").serializeJSON());
             var postData = { CustomerInfo: customerInfo, MeterInfo: meterInfo };
@@ -301,7 +289,6 @@
                 if (data.Success) {
                     //添加成功  1.关闭弹出层，2.刷新DataGird
                     // showTips("修改成功");
-
                     if (data.ErrorMessage == null) {
                         showTips("修改成功");
 
@@ -319,7 +306,6 @@
                 $.messager.alert("提示", "您未被授权使用该功能，请联系管理员进行处理。", 'warning');
             });
         }
-
         var OldddlPriceProperty;
         //修改或查看明细信息（绑定显示数据）
         function ShowEditOrViewDialog(view) {
@@ -335,16 +321,12 @@
             $("#txtddlPriceProperty2").next(".numberbox").hide();
             //隐藏阀门策略编码
             $("#txtIntAutoSwitch").next(".numberbox").hide();
-
             //隐藏集中器
             $("#ddlArcConcentratorInfo").next().hide();
             //隐藏采样点
-            $("#meterIntMP").next().hide();
-        
-
+            $("#meterIntMP").next().hide();      
             //首先取出来用户选择的数据的ID
             var rows = $("#grid").datagrid("getSelections");
-
             //首先取出来值判断用户只能选择一个
             if (rows.length == 0) {
                 $.messager.alert("提示", "请选择一条记录", "error");
@@ -363,8 +345,6 @@
             BindEditEvent();                     
             OldddlPriceProperty = $("#ddlPriceProperty").combobox("getText");
         }
-
-
         function setMeterInfoDefault() {
             var value = $("#grid").datagrid("getData");
             $("#ffMeterInfo").form('clear');
@@ -436,7 +416,6 @@
             $("#txtYFVcDesc").numberbox("setValue", text);
             $("#txtddlPriceProperty2").numberbox("setValue", info.IntPriceNo2);
             $("#txtIntAutoSwitch").numberbox("setValue", info.IntAutoSwitch);
-
             //协议类型
             $("#meterIntProtocol").numberbox("setValue", info.IntProtocol);
             //原始读数
@@ -467,20 +446,17 @@
                     $("#txtddlPriceProperty").textbox("setValue", $("#ddlPriceProperty").combobox("getValue"));
                 }
             });
-
             $("#ddlPriceProperty2").combobox({
                 "onChange": function () {
                     $("#txtddlPriceProperty2").numberbox("setValue", $("#ddlPriceProperty2").combobox("getValue"));
                 }
             });
-
             $("#IntAutoSwitch").combobox({
                 "onChange": function () {
                     $("#txtIntAutoSwitch").numberbox("setValue", $("#IntAutoSwitch").combobox("getValue"));
                 }
             })
         }
-
         //混合占比触发事件
         function meterIntChannal() {
             $("#meterIntChannal").numberbox({
@@ -520,8 +496,7 @@
                 textField: 'VcDesc',
                 required: true,                
             });
-        }
-     
+        }    
         var easyui_tree_options = {
             length: 0,  //层数
             getLevel: function (treeObj, node) {	//treeObj为tree的dom对象，node为选中的节点
@@ -536,11 +511,9 @@
         }
         function initDeptTreeview() {
             $("#loading").show();
-            var queryData = "";
-            //厂家编码
-            var code = 0;
+            var queryData = "";           
             $('#treeDept1').tree({
-                url: '/ArcCustomerInfo/TreeCommunity_Server?code=' + code,
+                url: '/ArcCustomerInfo/TreeCommunity_Server',
                 onBeforeSelect: function (node) {
                     fujiText = node.text;
                 },
@@ -557,7 +530,7 @@
             });
             $("#loading").fadeOut(500);
         }
-</script>
+    </script>
 
     <style>
         table.view {
@@ -568,7 +541,6 @@
             height: 98%;
             width: 98%;
         }
-
         .view th {
             padding-left: 10px;
             padding-right: 5px;
@@ -579,7 +551,6 @@
             border: 1px solid silver;
             background-color: #F1F6FF;
         }
-
         .view td {
             padding-left: 10px;
             padding-right: 5px;
@@ -590,7 +561,6 @@
             border: 1px solid silver;
             background-color: #FAFCFF;
         }
-
         .view input {
             width: 99%;
         }
@@ -604,19 +574,11 @@
 
     <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
         <div data-options="region:'west',split:true,title:'',iconCls:'icon-book'" style="width: 200px; padding: 1px;">
-            <div class="easyui-tabs" style="width:200px;">
-                @*<div title="集中器" style="padding:10px;">
-                        <ul id="treeDept"></ul>
-                    </div>*@
+            <div class="easyui-tabs" style="width:200px;">             
                 <div title="小区" style="padding:10px;">
                     <ul id="treeDept1"></ul>
                 </div>
-
-            </div>
-
-            @*<div style="margin: 2px; padding: 5px;">
-                    <ul id="treeDept"></ul>
-                </div>*@
+            </div>           
         </div>
         <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding: 5px; height: auto">
             <!-------------------------------搜索框----------------------------------->
@@ -689,13 +651,13 @@
                                     <label for="addIntNo">客户编号：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-numberbox" type="text" id="addIntNo" name="IntNo:number" style="width: 99%;" data-options="required:true,validType:'length[1,20]'" />
+                                    <input class="easyui-numberbox" type="text" id="addIntNo" name="IntNo:number" style="width: 99%;" data-options="required:true,validType:'length[1,16]'" />
                                 </td>
                                 <th>
                                     <label for="addNvcName">客户姓名：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-validatebox" oninput="InputNvcName(this)" type="text" id="addNvcName" name="NvcName" style="width: 99%;" data-options="required:true,validType:'length[1,60]'" />
+                                    <input class="easyui-validatebox" oninput="InputNvcName(this)" type="text" id="addNvcName" name="NvcName" style="width: 99%;" data-options="required:true,validType:'length[1,64]'" />
                                 </td>
                             </tr>
                             <tr>
@@ -787,9 +749,9 @@
                                     <input class="easyui-numberbox" type="text" id="addIntNumber" name="IntNumber:number" style="width: 99%;" />
                                 </td>
                             </tr>
-                            <tr>
+                            <tr id="usertype" hidden>
                                 <th>
-                                    <label for="addNvcCustType">客户类型：</label>
+                                    <label for="addNvcCustType" >客户类型：</label>
                                 </th>
                                 <td>
                                     <input class="easyui-validatebox" type="text" id="addNvcCustType" name="NvcCustType" style="width: 99%;" />
@@ -818,13 +780,13 @@
                                     <label for="addVcAddr">通信地址：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-validatebox" type="text" id="meterVcAddr" maxlength="14" name="VcAddr" style="width: 98%;" data-options="required:true, missingMessage:'请输入14位通信地址'" />
+                                    <input class="easyui-validatebox" type="text" id="meterVcAddr" maxlength="16" name="VcAddr" style="width: 98%;" data-options="required:true, missingMessage:'请输入14位通信地址'" />
                                 </td>
                                 <th>
                                     <label for="addNvcName">名称：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-validatebox" type="text" id="meterNvcName" name="NvcName" style="width: 98%;" data-options="" />
+                                    <input class="easyui-validatebox" type="text" id="meterNvcName" name="NvcName" style="width: 98%;" maxlength="16" data-options="required:true,validType:'length[1,16]'" />
                                 </td>
                             </tr>
                             <tr>
@@ -833,7 +795,7 @@
                                 </th>
 
                                 <td>
-                                    <input class="easyui-validatebox" type="text" id="meterNvcAddr" name="NvcAddr" style="width: 98%;" data-options="" />
+                                    <input class="easyui-validatebox" type="text" id="meterNvcAddr"  name="NvcAddr" style="width: 98%;"  maxlength="16" data-options="" />
                                 </td>
 
                                 <th>
@@ -848,13 +810,13 @@
                                     <label for="addVcAssetNo">资产编号：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-validatebox" type="text" id="meterVcAssetNo" name="VcAssetNo" style="width: 98%;" data-options="" />
+                                    <input class="easyui-validatebox" type="text" id="meterVcAssetNo" name="VcAssetNo" style="width: 98%;"  maxlength="16" data-options="" />
                                 </td>
                                 <th>
                                     <label for="addIntProtocol">协议类型：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-numberbox" type="text" id="meterIntProtocol" name="IntProtocol:number" style="width: 98%;" data-options="required:true" />
+                                    <input class="easyui-numberbox" type="text" id="meterIntProtocol" name="IntProtocol:number" style="width: 98%;"  maxlength="4" data-options="required:true" />
                                 </td>
                             </tr>
                             <tr>
@@ -862,13 +824,13 @@
                                     <label for="addIntCycle">校表周期（月为单位）：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-numberbox" type="text" id="meterIntCycle" name="IntCycle:number" style="width: 98%;" data-options="required:true" />
+                                    <input class="easyui-numberbox" type="text" id="meterIntCycle" name="IntCycle:number" style="width: 98%;" maxlength="4"  data-options="required:true" />
                                 </td>
                                 <th>
                                     <label for="addIntOrig">表原始读数：</label>
                                 </th>
                                 <td>
-                                    <input class="easyui-numberbox" type="text" id="meterIntOrig" name="IntOrig:number" style="width: 98%;" data-options="required:true" />
+                                    <input class="easyui-numberbox" type="text" id="meterIntOrig" name="IntOrig:number" style="width: 98%;" maxlength="8"  data-options="required:true" />
                                 </td>
                             </tr>
                             <tr>
@@ -925,15 +887,15 @@
 
                                 </td>
                             </tr>
-                            <tr>
+                            <tr hidden>
                                 <th>
-                                    @* <label for="addIntConID">所属采集器：</label>*@
+                                    <label for="addIntConID">所属采集器：</label>
                                 </th>
                                 <td>
                                     <select class="easyui-combobox" id="ddlArcConcentratorInfo" name="" style="width: 98%;display:none"></select>
                                 </td>
                                 <th>
-                                    @*<label for="addIntCustNO">计量点：</label>*@
+                                    <label for="addIntCustNO">计量点：</label>
                                 </th>
                                 <td>
                                     <input class="easyui-numberbox" id="meterIntMP" name="IntMP:number" style="width: 98%" value="0" />

@@ -23,8 +23,7 @@
             <div title="价格属性" style="padding: 5px; height: auto" data-options="iconCls:'icon-organ'">
                 <div style="padding: 1px; border: 1px solid #ddd; text-align: center;">
                     <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-reload'" id="roleRefresh" onclick="initRoleTree()">刷新</a>
-                    <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-expand'" id="roleExpand" onclick="return false;">新增</a>
-                    <!--<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-collapse'" id="roleCollapse" onclick="return false;">折叠</a>-->
+                    <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-expand'" id="roleExpand" onclick="return false;">新增</a>                   
                 </div>
                 <div style="padding-top: 5px;">
                     <ul id="treeRole"></ul>
@@ -34,7 +33,6 @@
         <div id="tbEdit" data-options="region:'center',split:true,title:'价格参数',iconCls:'icon-setting'" style="padding: 5px; height: auto">
             <div fit="false">
                 <form class="layui-form" action="">
-
                     <div id="div1" class="layui-form-item" style="margin-top: 5px; margin-bottom: 8px;">
                         <div class="layui-inline">
                             <label class="layui-form-label" style="width: 60px">价格名称</label>
@@ -56,7 +54,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div id="divStep" class="layui-form-item" style="display: none; margin-bottom: 8px;">
                         <div class="layui-inline">
                             <label class="layui-form-label" style="width: 60px">阶梯数量</label>
@@ -88,7 +85,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="layui-form-item" style="margin-left: 25px; margin-bottom: 8px;">
                         <div class="layui-inline">
                             <table class="layui-table table" style="text-align: center;">
@@ -99,8 +95,6 @@
                             </table>
                         </div>
                     </div>
-
-
                     <div id="div3" class="layui-form-item" style="margin-left: 25px;">
                         <div class="layui-inline">
                             <div class="layui-input-inline" style="width: 160px">
@@ -108,12 +102,9 @@
                             </div>
                         </div>
                     </div>
-
-
                 </form>
             </div>
         </div>
-
     </div>
     <style type="text/css">
         .table > tr:hover {
@@ -150,13 +141,12 @@
         //初始化列表
         function initRoleTree() {
             $('#treeRole').tree({
-                url: '/PriceProperty/GetTreeJson',
+                url: '/PriceProperty/GetListJson_Server',
                 onClick: function (node) {
                     if (node == lastClickNode) return;
-                    lastClickNode = node;
+                    lastClickNode = node;                  
                     setInput(node.data);
-                }
-                //, onLoadSuccess: offlineAll
+                }               
             });
         }
         function add() {
@@ -206,7 +196,7 @@
             var arrPriceType = [];
             var arrPriceCalc = [];
             $.ajax({
-                url: '/PriceType/GetTreeJson',
+                url: '/PriceType/GetTreeJson_Server',
                 type: 'post',
                 async: false,
                 dataType: 'json',
@@ -217,14 +207,13 @@
                     }
                 },
                 error: function () {
-
                 }
             });
 
             var intPropertyNo = $("#txtIntPropertyNo").val();
             if (intPropertyNo != "") {
                 $.ajax({
-                    url: '/PriceProperty/GetInfoByIntPropertyNo',
+                    url: '/PriceProperty/GetInfoByIntPropertyNo_Server',
                     type: 'post',
                     async: false,
                     data: { IntPropertyNo: intPropertyNo },
@@ -233,7 +222,6 @@
                         arrPriceCalc = data;
                     },
                     error: function () {
-
                     }
                 });
             }
@@ -286,8 +274,7 @@
                         if (itemOld == null)
                             strBody += '<td><input type="text" name="IntStepInc' + step + '" lay-verify="required|number" autocomplete="off" class="layui-input"></td>';
                         else
-                            strBody += '<td><input value="' + itemOld.IntStepInc + '" type="text" name="IntStepInc' + step + '" lay-verify="required|number" autocomplete="off" class="layui-input"></td>';
-
+                            strBody += '<td><input value="' + itemOld.IntStepInc + '" type="text" name="IntStepInc' + step + '" lay-verify="required|number" autocomplete="off" class="layui-input"></td>'; 
                     }
                     for (var arrIndex in arrPriceType) {
                         var price = QueryJson2(arrPriceCalc, "IntTypeNo", arrPriceType[arrIndex].IntNo, "IntStepOrder", step);
@@ -327,7 +314,6 @@
             $("#tbHead").html(strHead);
             $("#tbBody").html(strBody);
         }
-
         function countPrice($this) {
             var step = $($this).attr("step");
             var total = 0;
@@ -337,7 +323,6 @@
             });
             $("input[name='NumTotalPrice" + step + "'").val(total.toFixed(2));
         }
-
         var form, layer, laydate, table;
         layui.use(['form', 'laydate', 'table'], function () {
             form = layui.form
@@ -349,20 +334,7 @@
             laydate.render({
                 elem: '#DteStart'
             });
-
-            //自定义验证规则
-            form.verify({
-                title: function (value) {
-                    if (value.length < 5) {
-                        return '标题至少得5个字符啊';
-                    }
-                }
-              , pass: [/(.+){6,12}$/, '密码必须6到12位']
-              , content: function (value) {
-                  layedit.sync(editIndex);
-              }
-            });
-
+        
             //监听指定开关
             form.on('switch(switchIntStep)', function (data) {
                 IntStepChecked = this.checked;
@@ -383,7 +355,7 @@
                 //data.field.IntStepCount = $("#IntStepCount").val();
                 loading.show();
                 $.ajax({
-                    url: '/PriceProperty/AddOrUpdate',
+                    url: '/PriceProperty/AddOrUpdate_Server',
                     type: 'post',
                     //async: false,
                     data: data.field,
@@ -399,13 +371,9 @@
                     error: function () {
                         loading.hide();
                     }
-                });
-                //layer.alert(JSON.stringify(data.field), {
-                //    title: '最终的提交信息'
-                //})
+                });              
                 return false;
-            });
-             
+            });            
             setDivStep();
             add();
         });

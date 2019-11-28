@@ -59,11 +59,11 @@ namespace WHC.WaterFeeWeb.Controllers
                 custormerinfo.VcBuilding=  fuji ;
                 custormerinfo.VcUnitNum =  Text ;
             }
-       
+
+            var endcode = Session["EndCode"] ?? "0";
             //调用后台服务获取集中器信息
             ServiceDbClient DbServer = new ServiceDbClient();
-
-            var dts = DbServer.ArcCustomer_Qry(0, custormerinfo);
+            var dts = DbServer.ArcCustomer_Qry(endcode.ToString().ToInt32(), custormerinfo);
 
             int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
             int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
@@ -80,7 +80,7 @@ namespace WHC.WaterFeeWeb.Controllers
             }
             //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
             int total = dts.Rows.Count;
-            var result = new { total = total, rows = dat };
+            var result = new {total, rows = dat };
 
             return ToJsonContentDate(result);
         }
@@ -131,8 +131,10 @@ namespace WHC.WaterFeeWeb.Controllers
                 MeterInfo.IntCustNO = CustomerInfo.IntNo;
                 CustomerInfo.VcAddrCode = DBLib.PinYinHelper.GetInitials(CustomerInfo.NvcAddr);
                 CustomerInfo.VcNameCode = DBLib.PinYinHelper.GetInitials(CustomerInfo.NvcName);
-
-                //调用后台服务获取集中器信息
+                var endcode = Session["EndCode"] ?? "0";
+                CustomerInfo.IntEndCode = endcode.ToString().ToInt32();
+                MeterInfo.IntEndCode = endcode.ToString().ToInt32();
+              
                 ServiceDbClient DbServer = new ServiceDbClient();
                 var flg = DbServer.ArcCustMeter_Ins(CustomerInfo, MeterInfo);
                 if (flg == "0")
@@ -150,11 +152,9 @@ namespace WHC.WaterFeeWeb.Controllers
                 result.Success = false;
                 result.ErrorMessage = ex.Message;
             }
-
             return ToJsonContent(result);
         }
         public ActionResult Update_Server(Customer CustomerInfo, Meter MeterInfo) {
-
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.InsertKey);
             CommonResult result = new CommonResult();
@@ -182,8 +182,9 @@ namespace WHC.WaterFeeWeb.Controllers
                 MeterInfo.IntCustNO = CustomerInfo.IntNo;
                 CustomerInfo.VcAddrCode = DBLib.PinYinHelper.GetInitials(CustomerInfo.NvcAddr);
                 CustomerInfo.VcNameCode = DBLib.PinYinHelper.GetInitials(CustomerInfo.NvcName);
-         
-
+                var endcode = Session["EndCode"] ?? "0";
+                CustomerInfo.IntEndCode = endcode.ToString().ToInt32();
+                MeterInfo.IntEndCode = endcode.ToString().ToInt32();
                 //调用后台服务获取集中器信息
                 ServiceDbClient DbServer = new ServiceDbClient();
                 var flg = DbServer.ArcCustMeter_Upd(CustomerInfo, MeterInfo);
@@ -495,9 +496,11 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContentDate(treeList);
         }
 
-        public ActionResult TreeCommunity_Server(int code)
-        {         
-          var treelist = new ServiceDbClient().ArcCustomer_TreeCommunity(code);
+        public ActionResult TreeCommunity_Server()            
+        {
+            var endcode = Session["EndCode"] ?? "0";
+
+            var treelist = new ServiceDbClient().ArcCustomer_TreeCommunity(endcode.ToString().ToInt32());
             
           return ToJsonContentDate(treelist);
         }

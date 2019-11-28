@@ -10,6 +10,12 @@
       <xsd:import schemaLocation="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
     </xsd:schema>
   </wsdl:types>
+  <wsdl:message name="IServiceDb_SayHello_InputMessage">
+    <wsdl:part name="parameters" element="tns:SayHello" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_SayHello_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SayHelloResponse" />
+  </wsdl:message>
   <wsdl:message name="IServiceDb_ArcConcentrator_Qry_InputMessage">
     <wsdl:part name="parameters" element="tns:ArcConcentrator_Qry" />
   </wsdl:message>
@@ -106,13 +112,119 @@
   <wsdl:message name="IServiceDb_ArcMeter_Replace_OutputMessage">
     <wsdl:part name="parameters" element="tns:ArcMeter_ReplaceResponse" />
   </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceType_Qry_InputMessage">
+    <wsdl:part name="parameters" element="tns:PriceType_Qry" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceType_Qry_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PriceType_QryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceType_Ins_InputMessage">
+    <wsdl:part name="parameters" element="tns:PriceType_Ins" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceType_Ins_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PriceType_InsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceType_Upd_InputMessage">
+    <wsdl:part name="parameters" element="tns:PriceType_Upd" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceType_Upd_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PriceType_UpdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceType_GetTreeJson_InputMessage">
+    <wsdl:part name="parameters" element="tns:PriceType_GetTreeJson" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceType_GetTreeJson_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PriceType_GetTreeJsonResponse" />
+  </wsdl:message>
   <wsdl:message name="IServiceDb_PriceProperty_GetTreeJson_InputMessage">
     <wsdl:part name="parameters" element="tns:PriceProperty_GetTreeJson" />
   </wsdl:message>
   <wsdl:message name="IServiceDb_PriceProperty_GetTreeJson_OutputMessage">
     <wsdl:part name="parameters" element="tns:PriceProperty_GetTreeJsonResponse" />
   </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceProperty_GetList_InputMessage">
+    <wsdl:part name="parameters" element="tns:PriceProperty_GetList" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceProperty_GetList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PriceProperty_GetListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceProperty_GetByNo_InputMessage">
+    <wsdl:part name="parameters" element="tns:PriceProperty_GetByNo" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceProperty_GetByNo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PriceProperty_GetByNoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceProperty_AddOrUpdate_InputMessage">
+    <wsdl:part name="parameters" element="tns:PriceProperty_AddOrUpdate" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_PriceProperty_AddOrUpdate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PriceProperty_AddOrUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_SMS_Template_Qry_InputMessage">
+    <wsdl:part name="parameters" element="tns:SMS_Template_Qry" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_SMS_Template_Qry_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SMS_Template_QryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_SMS_Template_InsOrUpd_InputMessage">
+    <wsdl:part name="parameters" element="tns:SMS_Template_InsOrUpd" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_SMS_Template_InsOrUpd_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SMS_Template_InsOrUpdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetMoney_InputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetMoney" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetMoney_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetMoneyResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetDepositDetailByCustNo_InputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetDepositDetailByCustNo" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetDepositDetailByCustNo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetDepositDetailByCustNoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetDebtByCustNo_InputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetDebtByCustNo" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetDebtByCustNo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetDebtByCustNoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetWriteoffByCustNo_InputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetWriteoffByCustNo" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetWriteoffByCustNo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetWriteoffByCustNoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_DepositOperate_InputMessage">
+    <wsdl:part name="parameters" element="tns:Account_DepositOperate" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_DepositOperate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Account_DepositOperateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetDepositInvoiceInfo_InputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetDepositInvoiceInfo" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetDepositInvoiceInfo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetDepositInvoiceInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetDepositDetail_InputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetDepositDetail" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetDepositDetail_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetDepositDetailResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetBillByCustNo_InputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetBillByCustNo" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Account_GetBillByCustNo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Account_GetBillByCustNoResponse" />
+  </wsdl:message>
   <wsdl:portType name="IServiceDb">
+    <wsdl:operation name="SayHello">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/SayHello" message="tns:IServiceDb_SayHello_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/SayHelloResponse" message="tns:IServiceDb_SayHello_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="ArcConcentrator_Qry">
       <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/ArcConcentrator_Qry" message="tns:IServiceDb_ArcConcentrator_Qry_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/ArcConcentrator_QryResponse" message="tns:IServiceDb_ArcConcentrator_Qry_OutputMessage" />
@@ -177,13 +289,90 @@
       <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/ArcMeter_Replace" message="tns:IServiceDb_ArcMeter_Replace_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/ArcMeter_ReplaceResponse" message="tns:IServiceDb_ArcMeter_Replace_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="PriceType_Qry">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/PriceType_Qry" message="tns:IServiceDb_PriceType_Qry_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/PriceType_QryResponse" message="tns:IServiceDb_PriceType_Qry_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PriceType_Ins">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/PriceType_Ins" message="tns:IServiceDb_PriceType_Ins_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/PriceType_InsResponse" message="tns:IServiceDb_PriceType_Ins_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PriceType_Upd">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/PriceType_Upd" message="tns:IServiceDb_PriceType_Upd_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/PriceType_UpdResponse" message="tns:IServiceDb_PriceType_Upd_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PriceType_GetTreeJson">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/PriceType_GetTreeJson" message="tns:IServiceDb_PriceType_GetTreeJson_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/PriceType_GetTreeJsonResponse" message="tns:IServiceDb_PriceType_GetTreeJson_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="PriceProperty_GetTreeJson">
       <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/PriceProperty_GetTreeJson" message="tns:IServiceDb_PriceProperty_GetTreeJson_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/PriceProperty_GetTreeJsonResponse" message="tns:IServiceDb_PriceProperty_GetTreeJson_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="PriceProperty_GetList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/PriceProperty_GetList" message="tns:IServiceDb_PriceProperty_GetList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/PriceProperty_GetListResponse" message="tns:IServiceDb_PriceProperty_GetList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PriceProperty_GetByNo">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/PriceProperty_GetByNo" message="tns:IServiceDb_PriceProperty_GetByNo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/PriceProperty_GetByNoResponse" message="tns:IServiceDb_PriceProperty_GetByNo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PriceProperty_AddOrUpdate">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/PriceProperty_AddOrUpdate" message="tns:IServiceDb_PriceProperty_AddOrUpdate_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/PriceProperty_AddOrUpdateResponse" message="tns:IServiceDb_PriceProperty_AddOrUpdate_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SMS_Template_Qry">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/SMS_Template_Qry" message="tns:IServiceDb_SMS_Template_Qry_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/SMS_Template_QryResponse" message="tns:IServiceDb_SMS_Template_Qry_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SMS_Template_InsOrUpd">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/SMS_Template_InsOrUpd" message="tns:IServiceDb_SMS_Template_InsOrUpd_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/SMS_Template_InsOrUpdResponse" message="tns:IServiceDb_SMS_Template_InsOrUpd_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetMoney">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/Account_GetMoney" message="tns:IServiceDb_Account_GetMoney_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/Account_GetMoneyResponse" message="tns:IServiceDb_Account_GetMoney_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetDepositDetailByCustNo">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/Account_GetDepositDetailByCustNo" message="tns:IServiceDb_Account_GetDepositDetailByCustNo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/Account_GetDepositDetailByCustNoResponse" message="tns:IServiceDb_Account_GetDepositDetailByCustNo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetDebtByCustNo">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/Account_GetDebtByCustNo" message="tns:IServiceDb_Account_GetDebtByCustNo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/Account_GetDebtByCustNoResponse" message="tns:IServiceDb_Account_GetDebtByCustNo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetWriteoffByCustNo">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/Account_GetWriteoffByCustNo" message="tns:IServiceDb_Account_GetWriteoffByCustNo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/Account_GetWriteoffByCustNoResponse" message="tns:IServiceDb_Account_GetWriteoffByCustNo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Account_DepositOperate">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/Account_DepositOperate" message="tns:IServiceDb_Account_DepositOperate_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/Account_DepositOperateResponse" message="tns:IServiceDb_Account_DepositOperate_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetDepositInvoiceInfo">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/Account_GetDepositInvoiceInfo" message="tns:IServiceDb_Account_GetDepositInvoiceInfo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/Account_GetDepositInvoiceInfoResponse" message="tns:IServiceDb_Account_GetDepositInvoiceInfo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetDepositDetail">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/Account_GetDepositDetail" message="tns:IServiceDb_Account_GetDepositDetail_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/Account_GetDepositDetailResponse" message="tns:IServiceDb_Account_GetDepositDetail_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetBillByCustNo">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/Account_GetBillByCustNo" message="tns:IServiceDb_Account_GetBillByCustNo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/Account_GetBillByCustNoResponse" message="tns:IServiceDb_Account_GetBillByCustNo_OutputMessage" />
+    </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IServiceDb" type="tns:IServiceDb">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SayHello">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/SayHello" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="ArcConcentrator_Qry">
       <soap:operation soapAction="http://tempuri.org/IServiceDb/ArcConcentrator_Qry" style="document" />
       <wsdl:input>
@@ -328,8 +517,161 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="PriceType_Qry">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/PriceType_Qry" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PriceType_Ins">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/PriceType_Ins" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PriceType_Upd">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/PriceType_Upd" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PriceType_GetTreeJson">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/PriceType_GetTreeJson" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="PriceProperty_GetTreeJson">
       <soap:operation soapAction="http://tempuri.org/IServiceDb/PriceProperty_GetTreeJson" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PriceProperty_GetList">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/PriceProperty_GetList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PriceProperty_GetByNo">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/PriceProperty_GetByNo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PriceProperty_AddOrUpdate">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/PriceProperty_AddOrUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SMS_Template_Qry">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/SMS_Template_Qry" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SMS_Template_InsOrUpd">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/SMS_Template_InsOrUpd" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetMoney">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/Account_GetMoney" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetDepositDetailByCustNo">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/Account_GetDepositDetailByCustNo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetDebtByCustNo">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/Account_GetDebtByCustNo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetWriteoffByCustNo">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/Account_GetWriteoffByCustNo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Account_DepositOperate">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/Account_DepositOperate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetDepositInvoiceInfo">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/Account_GetDepositInvoiceInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetDepositDetail">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/Account_GetDepositDetail" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Account_GetBillByCustNo">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/Account_GetBillByCustNo" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

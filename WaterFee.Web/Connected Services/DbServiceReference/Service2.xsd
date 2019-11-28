@@ -151,6 +151,24 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="MeterReplaceInfo" nillable="true" type="tns:MeterReplaceInfo" />
+  <xs:complexType name="PriceType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DtCreate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DteEnd" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DteStart" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IntEndCode" type="xs:int" />
+      <xs:element minOccurs="0" name="IntNo" type="xs:int" />
+      <xs:element minOccurs="0" name="IntUserNo" type="xs:int" />
+      <xs:element minOccurs="0" name="NvcDesc" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PriceType" nillable="true" type="tns:PriceType" />
+  <xs:complexType name="ArrayOfPriceType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PriceType" nillable="true" type="tns:PriceType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPriceType" nillable="true" type="tns:ArrayOfPriceType" />
   <xs:complexType name="ArrayOfPricePropertyTree">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="PricePropertyTree" nillable="true" type="tns:PricePropertyTree" />
@@ -172,6 +190,7 @@
       <xs:element minOccurs="0" name="DtCreate" type="xs:dateTime" />
       <xs:element minOccurs="0" name="DteEnd" type="xs:dateTime" />
       <xs:element minOccurs="0" name="DteStart" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IntEndCode" type="xs:int" />
       <xs:element minOccurs="0" name="IntInterval" type="xs:int" />
       <xs:element minOccurs="0" name="IntNo" type="xs:int" />
       <xs:element minOccurs="0" name="IntStep" type="xs:int" />
@@ -182,4 +201,40 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="PriceProperty" nillable="true" type="tns:PriceProperty" />
+  <xs:complexType name="ArrayOfPriceProperty">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PriceProperty" nillable="true" type="tns:PriceProperty" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPriceProperty" nillable="true" type="tns:ArrayOfPriceProperty" />
+  <xs:complexType name="ArrayOfPriceDetail">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PriceDetail" nillable="true" type="tns:PriceDetail" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPriceDetail" nillable="true" type="tns:ArrayOfPriceDetail" />
+  <xs:complexType name="PriceDetail">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="IntStepInc" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="IntStepOrder" type="xs:unsignedInt" />
+      <xs:element minOccurs="0" name="IntStepStart" type="xs:unsignedInt" />
+      <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Price" nillable="true" type="q3:ArrayOfKeyValueOfintdouble" />
+      <xs:element minOccurs="0" name="TotalPrice" type="xs:double" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PriceDetail" nillable="true" type="tns:PriceDetail" />
+  <xs:complexType name="SmsTemplate">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DtCreate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DtLstUpd" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IntEndCode" type="xs:int" />
+      <xs:element minOccurs="0" name="IntID" type="xs:int" />
+      <xs:element minOccurs="0" name="IntStatus" type="xs:int" />
+      <xs:element minOccurs="0" name="NvcContent" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcSQL" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcAlyID" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SmsTemplate" nillable="true" type="tns:SmsTemplate" />
 </xs:schema>

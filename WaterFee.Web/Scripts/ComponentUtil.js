@@ -14,12 +14,9 @@ function QueryJson2(objJson, key1, value1, key2, value2) {
                 return objJson[i];
     return null;
 }
-
-
 //名称:加载显示等待画面,loading等待...
 //作者:来自深蓝QQ群257018781
 //版本:v0.1 (2017.06.26)
-;
 var isInitDivloading = false;
 var loading = {
     show: function (msg) {
@@ -50,9 +47,7 @@ function initDivloading() {
     $("body").prepend('<div id="divLoadingElement"></div><div id="divLoadingElementMsg">正在处理，请稍待。。。</div>');
     isInitDivloading = true;
 }
-
 //本文件定义一些在各个视图里面经常用到的一些Javascript脚本函数
-
 //datagrid宽度高度自动调整的函数
 $.fn.extend({
     resizeDataGrid: function (heightMargin, widthMargin, minHeight, minWidth) {
@@ -75,7 +70,6 @@ $.fn.center = function () {
                                         $(window).scrollLeft()) + "px");
     return this;
 }
-
 //在页面中生成GUID的值
 function newGuid() {
     var guid = "";
@@ -87,12 +81,10 @@ function newGuid() {
     }
     return guid;
 }
-
 //打包下载所有附件
 function DownloadAttach(guid) {
     window.open('/FileUpload/DownloadAttach?guid=' + guid);
 }
-
 //在新窗口中查看附件
 function ShowAttach(id, ext) {
     var showWindow = true;//标识是否使用窗口查看。office文档+图片文档窗口查看，其他的直接下载
@@ -146,7 +138,6 @@ function ShowAttach(id, ext) {
         window.open(viewUrl);
     }
 }
-
 //绑定附件列表
 function ShowUpFiles(guid, show_div) {
     $.ajax({
@@ -162,7 +153,6 @@ function ShowUpFiles(guid, show_div) {
         }
     });
 }
-
 //绑定附件列表（查看状态）
 function ViewUpFiles(guid, show_div) {
     $.ajax({
@@ -176,7 +166,6 @@ function ViewUpFiles(guid, show_div) {
         }
     });
 }
-
 //删除指定的附件后，对附件组进行更新
 // id 删除附件id, attachguid 附件组ID, show_div 显示附件的Div
 function DeleteAndRefreshAttach(id, attachguid, show_div) {
@@ -196,8 +185,6 @@ function DeleteAndRefreshAttach(id, attachguid, show_div) {
         }
     });
 }
-
-
 //绑定字典内容到指定的控件
 function BindDictItem(control, dictTypeName) {
     $('#' + control).combobox({
@@ -206,7 +193,6 @@ function BindDictItem(control, dictTypeName) {
         textField: 'Text'
     });
 }
-
 //绑定回车键操作到指定的控件
 function BindReturnEvent(control) {
     $('#' + control).bind("enterKey", function (e) {
@@ -218,7 +204,6 @@ function BindReturnEvent(control) {
         }
     });
 }
-
 //获取日期获取日期+时间的字符串
 function GetCurrentDate(hasTime) {
     var curr_time = new Date();
@@ -233,7 +218,6 @@ function GetCurrentDate(hasTime) {
     }
     return strDate;
 }
-
 //EasyUI树控件的相关操作
 function expandAll(treeName) {
     var node = $('#' + treeName).tree('getSelected');
@@ -271,9 +255,6 @@ function checkAllTree(tree, checked) {
         }
     }
 }
-
-
-
 //显示错误或提示信息（需要引用jNotify相关文件）
 function showError(tips, TimeShown, autoHide) {
     jError(
@@ -286,7 +267,7 @@ function showError(tips, TimeShown, autoHide) {
           ShowOverlay: true,
           ColorOverlay: '#000',
           onCompleted: function () { // added in v2.0
-              //alert('jNofity is completed !');
+          //alert('jNofity is completed !');
           }
       }
     );
@@ -303,7 +284,7 @@ function showErrorTop(tips, TimeShown, autoHide) {
            ShowOverlay: true,
            ColorOverlay: '#000',
            onCompleted: function () { // added in v2.0
-               //alert('jNofity is completed !');
+           //alert('jNofity is completed !');
            }
        }
      );
@@ -319,7 +300,7 @@ function showTips(tips, TimeShown, autoHide) {
           ShowOverlay: true,
           ColorOverlay: '#000',
           onCompleted: function () { // added in v2.0
-              //alert('jNofity is completed !');
+          //alert('jNofity is completed !');
           }
       }
     );
@@ -335,7 +316,7 @@ function showTipsTop(tips, TimeShown, autoHide) {
            ShowOverlay: true,
            ColorOverlay: '#000',
            onCompleted: function () { // added in v2.0
-               //alert('jNofity is completed !');
+           //alert('jNofity is completed !');
            }
        }
      );

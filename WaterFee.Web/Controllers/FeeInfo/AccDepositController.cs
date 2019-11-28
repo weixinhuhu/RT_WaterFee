@@ -12,6 +12,7 @@ using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
 using WHC.MVCWebMis.Controllers;
 using WHC.Pager.Entity;
+using WHC.WaterFeeWeb.DbServiceReference;
 
 namespace WHC.WaterFeeWeb.Controllers
 {
@@ -29,7 +30,7 @@ namespace WHC.WaterFeeWeb.Controllers
             sb.Append(" left join AccDeposit BB on AA.IntNo = BB.IntCustNO left join ArcMeterInfo CC on AA.IntNo=CC.IntCustNO and CC.IntStatus=0 left join ArcConcentratorInfo DD  on CC.IntTopConID=DD.IntID where 1 =1 ");
             sb.Append(strWhere);
             var list = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.SqlTable(sb.ToString());
-            
+
             //非要减去欠费的账单 
             var listCustNo = new List<int>();
             foreach (DataRow item in list.Rows)
@@ -55,6 +56,7 @@ namespace WHC.WaterFeeWeb.Controllers
             return list;
         }
 
+
         /// <summary>
         /// 预存款数据
         /// </summary>
@@ -73,7 +75,7 @@ namespace WHC.WaterFeeWeb.Controllers
 
         //预存款数据
         public ActionResult GetMoneyJson()
-        {   
+        {
             //weixin 2019.2.28修改分页bug
             var key = SqlTextClear(Request["key"]);
             var fuji = Request["WHC_Fuji"];
@@ -84,10 +86,10 @@ namespace WHC.WaterFeeWeb.Controllers
             var sb = new System.Text.StringBuilder();
             sb.Append(" select AA.NvcName,AA.IntNo IntCustNo,AA.IntUnitNum,AA.NvcVillage,AA.VcBuilding,AA.IntRoomNum,IsNULL(BB.MonSum,0) MonSum,BB.DtLastUpd ,CC.IntMP,DD.VcAddr from ArcCustomerInfo AA ");
             sb.Append(" left join AccDeposit BB on AA.IntNo = BB.IntCustNO left join ArcMeterInfo CC on AA.IntNo=CC.IntCustNO and CC.IntStatus=0 left join ArcConcentratorInfo DD  on CC.IntTopConID=DD.IntID where 1 =1 ");
-           
+
             if (Strlevel == "1")
             {
-                sb.AppendFormat( " and NvcVillage = '所有小区' ");
+                sb.AppendFormat(" and NvcVillage = '所有小区' ");
             }
 
             if (Strlevel == "2")
@@ -129,6 +131,71 @@ namespace WHC.WaterFeeWeb.Controllers
             int total = list.Rows.Count;
             var result = new { total = total, rows = dat };
             return ToJsonContentDate(result);
-        }       
+        }
+        //预存款数据
+        public ActionResult GetMoneyJson_Server()
+        {
+
+            var Strlevel = Request["WHC_Treelevel"];
+            var fuji = Request["WHC_Fuji"];
+            var Text = Request["WHC_Text"];
+            var ParentText = Request["WHC_TreePrentText"];
+
+            var custormerinfo = new Customer()
+            {
+                NvcName = Request["WHC_NvcName"] ?? "",
+                NvcAddr = Request["WHC_NvcAddr"] ?? "",
+                VcMobile = Request["WHC_VcMobile"] ?? ""
+            };
+
+            if (Strlevel == "1")
+            {
+                custormerinfo.NvcVillage = "所有小区";
+            };
+
+            if (Strlevel == "2")
+            {
+                custormerinfo.NvcVillage = Text;
+            }
+
+            if (Strlevel == "3")
+            {
+                custormerinfo.NvcVillage = fuji;
+                custormerinfo.VcBuilding = Text;
+            }
+
+            if (Strlevel == "4")
+            {
+                custormerinfo.NvcVillage = ParentText;
+                custormerinfo.VcBuilding = fuji;
+                custormerinfo.VcUnitNum = Text;
+            }
+
+            var endcode = Session["EndCode"] ?? "0";
+            //调用后台服务获取集中器信息
+            ServiceDbClient DbServer = new ServiceDbClient();
+            var dts = DbServer.Account_GetMoney(endcode.ToString().ToInt32(), custormerinfo);
+
+            int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
+            int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
+
+            DataTable dat = new DataTable();
+            //复制源的架构和约束
+            dat = dts.Clone();
+            // 清除目标的所有数据
+            dat.Clear();
+            //对数据进行分页
+            for (int i = (page - 1) * rows; i < page * rows && i < dts.Rows.Count; i++)
+            {
+                dat.ImportRow(dts.Rows[i]);
+            }
+            //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
+            int total = dts.Rows.Count;
+            var result = new {total, rows = dat };
+
+            return ToJsonContentDate(result);
+        }
     }
+    
 }
+

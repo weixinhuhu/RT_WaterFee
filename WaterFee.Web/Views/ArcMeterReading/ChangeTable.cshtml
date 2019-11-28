@@ -64,7 +64,7 @@
             //厂家编码
             var code = 0;
             $('#treeDept1').tree({
-                url: '/ArcCustomerInfo/TreeCommunity_Server?code=' + code,
+                url: '/ArcCustomerInfo/TreeCommunity_Server',
                 onBeforeSelect: function (node) {
                     fujiText = node.text;
                 },
@@ -88,8 +88,7 @@
             $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
                 url: '/ArcMeterInfo/ListJson_Server',   //指向后台的Action来获取当前用户的信息的Json格式的数据
                 title: '换表',
-                iconCls: 'icon-view',
-                height: 650,
+                iconCls: 'icon-view',               
                 width: function () { return document.body.clientWidth * 0.9 },//自动宽度
                 nowrap: true,
                 autoRowHeight: true,
@@ -113,8 +112,8 @@
                     { title: '用户姓名', field: 'NvcName', width: 80, sortable: true },
                     { title: '用户小区', field: 'NvcVillage', width: 80, sortable: true },
                     { title: '用户楼栋', field: 'VcBuilding', width: 80, sortable: true },
-                    { title: '用户单元', field: 'IntUnitNum', width: 80, sortable: true },
-                    { title: '用户门牌号', field: 'IntRoomNum', width: 80, sortable: true },
+                    { title: '用户单元', field: 'VcUnitNum', width: 80, sortable: true },
+                    { title: '用户门牌号', field: 'VcRoomNum', width: 80, sortable: true },
                     { title: '安装地址', field: 'NvcAddr', width: 120, sortable: true },
                     { title: '阀门状态', field: 'IntValveState', width: 80, sortable: true },
                     { title: '使用状态', field: 'IntStatus', width: 80, sortable: true },
@@ -255,8 +254,8 @@
         
         //绑定编辑详细信息的方法
         function BindEditInfo(info) {
-            $("#IntCustNo").val(info.IntCustNO);
-            $("#VcAddrOld").val(info.VcAddr);           
+            $("#IntCustNo").textbox("setValue",info.IntCustNO);
+            $("#VcAddrOld").textbox("setValue",info.VcAddr);           
             $("#NvcNames").textbox("setValue", info.NvcName);
             $("#NvcAddrs").textbox("setValue", info.NvcAddr);
         }
@@ -313,8 +312,7 @@
                     }
                 }
             });
-        }
-        
+        }       
         //绑定账务方式及阀门策略
         function option() {
             $('#IntNewAccountWay').combobox({
@@ -346,7 +344,6 @@
             height: 98%;
             width: 98%;
         }
-
         .view th {
             padding-left: 10px;
             padding-right: 5px;
@@ -357,7 +354,6 @@
             border: 1px solid silver;
             background-color: #F1F6FF;
         }
-
         .view td {
             padding-left: 10px;
             padding-right: 5px;
@@ -368,7 +364,6 @@
             border: 1px solid silver;
             background-color: #FAFCFF;
         }
-
         .view input {
             width: 98%;
         }
@@ -446,20 +441,21 @@
                             <label for="IntCustNo">客户编号：</label>
                         </th>
                         <td>
-                            <input class="easyui-validatebox" type="text" id="IntCustNo" name="IntCustNo" data-options="editable:false,panelHeight:'auto'" style="width: 98%" />
+                            <input class="easyui-textbox" type="text" id="IntCustNo" name="IntCustNo" data-options="editable:false" style="width: 98%" />
                         </td>
                         <th>
                             <label for="NvcNames">客户名称：</label>
                         </th>
                         <td>
-                            <input class="easyui-textbox" type="text" id="NvcNames" name="NvcNames" data-options="editable:false,panelHeight:'auto'" style="width: 98%" />
+                            <input class="easyui-textbox" type="text" id="NvcNames" name="NvcNames" maxlength="64"  data-options="editable:false" style="width: 98%" />
                         </td>
                         <th>
                             <label for="NvcAddrs">客户地址：</label>
                         </th>
                         <td>
-                            <input class="easyui-textbox" type="text" id="NvcAddrs" name="NvcAddrs" data-options="editable:false,panelHeight:'auto'" style="width: 98%" />
+                            <input class="easyui-textbox" type="text" id="NvcAddrs" name="NvcAddrs" maxlength="64" data-options="editable:false" style="width: 98%" />
                         </td>
+                    </tr>
                     <tr>
                         <th>
                             <label for="IntReplaceType">换表类型：</label>
@@ -472,13 +468,13 @@
                             <label for="VcAddrOld">旧表地址：</label>
                         </th>
                         <td>
-                            <input class="easyui-validatebox" type="text" id="VcAddrOld" name="VcOldAddr" data-options="editable:false,panelHeight:'auto'" style="width: 98%" />
+                            <input class="easyui-textbox" type="text" id="VcAddrOld" name="VcOldAddr" maxlength="16" data-options="editable:false,panelHeight:'auto'" style="width: 98%" />
                         </td>
                         <th>
                             <label for="NumReading">旧表最后读数：</label>
                         </th>
                         <td>
-                            <input class="easyui-textbox" type="text" id="NumReading" name="NumOldLastReading" style="width: 98%" data-options="required:true" />
+                            <input class="easyui-validatebox" type="text" id="NumReading" name="NumOldLastReading" style="width: 98%" maxlength="16" data-options="required:true" />
                         </td>
                     </tr>
                     <tr>
@@ -486,19 +482,19 @@
                             <label for="NVcDesc">换表说明：</label>
                         </th>
                         <td>
-                            <input class="easyui-textbox" type="text" id="NVcDesc" name="VcReplaceDesc" style="width: 98%" data-options="required:true" />
+                            <input class="easyui-validatebox" type="text" id="NVcDesc" name="VcReplaceDesc" style="width: 98%" maxlength="16" data-options="required:true,validType:'length[1,16]'" />
                         </td>
                         <th>
                             <label for="VcAddrNew">新表地址：</label>
                         </th>
                         <td>
-                            <input class="easyui-validatebox" type="text" id="VcNewMeterAddr" maxlength="14" name="VcNewMeterAddr" style="width: 98%" data-options="required:true" />
+                            <input class="easyui-validatebox" type="text" id="VcNewMeterAddr" maxlength="16" name="VcNewMeterAddr"  style="width: 98%" data-options="required:true,validType:'length[1,16]'" />
                         </td>
                         <th>
                             <label for="addNameNew">新表名称：</label>
                         </th>
                         <td>
-                            <input class="easyui-validatebox" type="text" id="VcNewName" name="VcNewName" style="width: 98%" data-options="required:true" />
+                            <input class="easyui-validatebox" type="text" id="VcNewName" name="VcNewName" style="width: 98%" maxlength="16" data-options="required:true,validType:'length[1,16]' " />
                         </td>
                     </tr>
                     <tr>
@@ -506,19 +502,19 @@
                             <label for="addNvcAddrNew">新表安装地址：</label>
                         </th>
                         <td>
-                            <input class="easyui-validatebox" type="text" id="VcNewAddr" name="VcNewAddr" style="width: 98%" data-options="required:true" />
+                            <input class="easyui-validatebox" type="text" id="VcNewAddr" name="VcNewAddr" style="width: 98%" maxlength="16" data-options="required:true" />
                         </td>
                         <th>
                             <label for="addVcBarCodeNew">新表IMEI：</label>
                         </th>
                         <td>
-                            <input class="easyui-validatebox" type="text" id="VcNewBarCode" name="VcNewBarCode" style="width: 98%" data-options="required:true" />
+                            <input class="easyui-validatebox" type="text" id="VcNewBarCode" name="VcNewBarCode" style="width: 98%" maxlength="16" data-options="required:true,validType:'length[1,16]'" />
                         </td>
                         <th>
                             <label for="addVcAssetNoNew">新表资产编号：</label>
                         </th>
                         <td>
-                            <input class="easyui-validatebox" type="text" id="VcNewAssetNo" name="VcNewAssetNo" style="width: 98%" data-options="required:true" />
+                            <input class="easyui-validatebox" type="text" id="VcNewAssetNo" name="VcNewAssetNo" style="width: 98%" maxlength="16" data-options="required:true" />
                         </td>
                     </tr>
                     <tr>
@@ -526,7 +522,7 @@
                             <label for="addIntProtocol">协议类型：</label>
                         </th>
                         <td>
-                            <input class="easyui-numberbox" type="text" id="IntNewProtocol" name="IntNewProtocol" style="width: 98%" data-options="required:true" />
+                            <input class="easyui-numberbox" type="text" id="IntNewProtocol" name="IntNewProtocol" style="width: 98%" maxlength="4" data-options="required:true" />
                         </td>
                         <th>
                             <label for="addIntChannal">新表混合占比：</label>
@@ -554,7 +550,7 @@
                             <label for="IntNewAccountWay">新表账务方式：</label>
                         </th>
                         <td>
-                            <select id="IntNewAccountWay" class="easyui-combobox" name="" style="width: 98%" data-options="required:true,editable:false,panelHeight:'auto'" ></select>
+                            <select id="IntNewAccountWay" class="easyui-combobox" name="" style="width: 98%" data-options="required:true,editable:false,panelHeight:'auto'"></select>
                             <input class="easyui-numberbox" id="txtIntNewAccountWay" name="IntNewAccountWay" style="width:98%;" />
                         </td>
                         <th>
@@ -570,21 +566,21 @@
                             <label for="addIntCycleNew">新表校表周期（月为单位）：</label>
                         </th>
                         <td>
-                            <input class="easyui-numberbox" type="text" id="IntNewCycle" name="IntNewCycle" style="width: 98%" data-options="required:true" />
+                            <input class="easyui-numberbox" type="text" id="IntNewCycle" name="IntNewCycle" style="width: 98%" maxlength="4" data-options="required:true" />
                         </td>
 
                         <th>
                             <label for="addIntOrigNew">新表原始读数：</label>
                         </th>
                         <td>
-                            <input class="easyui-textbox" type="text" id="IntNewOrig" name="IntNewOrig" style="width: 98%" data-options="required:true" />
+                            <input class="easyui-numberbox" type="text" id="IntNewOrig" name="IntNewOrig" style="width: 98%" maxlength="8" data-options="required:true" />
                         </td>
                         <th>
                             <label for="DteChange">换表日期：</label>
                         </th>
                         <td>
                             <input class="easyui-datebox" type="text" id="DteChange" style="width: 98%" data-options="required:true " />
-                            <input class="easyui-textbox" type="text" id="txtDteChange" name="DtReplace"/>
+                            <input class="easyui-textbox" type="text" id="txtDteChange" name="DtReplace" />
                         </td>
                     </tr>
                 </table>

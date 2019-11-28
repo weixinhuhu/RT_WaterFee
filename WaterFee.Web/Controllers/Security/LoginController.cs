@@ -85,6 +85,9 @@ namespace WHC.MVCWebMis.Controllers
                             Session["UserInfo"] = info;
                             Session["Identity"] = info.Name.Trim();
 
+                            //Session["EndCode"] = info.Endcode;
+                            Session["EndCode"] = 0;
+
                             #region 取得用户的授权信息，并存储在Session中
 
                             List<FunctionInfo> functionList = BLLFactory<Function>.Instance.GetFunctionsByUser(info.ID, MyConstants.SystemType);

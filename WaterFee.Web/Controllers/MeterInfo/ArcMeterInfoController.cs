@@ -406,9 +406,7 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContent(result);
         }
         [HttpPost]
-     
-
-     
+         
         public ActionResult Update(Core.Entity.ArcMeterInfo info)
         {
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
@@ -497,9 +495,7 @@ namespace WHC.WaterFeeWeb.Controllers
             if (Fn != null && VcAddr != null) { 
             var sql =" update ArcMeterInfo set IntValveState=" + Fn + " where VcAddr= '" + VcAddr + "'";
                 var num = BLLFactory<Core.BLL.ArcConcentratorInfo>.Instance.SqlExecute(sql);
-            }
-           
-
+            }          
             return View();
         }
 
@@ -976,7 +972,7 @@ namespace WHC.WaterFeeWeb.Controllers
         public ActionResult ChangeTBL_Server(MeterReplaceInfo MeterReplace)
         {
             CommonResult result = new CommonResult();      
-            MeterReplace.VcUserID= Session["Identity"].ToString();
+            MeterReplace.VcUserID= Session["UserID"].ToString();
             MeterReplace.IntEndCode = 0;
             try
             {

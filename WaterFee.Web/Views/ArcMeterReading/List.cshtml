@@ -20,9 +20,7 @@
         $(function () {
             initDeptTreeview();      
         });
-
-       
-
+  
         var easyui_tree_options = {
 		    length : 0,  //层数
 		    getLevel : function(treeObj, node){	//treeObj为tree的dom对象，node为选中的节点
@@ -42,7 +40,6 @@
                 url: '/ArcCustomerInfo/TreeCommunity',
                 onBeforeSelect: function (node) {
                     fujiText = node.text;
-
                 },
                 onClick: function (node) {
 
@@ -79,7 +76,7 @@
                 url: '/ArcMeterReading/ListJson',   //指向后台的Action来获取当前用户的信息的Json格式的数据
                 title: '日冻结数据查询',
                 iconCls: 'icon-view',
-                height: document.body.clientHeight - 72,
+                height: function () { document.body.clientHeight - 72 },
                 width: function () { return document.body.clientWidth * 0.9 },//自动宽度
                 nowrap: true,
                 autoRowHeight: true,
@@ -143,7 +140,6 @@
             InitGrid(queryData);
             return false;
         }
-
     </script>
 
     <style>

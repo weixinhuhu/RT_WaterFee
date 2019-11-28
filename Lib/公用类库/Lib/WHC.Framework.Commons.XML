@@ -884,7 +884,7 @@
             <param name="match">定义元素的条件来搜索的委托</param>
             <exception cref="T:System.ArgumentNullException">match 为 null.</exception>
         </member>
-        <!-- 对于成员“M:WHC.Framework.Commons.Collections.SyncList`1.FindAll(System.Predicate{`0})”忽略有格式错误的 XML 注释 -->
+        <!-- Badly formed XML comment ignored for member "M:WHC.Framework.Commons.Collections.SyncList`1.FindAll(System.Predicate{`0})" -->
         <member name="M:WHC.Framework.Commons.Collections.SyncList`1.FindIndex(System.Predicate{`0})">
             <summary>
             查找符合指定Predicate定义的条件相匹配的一个元素，并返回第一次出现在整个集合中的从零开始的索引。
@@ -13341,7 +13341,7 @@
             <param name="height">原始图片的高度</param>
             <param name="val">增加或减少的光暗值</param>
         </member>
-        <!-- 对于成员“M:WHC.Framework.Commons.ImageHelper.CompressAsJPG(System.Drawing.Bitmap,System.String,System.Int32)”忽略有格式错误的 XML 注释 -->
+        <!-- Badly formed XML comment ignored for member "M:WHC.Framework.Commons.ImageHelper.CompressAsJPG(System.Drawing.Bitmap,System.String,System.Int32)" -->
         <member name="M:WHC.Framework.Commons.ImageHelper.CompressAsJPG(System.IO.Stream,System.String,System.Int32)">
             <summary>
             将inputStream中的对象压缩为JPG图片类型
@@ -17666,7 +17666,7 @@
             <param name="obj">对象实例</param>
             <returns></returns>
         </member>
-        <!-- 对于成员“M:WHC.Framework.Commons.ReflectionUtil.ToNameValuePairs(System.Object,System.Boolean)”忽略有格式错误的 XML 注释 -->
+        <!-- Badly formed XML comment ignored for member "M:WHC.Framework.Commons.ReflectionUtil.ToNameValuePairs(System.Object,System.Boolean)" -->
         <member name="M:WHC.Framework.Commons.ReflectionUtil.GetDescription(System.Enum)">
             <summary>
             获取枚举字段的Description属性值

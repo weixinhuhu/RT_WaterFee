@@ -73,13 +73,14 @@ namespace WHC.WaterFeeWeb.Controllers
                 NvcName = Request["WHC_NvcName"] ?? "",
                 NvcAddr = Request["WHC_NvcAddr"] ?? "",
                 VcSimNo = Request["WHC_VcSimNo"] ?? "",
-                VcAddr = Request["WHC_VcAddr"] ?? ""
-            };
-          
+                VcAddr = Request["WHC_VcAddr"] ?? ""          
+        };
+            var endcode = Session["EndCode"] ?? "0";
+
             //调用后台服务获取集中器信息
             ServiceDbClient DbServer = new ServiceDbClient();
              
-            var dts = DbServer.ArcConcentrator_Qry(0, info);       
+            var dts = DbServer.ArcConcentrator_Qry(endcode.ToString().ToInt32(), info);       
 
             int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
 
@@ -140,10 +141,10 @@ namespace WHC.WaterFeeWeb.Controllers
         public ActionResult TreeJson()
         {
             //   var listAll = BLLFactory<Core.BLL.ArcConcentratorInfo>.Instance.GetAll();
-
+            var endcode = Session["EndCode"] ?? "0";
             //调用后台服务获取集中器信息
             ServiceDbClient DbServer = new ServiceDbClient();
-            var listAll = DbServer.ArcConcentrator_GetTree_Level(0).ToList();
+            var listAll = DbServer.ArcConcentrator_GetTree_Level(endcode.ToString().ToInt32()).ToList();
 
             var children = new List<EasyTreeData>();
             var listFirst = listAll.Where(n => n.IntUpID == 0);
@@ -656,7 +657,9 @@ namespace WHC.WaterFeeWeb.Controllers
 
             CommonResult result = new CommonResult();
 
-            info.IntEndCode = 0;
+            //厂家编码
+            var endcode = Session["EndCode"] ?? "0";
+            info.IntEndCode = endcode.ToString().ToInt32();
 
             try
             {
@@ -758,7 +761,8 @@ namespace WHC.WaterFeeWeb.Controllers
             }
 
             //厂家编码
-            info.IntEndCode = 0;
+            var endcode = Session["EndCode"] ?? "0";
+            info.IntEndCode = endcode.ToString().ToInt32();
         
             try
             {

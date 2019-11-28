@@ -498,6 +498,9 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         private System.DateTime DteStartField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IntEndCodeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int IntIntervalField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -563,6 +566,19 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
                 if ((this.DteStartField.Equals(value) != true)) {
                     this.DteStartField = value;
                     this.RaisePropertyChanged("DteStart");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IntEndCode {
+            get {
+                return this.IntEndCodeField;
+            }
+            set {
+                if ((this.IntEndCodeField.Equals(value) != true)) {
+                    this.IntEndCodeField = value;
+                    this.RaisePropertyChanged("IntEndCode");
                 }
             }
         }
@@ -1616,10 +1632,17 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.Meter))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.MeterReplaceQryCondition))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.MeterReplaceInfo))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.PriceType))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.PriceType[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.PricePropertyTree[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.PricePropertyTree))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.PriceProperty))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.PriceProperty[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.PriceDetail[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.PriceDetail))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.SmsTemplate))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(object[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.Generic.Dictionary<int, double>))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.EasyTreeData[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.EasyTreeData))]
     public partial class CommonResult : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
@@ -2345,9 +2368,438 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PriceType", Namespace="http://schemas.datacontract.org/2004/07/DbServer.DTO")]
+    [System.SerializableAttribute()]
+    public partial class PriceType : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime DtCreateField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime DteEndField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime DteStartField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IntEndCodeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IntNoField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IntUserNoField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string NvcDescField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime DtCreate {
+            get {
+                return this.DtCreateField;
+            }
+            set {
+                if ((this.DtCreateField.Equals(value) != true)) {
+                    this.DtCreateField = value;
+                    this.RaisePropertyChanged("DtCreate");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime DteEnd {
+            get {
+                return this.DteEndField;
+            }
+            set {
+                if ((this.DteEndField.Equals(value) != true)) {
+                    this.DteEndField = value;
+                    this.RaisePropertyChanged("DteEnd");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime DteStart {
+            get {
+                return this.DteStartField;
+            }
+            set {
+                if ((this.DteStartField.Equals(value) != true)) {
+                    this.DteStartField = value;
+                    this.RaisePropertyChanged("DteStart");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IntEndCode {
+            get {
+                return this.IntEndCodeField;
+            }
+            set {
+                if ((this.IntEndCodeField.Equals(value) != true)) {
+                    this.IntEndCodeField = value;
+                    this.RaisePropertyChanged("IntEndCode");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IntNo {
+            get {
+                return this.IntNoField;
+            }
+            set {
+                if ((this.IntNoField.Equals(value) != true)) {
+                    this.IntNoField = value;
+                    this.RaisePropertyChanged("IntNo");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IntUserNo {
+            get {
+                return this.IntUserNoField;
+            }
+            set {
+                if ((this.IntUserNoField.Equals(value) != true)) {
+                    this.IntUserNoField = value;
+                    this.RaisePropertyChanged("IntUserNo");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string NvcDesc {
+            get {
+                return this.NvcDescField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NvcDescField, value) != true)) {
+                    this.NvcDescField = value;
+                    this.RaisePropertyChanged("NvcDesc");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PriceDetail", Namespace="http://schemas.datacontract.org/2004/07/DbServer.DTO")]
+    [System.SerializableAttribute()]
+    public partial class PriceDetail : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private uint IntStepIncField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private uint IntStepOrderField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private uint IntStepStartField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Collections.Generic.Dictionary<int, double> PriceField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private double TotalPriceField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public uint IntStepInc {
+            get {
+                return this.IntStepIncField;
+            }
+            set {
+                if ((this.IntStepIncField.Equals(value) != true)) {
+                    this.IntStepIncField = value;
+                    this.RaisePropertyChanged("IntStepInc");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public uint IntStepOrder {
+            get {
+                return this.IntStepOrderField;
+            }
+            set {
+                if ((this.IntStepOrderField.Equals(value) != true)) {
+                    this.IntStepOrderField = value;
+                    this.RaisePropertyChanged("IntStepOrder");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public uint IntStepStart {
+            get {
+                return this.IntStepStartField;
+            }
+            set {
+                if ((this.IntStepStartField.Equals(value) != true)) {
+                    this.IntStepStartField = value;
+                    this.RaisePropertyChanged("IntStepStart");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Collections.Generic.Dictionary<int, double> Price {
+            get {
+                return this.PriceField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.PriceField, value) != true)) {
+                    this.PriceField = value;
+                    this.RaisePropertyChanged("Price");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public double TotalPrice {
+            get {
+                return this.TotalPriceField;
+            }
+            set {
+                if ((this.TotalPriceField.Equals(value) != true)) {
+                    this.TotalPriceField = value;
+                    this.RaisePropertyChanged("TotalPrice");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="SmsTemplate", Namespace="http://schemas.datacontract.org/2004/07/DbServer.DTO")]
+    [System.SerializableAttribute()]
+    public partial class SmsTemplate : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime DtCreateField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime DtLstUpdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IntEndCodeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IntIDField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IntStatusField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string NvcContentField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string NvcNameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string NvcSQLField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcAlyIDField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime DtCreate {
+            get {
+                return this.DtCreateField;
+            }
+            set {
+                if ((this.DtCreateField.Equals(value) != true)) {
+                    this.DtCreateField = value;
+                    this.RaisePropertyChanged("DtCreate");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime DtLstUpd {
+            get {
+                return this.DtLstUpdField;
+            }
+            set {
+                if ((this.DtLstUpdField.Equals(value) != true)) {
+                    this.DtLstUpdField = value;
+                    this.RaisePropertyChanged("DtLstUpd");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IntEndCode {
+            get {
+                return this.IntEndCodeField;
+            }
+            set {
+                if ((this.IntEndCodeField.Equals(value) != true)) {
+                    this.IntEndCodeField = value;
+                    this.RaisePropertyChanged("IntEndCode");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IntID {
+            get {
+                return this.IntIDField;
+            }
+            set {
+                if ((this.IntIDField.Equals(value) != true)) {
+                    this.IntIDField = value;
+                    this.RaisePropertyChanged("IntID");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IntStatus {
+            get {
+                return this.IntStatusField;
+            }
+            set {
+                if ((this.IntStatusField.Equals(value) != true)) {
+                    this.IntStatusField = value;
+                    this.RaisePropertyChanged("IntStatus");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string NvcContent {
+            get {
+                return this.NvcContentField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NvcContentField, value) != true)) {
+                    this.NvcContentField = value;
+                    this.RaisePropertyChanged("NvcContent");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string NvcName {
+            get {
+                return this.NvcNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NvcNameField, value) != true)) {
+                    this.NvcNameField = value;
+                    this.RaisePropertyChanged("NvcName");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string NvcSQL {
+            get {
+                return this.NvcSQLField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NvcSQLField, value) != true)) {
+                    this.NvcSQLField = value;
+                    this.RaisePropertyChanged("NvcSQL");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcAlyID {
+            get {
+                return this.VcAlyIDField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcAlyIDField, value) != true)) {
+                    this.VcAlyIDField = value;
+                    this.RaisePropertyChanged("VcAlyID");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="DbServiceReference.IServiceDb")]
     public interface IServiceDb {
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/SayHello", ReplyAction="http://tempuri.org/IServiceDb/SayHelloResponse")]
+        string SayHello(string sName);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/SayHello", ReplyAction="http://tempuri.org/IServiceDb/SayHelloResponse")]
+        System.Threading.Tasks.Task<string> SayHelloAsync(string sName);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/ArcConcentrator_Qry", ReplyAction="http://tempuri.org/IServiceDb/ArcConcentrator_QryResponse")]
         System.Data.DataTable ArcConcentrator_Qry(int iCode, WHC.WaterFeeWeb.DbServiceReference.Concentrator Concent);
@@ -2445,11 +2897,113 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/ArcMeter_Replace", ReplyAction="http://tempuri.org/IServiceDb/ArcMeter_ReplaceResponse")]
         System.Threading.Tasks.Task<string> ArcMeter_ReplaceAsync(WHC.WaterFeeWeb.DbServiceReference.MeterReplaceInfo MeterReplace);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceProperty_GetTreeJson", ReplyAction="http://tempuri.org/IServiceDb/PriceProperty_GetTreeJsonResponse")]
-        WHC.WaterFeeWeb.DbServiceReference.PricePropertyTree[] PriceProperty_GetTreeJson();
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceType_Qry", ReplyAction="http://tempuri.org/IServiceDb/PriceType_QryResponse")]
+        System.Data.DataTable PriceType_Qry(int iCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceType_Qry", ReplyAction="http://tempuri.org/IServiceDb/PriceType_QryResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> PriceType_QryAsync(int iCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceType_Ins", ReplyAction="http://tempuri.org/IServiceDb/PriceType_InsResponse")]
+        string PriceType_Ins(int iCode, WHC.WaterFeeWeb.DbServiceReference.PriceType priceType);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceType_Ins", ReplyAction="http://tempuri.org/IServiceDb/PriceType_InsResponse")]
+        System.Threading.Tasks.Task<string> PriceType_InsAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.PriceType priceType);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceType_Upd", ReplyAction="http://tempuri.org/IServiceDb/PriceType_UpdResponse")]
+        string PriceType_Upd(WHC.WaterFeeWeb.DbServiceReference.PriceType priceType);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceType_Upd", ReplyAction="http://tempuri.org/IServiceDb/PriceType_UpdResponse")]
+        System.Threading.Tasks.Task<string> PriceType_UpdAsync(WHC.WaterFeeWeb.DbServiceReference.PriceType priceType);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceType_GetTreeJson", ReplyAction="http://tempuri.org/IServiceDb/PriceType_GetTreeJsonResponse")]
+        WHC.WaterFeeWeb.DbServiceReference.PriceType[] PriceType_GetTreeJson(int iCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceType_GetTreeJson", ReplyAction="http://tempuri.org/IServiceDb/PriceType_GetTreeJsonResponse")]
+        System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.PriceType[]> PriceType_GetTreeJsonAsync(int iCode);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceProperty_GetTreeJson", ReplyAction="http://tempuri.org/IServiceDb/PriceProperty_GetTreeJsonResponse")]
-        System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.PricePropertyTree[]> PriceProperty_GetTreeJsonAsync();
+        WHC.WaterFeeWeb.DbServiceReference.PricePropertyTree[] PriceProperty_GetTreeJson(int iCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceProperty_GetTreeJson", ReplyAction="http://tempuri.org/IServiceDb/PriceProperty_GetTreeJsonResponse")]
+        System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.PricePropertyTree[]> PriceProperty_GetTreeJsonAsync(int iCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceProperty_GetList", ReplyAction="http://tempuri.org/IServiceDb/PriceProperty_GetListResponse")]
+        WHC.WaterFeeWeb.DbServiceReference.PriceProperty[] PriceProperty_GetList(int iCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceProperty_GetList", ReplyAction="http://tempuri.org/IServiceDb/PriceProperty_GetListResponse")]
+        System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.PriceProperty[]> PriceProperty_GetListAsync(int iCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceProperty_GetByNo", ReplyAction="http://tempuri.org/IServiceDb/PriceProperty_GetByNoResponse")]
+        System.Data.DataTable PriceProperty_GetByNo(int iPropertyNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceProperty_GetByNo", ReplyAction="http://tempuri.org/IServiceDb/PriceProperty_GetByNoResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> PriceProperty_GetByNoAsync(int iPropertyNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceProperty_AddOrUpdate", ReplyAction="http://tempuri.org/IServiceDb/PriceProperty_AddOrUpdateResponse")]
+        string PriceProperty_AddOrUpdate(WHC.WaterFeeWeb.DbServiceReference.PriceProperty Property, WHC.WaterFeeWeb.DbServiceReference.PriceDetail[] LstPrice);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceProperty_AddOrUpdate", ReplyAction="http://tempuri.org/IServiceDb/PriceProperty_AddOrUpdateResponse")]
+        System.Threading.Tasks.Task<string> PriceProperty_AddOrUpdateAsync(WHC.WaterFeeWeb.DbServiceReference.PriceProperty Property, WHC.WaterFeeWeb.DbServiceReference.PriceDetail[] LstPrice);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/SMS_Template_Qry", ReplyAction="http://tempuri.org/IServiceDb/SMS_Template_QryResponse")]
+        System.Data.DataTable SMS_Template_Qry(int iCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/SMS_Template_Qry", ReplyAction="http://tempuri.org/IServiceDb/SMS_Template_QryResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> SMS_Template_QryAsync(int iCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/SMS_Template_InsOrUpd", ReplyAction="http://tempuri.org/IServiceDb/SMS_Template_InsOrUpdResponse")]
+        string SMS_Template_InsOrUpd(WHC.WaterFeeWeb.DbServiceReference.SmsTemplate Template);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/SMS_Template_InsOrUpd", ReplyAction="http://tempuri.org/IServiceDb/SMS_Template_InsOrUpdResponse")]
+        System.Threading.Tasks.Task<string> SMS_Template_InsOrUpdAsync(WHC.WaterFeeWeb.DbServiceReference.SmsTemplate Template);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetMoney", ReplyAction="http://tempuri.org/IServiceDb/Account_GetMoneyResponse")]
+        System.Data.DataTable Account_GetMoney(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetMoney", ReplyAction="http://tempuri.org/IServiceDb/Account_GetMoneyResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> Account_GetMoneyAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetDepositDetailByCustNo", ReplyAction="http://tempuri.org/IServiceDb/Account_GetDepositDetailByCustNoResponse")]
+        System.Data.DataTable Account_GetDepositDetailByCustNo(int iCode, int iCustNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetDepositDetailByCustNo", ReplyAction="http://tempuri.org/IServiceDb/Account_GetDepositDetailByCustNoResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> Account_GetDepositDetailByCustNoAsync(int iCode, int iCustNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetDebtByCustNo", ReplyAction="http://tempuri.org/IServiceDb/Account_GetDebtByCustNoResponse")]
+        System.Data.DataTable Account_GetDebtByCustNo(int iCode, int iCustNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetDebtByCustNo", ReplyAction="http://tempuri.org/IServiceDb/Account_GetDebtByCustNoResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> Account_GetDebtByCustNoAsync(int iCode, int iCustNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetWriteoffByCustNo", ReplyAction="http://tempuri.org/IServiceDb/Account_GetWriteoffByCustNoResponse")]
+        System.Data.DataTable Account_GetWriteoffByCustNo(int iCode, int iCustNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetWriteoffByCustNo", ReplyAction="http://tempuri.org/IServiceDb/Account_GetWriteoffByCustNoResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> Account_GetWriteoffByCustNoAsync(int iCode, int iCustNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_DepositOperate", ReplyAction="http://tempuri.org/IServiceDb/Account_DepositOperateResponse")]
+        WHC.WaterFeeWeb.DbServiceReference.CommonResult Account_DepositOperate(int iCode, int iCustNo, double NumMoney, string sRemark, int iUserID, string sReceiptNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_DepositOperate", ReplyAction="http://tempuri.org/IServiceDb/Account_DepositOperateResponse")]
+        System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> Account_DepositOperateAsync(int iCode, int iCustNo, double NumMoney, string sRemark, int iUserID, string sReceiptNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetDepositInvoiceInfo", ReplyAction="http://tempuri.org/IServiceDb/Account_GetDepositInvoiceInfoResponse")]
+        System.Data.DataTable Account_GetDepositInvoiceInfo(int iCode, string sFlowNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetDepositInvoiceInfo", ReplyAction="http://tempuri.org/IServiceDb/Account_GetDepositInvoiceInfoResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> Account_GetDepositInvoiceInfoAsync(int iCode, string sFlowNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetDepositDetail", ReplyAction="http://tempuri.org/IServiceDb/Account_GetDepositDetailResponse")]
+        System.Data.DataTable Account_GetDepositDetail(int iUserID, System.DateTime DtStart, System.DateTime DtEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetDepositDetail", ReplyAction="http://tempuri.org/IServiceDb/Account_GetDepositDetailResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> Account_GetDepositDetailAsync(int iUserID, System.DateTime DtStart, System.DateTime DtEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetBillByCustNo", ReplyAction="http://tempuri.org/IServiceDb/Account_GetBillByCustNoResponse")]
+        System.Data.DataTable Account_GetBillByCustNo(int iCode, int iCustNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetBillByCustNo", ReplyAction="http://tempuri.org/IServiceDb/Account_GetBillByCustNoResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> Account_GetBillByCustNoAsync(int iCode, int iCustNo);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -2477,6 +3031,14 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         
         public ServiceDbClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress) {
+        }
+        
+        public string SayHello(string sName) {
+            return base.Channel.SayHello(sName);
+        }
+        
+        public System.Threading.Tasks.Task<string> SayHelloAsync(string sName) {
+            return base.Channel.SayHelloAsync(sName);
         }
         
         public System.Data.DataTable ArcConcentrator_Qry(int iCode, WHC.WaterFeeWeb.DbServiceReference.Concentrator Concent) {
@@ -2607,12 +3169,148 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
             return base.Channel.ArcMeter_ReplaceAsync(MeterReplace);
         }
         
-        public WHC.WaterFeeWeb.DbServiceReference.PricePropertyTree[] PriceProperty_GetTreeJson() {
-            return base.Channel.PriceProperty_GetTreeJson();
+        public System.Data.DataTable PriceType_Qry(int iCode) {
+            return base.Channel.PriceType_Qry(iCode);
         }
         
-        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.PricePropertyTree[]> PriceProperty_GetTreeJsonAsync() {
-            return base.Channel.PriceProperty_GetTreeJsonAsync();
+        public System.Threading.Tasks.Task<System.Data.DataTable> PriceType_QryAsync(int iCode) {
+            return base.Channel.PriceType_QryAsync(iCode);
+        }
+        
+        public string PriceType_Ins(int iCode, WHC.WaterFeeWeb.DbServiceReference.PriceType priceType) {
+            return base.Channel.PriceType_Ins(iCode, priceType);
+        }
+        
+        public System.Threading.Tasks.Task<string> PriceType_InsAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.PriceType priceType) {
+            return base.Channel.PriceType_InsAsync(iCode, priceType);
+        }
+        
+        public string PriceType_Upd(WHC.WaterFeeWeb.DbServiceReference.PriceType priceType) {
+            return base.Channel.PriceType_Upd(priceType);
+        }
+        
+        public System.Threading.Tasks.Task<string> PriceType_UpdAsync(WHC.WaterFeeWeb.DbServiceReference.PriceType priceType) {
+            return base.Channel.PriceType_UpdAsync(priceType);
+        }
+        
+        public WHC.WaterFeeWeb.DbServiceReference.PriceType[] PriceType_GetTreeJson(int iCode) {
+            return base.Channel.PriceType_GetTreeJson(iCode);
+        }
+        
+        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.PriceType[]> PriceType_GetTreeJsonAsync(int iCode) {
+            return base.Channel.PriceType_GetTreeJsonAsync(iCode);
+        }
+        
+        public WHC.WaterFeeWeb.DbServiceReference.PricePropertyTree[] PriceProperty_GetTreeJson(int iCode) {
+            return base.Channel.PriceProperty_GetTreeJson(iCode);
+        }
+        
+        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.PricePropertyTree[]> PriceProperty_GetTreeJsonAsync(int iCode) {
+            return base.Channel.PriceProperty_GetTreeJsonAsync(iCode);
+        }
+        
+        public WHC.WaterFeeWeb.DbServiceReference.PriceProperty[] PriceProperty_GetList(int iCode) {
+            return base.Channel.PriceProperty_GetList(iCode);
+        }
+        
+        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.PriceProperty[]> PriceProperty_GetListAsync(int iCode) {
+            return base.Channel.PriceProperty_GetListAsync(iCode);
+        }
+        
+        public System.Data.DataTable PriceProperty_GetByNo(int iPropertyNo) {
+            return base.Channel.PriceProperty_GetByNo(iPropertyNo);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> PriceProperty_GetByNoAsync(int iPropertyNo) {
+            return base.Channel.PriceProperty_GetByNoAsync(iPropertyNo);
+        }
+        
+        public string PriceProperty_AddOrUpdate(WHC.WaterFeeWeb.DbServiceReference.PriceProperty Property, WHC.WaterFeeWeb.DbServiceReference.PriceDetail[] LstPrice) {
+            return base.Channel.PriceProperty_AddOrUpdate(Property, LstPrice);
+        }
+        
+        public System.Threading.Tasks.Task<string> PriceProperty_AddOrUpdateAsync(WHC.WaterFeeWeb.DbServiceReference.PriceProperty Property, WHC.WaterFeeWeb.DbServiceReference.PriceDetail[] LstPrice) {
+            return base.Channel.PriceProperty_AddOrUpdateAsync(Property, LstPrice);
+        }
+        
+        public System.Data.DataTable SMS_Template_Qry(int iCode) {
+            return base.Channel.SMS_Template_Qry(iCode);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> SMS_Template_QryAsync(int iCode) {
+            return base.Channel.SMS_Template_QryAsync(iCode);
+        }
+        
+        public string SMS_Template_InsOrUpd(WHC.WaterFeeWeb.DbServiceReference.SmsTemplate Template) {
+            return base.Channel.SMS_Template_InsOrUpd(Template);
+        }
+        
+        public System.Threading.Tasks.Task<string> SMS_Template_InsOrUpdAsync(WHC.WaterFeeWeb.DbServiceReference.SmsTemplate Template) {
+            return base.Channel.SMS_Template_InsOrUpdAsync(Template);
+        }
+        
+        public System.Data.DataTable Account_GetMoney(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust) {
+            return base.Channel.Account_GetMoney(iCode, Cust);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> Account_GetMoneyAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust) {
+            return base.Channel.Account_GetMoneyAsync(iCode, Cust);
+        }
+        
+        public System.Data.DataTable Account_GetDepositDetailByCustNo(int iCode, int iCustNo) {
+            return base.Channel.Account_GetDepositDetailByCustNo(iCode, iCustNo);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> Account_GetDepositDetailByCustNoAsync(int iCode, int iCustNo) {
+            return base.Channel.Account_GetDepositDetailByCustNoAsync(iCode, iCustNo);
+        }
+        
+        public System.Data.DataTable Account_GetDebtByCustNo(int iCode, int iCustNo) {
+            return base.Channel.Account_GetDebtByCustNo(iCode, iCustNo);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> Account_GetDebtByCustNoAsync(int iCode, int iCustNo) {
+            return base.Channel.Account_GetDebtByCustNoAsync(iCode, iCustNo);
+        }
+        
+        public System.Data.DataTable Account_GetWriteoffByCustNo(int iCode, int iCustNo) {
+            return base.Channel.Account_GetWriteoffByCustNo(iCode, iCustNo);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> Account_GetWriteoffByCustNoAsync(int iCode, int iCustNo) {
+            return base.Channel.Account_GetWriteoffByCustNoAsync(iCode, iCustNo);
+        }
+        
+        public WHC.WaterFeeWeb.DbServiceReference.CommonResult Account_DepositOperate(int iCode, int iCustNo, double NumMoney, string sRemark, int iUserID, string sReceiptNo) {
+            return base.Channel.Account_DepositOperate(iCode, iCustNo, NumMoney, sRemark, iUserID, sReceiptNo);
+        }
+        
+        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> Account_DepositOperateAsync(int iCode, int iCustNo, double NumMoney, string sRemark, int iUserID, string sReceiptNo) {
+            return base.Channel.Account_DepositOperateAsync(iCode, iCustNo, NumMoney, sRemark, iUserID, sReceiptNo);
+        }
+        
+        public System.Data.DataTable Account_GetDepositInvoiceInfo(int iCode, string sFlowNo) {
+            return base.Channel.Account_GetDepositInvoiceInfo(iCode, sFlowNo);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> Account_GetDepositInvoiceInfoAsync(int iCode, string sFlowNo) {
+            return base.Channel.Account_GetDepositInvoiceInfoAsync(iCode, sFlowNo);
+        }
+        
+        public System.Data.DataTable Account_GetDepositDetail(int iUserID, System.DateTime DtStart, System.DateTime DtEnd) {
+            return base.Channel.Account_GetDepositDetail(iUserID, DtStart, DtEnd);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> Account_GetDepositDetailAsync(int iUserID, System.DateTime DtStart, System.DateTime DtEnd) {
+            return base.Channel.Account_GetDepositDetailAsync(iUserID, DtStart, DtEnd);
+        }
+        
+        public System.Data.DataTable Account_GetBillByCustNo(int iCode, int iCustNo) {
+            return base.Channel.Account_GetBillByCustNo(iCode, iCustNo);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> Account_GetBillByCustNoAsync(int iCode, int iCustNo) {
+            return base.Channel.Account_GetBillByCustNoAsync(iCode, iCustNo);
         }
     }
 }
