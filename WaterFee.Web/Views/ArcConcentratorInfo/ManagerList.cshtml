@@ -38,25 +38,17 @@
         function initDeptTreeview() {
             $("#loading").show();
             $('#treeDept1').tree({
-                url: '/ArcCustomerInfo/TreeCommunity',
+                url: '/ArcCustomerInfo/TreeCommunity_Server',
                 onBeforeSelect: function (node) {
                     fujiText = node.text;
-
                 },
                 onClick: function (node) {
-
                     var Text = $("#treeDept1").tree("getParent", node.target);
-
                     var Treelevel = easyui_tree_options.getLevel(this, node);
-
                     var ParentText = "";
-                                                               
                     if (Treelevel == 4) {
-
                         ParentText = $("#treeDept1").tree("getParent", Text.target)
-
                     }
-                    
                     var queryData = {
                         "IntCustNO": $("#IntCustNO").val(),
                         WHC_Fuji: Text.text,
@@ -69,7 +61,6 @@
             });
             $("#loading").fadeOut(500);
         }
-
 
         function getSelectVcAddr() {
             var rows = $('#gridSettingInfo').datagrid('getChecked');
@@ -196,9 +187,7 @@
             data = data + '</SendMeterConfigCmd>';
             data = data + '</soap12:Body>';
             data = data + '</soap12:Envelope>';
-
             alert(data);
-
             try {
                 //创建异步对象
                 var xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
@@ -230,13 +219,12 @@
             };
         }
 
-
         //信息查询
         function submits(queryData) {
             $('#gridSettingInfo').datagrid({   //定位到Table标签，Table标签的ID是grid
                 url: '/ArcMeterInfo/SettingMangger',   //指向后台的Action来获取当前用户的信息的Json格式的数据
-                height: document.body.clientHeight - 163,
-                width: function () { return document.body.clientWidth * 0.8 - 20 },//自动宽度
+                height: document.body.clientHeight *0.7,
+                width: function () { return document.body.clien6tWidth * 0.8 - 20 },//自动宽度
                 nowrap: true,
                 autoRowHeight: true,
                 striped: true,

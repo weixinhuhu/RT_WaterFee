@@ -101,11 +101,35 @@
       <xs:element minOccurs="0" name="ErrorMsg" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="IsSuccess" type="xs:boolean" />
       <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LstObj" nillable="true" type="q1:ArrayOfanyType" />
-      <xs:element minOccurs="0" name="Obj1" nillable="true" type="xs:anyType" />
-      <xs:element minOccurs="0" name="Obj2" nillable="true" type="xs:anyType" />
       <xs:element minOccurs="0" name="StrData1" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="StrData2" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="StrData3" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Tbl1" nillable="true">
+        <xs:complexType>
+          <xs:annotation>
+            <xs:appinfo>
+              <ActualType Name="DataTable" Namespace="http://schemas.datacontract.org/2004/07/System.Data" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+            <xs:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="Tbl2" nillable="true">
+        <xs:complexType>
+          <xs:annotation>
+            <xs:appinfo>
+              <ActualType Name="DataTable" Namespace="http://schemas.datacontract.org/2004/07/System.Data" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+            <xs:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:element name="CommonResult" nillable="true" type="tns:CommonResult" />
@@ -232,7 +256,7 @@
       <xs:element minOccurs="0" name="IntStatus" type="xs:int" />
       <xs:element minOccurs="0" name="NvcContent" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="NvcName" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="NvcSQL" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcProc" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="VcAlyID" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>

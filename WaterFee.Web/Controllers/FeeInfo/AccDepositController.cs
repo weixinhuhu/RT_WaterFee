@@ -135,18 +135,18 @@ namespace WHC.WaterFeeWeb.Controllers
         //预存款数据
         public ActionResult GetMoneyJson_Server()
         {
-
-            var Strlevel = Request["WHC_Treelevel"];
-            var fuji = Request["WHC_Fuji"];
-            var Text = Request["WHC_Text"];
-            var ParentText = Request["WHC_TreePrentText"];
-
+            var Strlevel = Request["WHC_Treelevel"]??"";
+            var fuji = Request["WHC_Fuji"] ?? "";
+            var Text = Request["WHC_Text"] ?? "";
+            var ParentText = Request["WHC_TreePrentText"] ?? "";
             var custormerinfo = new Customer()
-            {
+            {             
                 NvcName = Request["WHC_NvcName"] ?? "",
                 NvcAddr = Request["WHC_NvcAddr"] ?? "",
-                VcMobile = Request["WHC_VcMobile"] ?? ""
+                VcMobile = Request["WHC_VcMobile"] ?? ""             
             };
+            var useno = Request["Key"] ?? "0";
+            custormerinfo.IntNo = useno.Equals("") ? 0 : useno.ToInt32();
 
             if (Strlevel == "1")
             {

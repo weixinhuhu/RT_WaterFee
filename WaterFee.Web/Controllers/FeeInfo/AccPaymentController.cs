@@ -58,8 +58,28 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContentDate(result);
         }
 
+        public ActionResult CounterReverseData_Server() {
+            var endcode = Session["IntEndCode"] ?? "0";
+            var CustNo = Request["WHC_IntCustNo"] ?? "";
+            var NvcName = Request["WHC_NvcName"] ?? "";
+            var NvcAddr = Request["WHC_NvcAddr"] ?? "";
+            var VcMobile = Request["WHC_VcMobile"] ?? DateTime.Now.ToString();
+            var DtStart = Request["WHC_DtStart"] ?? DateTime.Now.ToString();
+            var Dtend = Request["WHC_DtEnd"] ?? "";          
+            var custinfo = new DbServiceReference.Customer
+            {
+                IntNo = CustNo == "" ? 0 : CustNo.ToInt(),
+                NvcName = NvcName,
+                NvcAddr = NvcAddr,
+                VcMobile = VcMobile
+            };
+            var dt = new DbServiceReference.ServiceDbClient().Account_GetPaymentDetail(endcode.ToString().ToInt(),0, DtStart.ToDateTime(), Dtend.ToDateTime(), custinfo);
+            var result = new { total = dt.Rows.Count, rows = dt };
+            return ToJsonContentDate(result);
+        }
+
         //柜台冲正数据
-        public ActionResult CounterReverseDataByIntCustNo(int IntCustNo)
+        public ActionResult CounterReverseDataByIntCustNo (int IntCustNo)
         {
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.ListKey);

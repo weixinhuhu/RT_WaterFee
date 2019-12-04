@@ -17,36 +17,163 @@
         var isAddOrEdit = 'add';//标识是新增还是编辑对话框弹出，用于删除附件的操作
 
         $(function () {
-
-
             var queryData = {
-
-            };//可添加一些预设条件
-
-            InitGrid(queryData);//初始化Datagrid表格数据
-            //InitDictItem();   //初始化字典信息
-
-          //  BindSearchEvent();//绑定查询按钮事件
-            //BindSearchDeletedEvent();//查看已删除记录
-            //BindAddEvent();   //绑定添加按钮的事件
-            BindEditEvent();  //绑定修改按钮的事件
+                WHC_IntNo: $("#txtIntNo").val(),
+                WHC_NvcName: $("#txtNvcName").val(),
+                WHC_NvcAddr: $("#txtNvcAddr").val(),
+                WHC_VcMobile: $("#txtVcMobile").val()
+            }
+            UserInfoGrid(queryData);
+            InitGrid();
+            initDeptTreeview()
+            BindSearchEvent()
+            BindAddEvent();
         });
-
-
-        //实现对DataGird控件的绑定操作
-        function InitGrid(queryData) {
-            $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
-                url: '/ArcMeterReading/ListJson',   //指向后台的Action来获取当前用户的信息的Json格式的数据
-                title: '手工抄表',
+         var easyui_tree_options = {
+            length: 0,  //层数
+            getLevel: function (treeObj, node) {	//treeObj为tree的dom对象，node为选中的节点
+                while (node != null) {
+                    node = $(treeObj).tree('getParent', node.target)
+                    easyui_tree_options.length++;
+                }
+                var length1 = easyui_tree_options.length;
+                easyui_tree_options.length = 0;		//重置层数
+                return length1;
+            }
+        }
+        function initDeptTreeview() {
+            $("#loading").show();
+            $('#treeDept1').tree({
+                url: '/ArcCustomerInfo/TreeCommunity_Server',
+                onBeforeSelect: function (node) {
+                    fujiText = node.text;
+                },
+                onClick: function (node) {
+                    var Text = $("#treeDept1").tree("getParent", node.target);
+                    var Treelevel = easyui_tree_options.getLevel(this, node);
+                    var ParentText = "";
+                    if (Treelevel == 4) {
+                        ParentText = $("#treeDept1").tree("getParent", Text.target)
+                    }
+                      queryData = { "WHC_Fuji": Text.text, "WHC_Text": node.text, "WHC_Treelevel": Treelevel.toString(), "WHC_TreePrentText": ParentText.text };
+                    UserInfoGrid(queryData);
+                }
+            });
+            $("#loading").fadeOut(500);
+        }
+           //实现对DataGird控件的绑定操作
+        function UserInfoGrid(queryData) {
+            $('#usergrid').datagrid({
+                //指向后台的Action来获取当前用户的信息的Json格式的数据
+                url: '/ArcCustomerInfo/ListJson_Server',            
+                title: '客户档案',
                 iconCls: 'icon-view',
-                height: document.body.clientHeight - 72,
+                height: document.body.clientHeight * 0.5 ,
                 width: function () { return document.body.clientWidth * 0.9 },//自动宽度
                 nowrap: true,
                 autoRowHeight: true,
                 striped: true,
                 collapsible: true,
                 pagination: true,
+                pageSize: 50,
+                pageList: [50, 100, 200],
+                rownumbers: true,
+                //根据某个字段给easyUI排序
+                //sortName: 'ID',    
+                sortOrder: 'asc',
+                remoteSort: false,
+                singleSelect: true,
+                //不设置idField，翻页不会记录选择
+                //idField: 'ID',
+                //异步查询的参数
+                queryParams: queryData,  
+                columns: [[
+                    //{ field: 'ck', checkbox: true },   //选择
+                    { title: 'ID', field: 'IntID', width: 80, sortable: true, hidden: true },
+                    { title: '客户编号', field: 'IntNo', width: 80, sortable: true },
+                    { title: '客户姓名', field: 'NvcName', width: 100, sortable: true },
+                    { title: '通信地址', field: 'bVcAddr', width: 100, sortable: true },
+                    //{ title: '计量点', field: 'IntMP', width: 100, sortable: true, hidden: true },
+                    //{ title: '集中器', field: 'eNvcName', width: 100, sortable: true, hidden: true },
+                    {
+                        title: '阀门状态', field: 'VcDesc', width: 80, sortable: true
+                    },
+                    { title: '客户地址', field: 'NvcAddr', width: 120, sortable: true },
+                    { title: '客户小区', field: 'NvcVillage', width: 80, sortable: true },
+                    { title: '客户楼栋', field: 'VcBuilding', width: 80, sortable: true },
+                    { title: '单元编号', field: 'VcUnitNum', width: 80, sortable: true },
+                    { title: '门牌编号', field: 'VcRoomNum', width: 80, sortable: true },
+                    { title: '姓名查询码', field: 'VcNameCode', width: 80, sortable: true },
+                    { title: '地址查询码', field: 'VcAddrCode', width: 80, sortable: true },
+                    { title: '移动电话', field: 'VcMobile', width: 80, sortable: true },
+                    { title: '固定电话', field: 'VcTelNo', width: 80, sortable: true },
+                    { title: '身份证号', field: 'VcIDNo', width: 80, sortable: true },
+                    { title: '合同号', field: 'VcContractNo', width: 80, sortable: true },
+                    { title: '发票姓名', field: 'NvcInvName', width: 80, sortable: true },
+                    { title: '发票地址', field: 'NvcInvAddr', width: 120, sortable: true },
+                    { title: '家庭人口', field: 'IntNumber', width: 80, sortable: true },
+                    // { title: '价格属性编码', field: 'IntPriceNo', width: 80, sortable: true },
+                    { title: '客户类型', field: 'NvcCustType', width: 80, sortable: true },
+                    {
+                        title: '账务模式', field: 'YFVcDesc', width: 80, align: 'center', sortable: true
+                    },
+                    {
+                        title: '状态', field: 'IntStatus', width: 80, sortable: true, formatter: function (val) {
+                            //客户状态0:未开户 1.开户 2.用水 3.停用 4.销户
+                            if (val == 0) return "未开户";
+                            if (val == 1) return "开户";
+                            if (val == 2) return "用水";
+                            if (val == 3) return "停用";
+                            if (val == 4) return "销户";
+                            else return val;
+                        }
+                    },
+                    { title: '操作员', field: 'IntUserID', width: 80, sortable: true },
+                    {
+                        title: '开户日期', field: 'DteOpen', width: 100, align: 'center', sortable: true, formatter: function (val) {
+                            return val == "9999-09-09 00:00:00" ? "-" : val.substring(0, 10);
+                        }                       
+                    },
+                    {
+                        title: '销户日期', field: 'DteCancel', width: 100, align: 'center', sortable: true, formatter: function (val) {
+                            return val == "9999-09-09 00:00:00" ? "-" : val.substring(0, 10);
+                        }
+                    },
+                    { title: '建立时间', field: 'DtCreate', width: 100, sortable: true }
+                    //,{ title: '', field: 'IntHelper', width: 80, sortable: true }
+                ]],
+                
+                toolbar: [{
+                    id: 'btnAdd',
+                    text: '添加手工抄表数据',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        ShowEditOrViewDialog();//实现添加记录的页面
+                    }
+                }],
+                //onDblClickRow: function () {                 
+                //    SearchFreezeDetail();
+                //},
+                onClickRow: function () {  
+                   $('#grid').datagrid('loadData',[]);
+                   SearchFreezeDetail();
+                }
+            });
+        };
 
+        //实现对DataGird控件的绑定操作
+        function InitGrid(queryData) {
+            $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
+                url: '/ArcMeterReading/ListJson_Server',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                title: '抄表信息',
+                iconCls: 'icon-view',
+                height: document.body.clientHeight *0.35,
+                width: function () { return document.body.clientWidth * 0.9 },//自动宽度
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
                 pageSize: 50,
                 pageList: [50, 100, 200],
                 showRefresh: false,
@@ -60,14 +187,22 @@
                 columns: [[
 	                 //{ field: 'ck', checkbox: true },   //选择
                      { title: 'ID', field: 'IntID', width: 80, sortable: true, hidden: true },
-                     { title: '表通信地址', field: 'VcAddr', width: 120, sortable: true },
-                     { title: '客户编号', field: 'IntCustNo', width: 80, sortable: true },
-                     { title: '读取日期', field: 'DteReading', width: 120, sortable: true },
-                     { title: '冻结日期', field: 'DteFreeze', width: 120, sortable: true },
-                     { title: '读数', field: 'NumReading', width: 80, sortable: true },
-                     //{ title: '状态码', field: 'VcStatus', width: 80, sortable: true },
-                      { title: '状态码', field: 'Word', width: 80, sortable: true },
-
+                     { title: '表通信地址', field: 'VcAddr', width: 120, sortable: true ,hidden: true},
+                     { title: '客户编号', field: 'IntCustNo', width: 80, sortable: true ,hidden: true},
+                    {
+                        title: '读取日期', field: 'DteReading', width: 120, sortable: true,hidden: true,
+                        formatter: function (val, rowObj, index) {
+                           return val == "9999-09-09 00:00:00" ? "-" : val.substring(0, 10);
+                        }
+                    },
+                    {
+                        title: '冻结日期', field: 'DteFreeze', width: 120, sortable: true
+                    ,
+                        formatter: function (val, rowObj, index) {
+                           return val == "9999-09-09 00:00:00" ? "-" : val.substring(0, 10);
+                        }},
+                     { title: '读数', field: 'NumReading', width: 80, sortable: true },                   
+                     { title: '状态码', field: 'Word', width: 80, sortable: true },
                      {
                          title: '状态', field: 'IntStatus', width: 80, sortable: true,
                          formatter: function (val, rowObj, index) {
@@ -75,131 +210,72 @@
                              else return "停用";
                          }
                      },
-                     { title: '最后更新时间', field: 'DtLastUpd', width: 120, sortable: true },
-                    { title: '创建时间', field: 'DtCreate', width: 120, sortable: true },
-                    { title: '召测状态', field: 'VcDesc', align: 'center', width: 100, sortable: true }
+                    {
+                        title: '最后更新时间', field: 'DtLastUpd', width: 120, sortable: true,
+                        formatter: function (val, rowObj, index) {
+                           return val == "9999-09-09 00:00:00" ? "-" : val.substring(0, 10);
+                        }
+                    },
+                    {
+                        title: '创建时间', field: 'DtCreate', width: 120, sortable: true,
+                        formatter: function (val, rowObj, index) {
+                           return val == "9999-09-09 00:00:00" ? "-" : val.substring(0, 10);
+                        }
+                    },
+                    { title: '备注', field: 'VcDesc', align: 'center', width: 100, sortable: true }
                 ]],
                 onLoadSuccess: function () {
-                    // $(".grid_visible").linkbutton({ text: '可用', plain: true, iconCls: 'icon-ok' });
-                    // $(".grid_unvisible").linkbutton({ text: '过期', plain: true, iconCls: 'icon-stop' });
-                    //
-                    // $(".grid_normal").linkbutton({ text: '正常', plain: true, iconCls: 'icon-ok' });
-                    // $(".grid_deleted").linkbutton({ text: '已删除', plain: true, iconCls: 'icon-stop' });
+                   
                 },
-
-                toolbar: [{
-                    id: 'btnAdd',
-                    text: '添加手工抄表数据',
-                    iconCls: 'icon-add',
-                    handler: function () {
-                        ShowEditOrViewDialog();//实现添加记录的页面
-                    }
-                }],
-                onDblClickRow: function (rowIndex, rowData) {
-                    $('#grid').datagrid('uncheckAll');
-                    $('#grid').datagrid('checkRow', rowIndex);
-                    ShowEditOrViewDialog();
-                }
-            });
-            //var heightMargin = $("#toolbar").height() + 60;
-            //var widthMargin = $(document.body).width() - $("#tb").width();
-            //// 第一次加载时和当窗口大小发生变化时，自动变化大小
-            //$('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
-            //$(window).resize(function () {
-            //    $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
-            //});
+            });         
         };
-
-
         //绑定搜索按钮的的点击事件
         function BindSearchEvent() {
-            //按条件进行查询数据，首先我们得到数据的值
-          //  $("#btnSearch").click(function () {
-                //得到用户输入的参数
-                //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
-                //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
-                var page = $('#grid').datagrid('getPager').data("pagination").options.pageSize;
-                var pageNum = $('#grid').datagrid('getPager').data("pagination").options.pageNumber;
-
-                var queryData = {
-                    WHC_VcAddr: $("#VcAddr").val(),
-                    WHC_IntCustNo: $("#IntCustNo").val(),
-                    WHC_DteFreeze: $("#DteFreeze").datebox("getValue"),
-                    pageSize: page,
-                    pageNum: pageNum
-
-                }
-                //将值传递给
-                InitGrid(queryData);
-                return false;
-           // });
+            var queryData = {
+                WHC_IntNo: $("#txtIntNo").val(),
+                WHC_NvcName: $("#txtNvcName").val(),
+                WHC_NvcAddr: $("#txtNvcAddr").val(),
+                WHC_VcMobile: $("#txtVcMobile").val()
+            }
+            //将值传递给
+            UserInfoGrid(queryData);
+            return false;
         }
-        //绑定搜索按钮的的点击事件
-
-        function BindSearchDeletedEvent() {
-
-            //按条件进行查询数据，首先我们得到数据的值
-            $("#btnSearchDeleted").click(function () {
-                var queryData = {
-                    WHC_Deleted: "1",
-
-
-                }
-                //将值传递给
-                InitGrid(queryData);
-                return false;
-            });
-        }
-
-        //弹出新增对话框
-        function ShowAddDialog() {
-            //isAddOrEdit = 'add';//新增对话框标识
-            ////CKEDITOR.instances.Content.setData('');  //清空编辑器的数据
-
-            $("#DivAdd").dialog('open').dialog('setTitle', '添加信息');
-            //$("#DivAdd").window('open') ;
-            BindAddEvent();
-            return;
-            $.showWindow({
-                title: '添加信息',
-                useiframe: true,
-                width: '750px',
-                height: '98%',
-                content: 'url:/ArcMeterReading/Insert',
-                data: {},
-                buttons: [{
-                    text: '取消',
-                    iconCls: 'icon-cancel',
-                    handler: function (win) {
-                        $("#grid").datagrid("reload");
-                        win.close();
-                    }
-                }, {
-                    text: '保存',
-                    iconCls: 'icon-ok',
-                    handler: 'Insert' //此方法在弹出页面中
-                }]
-            });
-        }
-
-        //绑定添加按钮的事件
+         //绑定添加按钮的事件
         function BindAddEvent() {
-            $("#btnAddOK").unbind("click").click(Insert);
+            $("#btnAddOK").unbind("click");
+            $("#btnAddOK").click(Insert);
         }
-
+        function SearchFreezeDetail() {
+            var rows = $("#usergrid").datagrid("getSelections");
+            //首先取出来值判断用户只能选择一个
+            if (rows.length == 0) {
+                $.messager.alert("提示", "请选择一条记录", "error");
+                return;
+            }  
+            var IntNo = rows[0].IntNo;
+            var VcName = rows[0].NvcName;
+            var start = $("#StartDteFreeze").datebox("getValue")
+            var end=$("#EndDteFreeze").datebox("getValue")
+            var queryData = {
+                WHC_IntCustNo: IntNo,
+                WHC_StratDteFreeze: start,
+                WHC_EndDteFreeze:end
+            };
+            InitGrid(queryData);
+            var Newtitle = '抄表信息  用户名称 【' + VcName + '】 冻结日期  【' + start + ' 至 ' + end + '】';
+            $('#grid').datagrid("getPanel").panel("setTitle", Newtitle)
+        }
+         
         function Insert() {
             //判断表单的信息是否通过验证
             var validate = $("#ffAdd").form('validate');
             if (validate == false) {
                 return false;
-            }
-
-            //var VcAddr = $("#VcAddrs").textbox("getValue");
-           // var IntCustNos = $("#IntCustNos").textbox("getValue");
+            }     
             var DteFreeze =  $("#DteFreezes").datebox('getValue');
-
             $.ajax({
-                url: '/ArcMeterReading/WriteNumReading',
+                url: '/ArcMeterReading/WriteNumReading_Server',
                 type: "post",
                 dataType: "json",
                 data: {
@@ -212,46 +288,25 @@
                     showError(data.ErrorMessage, 3000);
                     $("#DivAdd").dialog("close");
                     $("#grid").datagrid("reload");
-                    $("#ffAdd").form("clear");
-
+                    $("#ffAdd").form("clear");             
                 },
                 error: function () {
                     alert(data.ErrorMessage);
                 }
-
             });
         }
 
-       
-
         //修改或查看明细信息（绑定显示数据）
-        function ShowEditOrViewDialog(view) {
+        function ShowEditOrViewDialog() {
             //首先取出来用户选择的数据的ID
-            var rows = $("#grid").datagrid("getSelections");
+            var rows = $("#usergrid").datagrid("getSelections");
             //首先取出来值判断用户只能选择一个
             if (rows.length == 0) {
                 $.messager.alert("提示", "请选择一条记录", "error");
                 return;
             }
-            else if (rows.length > 1) {
-                $.messager.alert("提示", "每次只能修改/查看一条记录，你已经选择了<font color='red'  size='6'>" + rows.length + "</font>条", "error");
-                return;
-            }
-            if (view == null) {
-                //处理修改的信息
-                //$("#DivEdit").dialog('open').dialog('setTitle', '修改信息');
-                //绑定修改详细信息的方法
-                BindEditInfo(rows[0]);
-
-                $("#DivAdd").dialog('open').dialog('setTitle', '修改信息');
-                BindEditEvent();
-            }
-            else {
-                //处理查看详细
-                $("#DivView").dialog('open').dialog('setTitle', '查看详细信息');
-                //绑定查看详细信息方法
-                BindViewInfo();
-            }
+            BindEditInfo(rows[0]);         
+            $("#DivAdd").dialog('open').dialog('setTitle', '录入数据');         
         }
 
         //绑定编辑详细信息的方法
@@ -260,26 +315,13 @@
                 showTips("数据有误!");
                 return false;
             }
- //绑定用户抄表信息
-
-            $("#VcAddrs").textbox("setValue", info.VcAddr);
-            $("#IntCustNos").textbox("setValue", info.IntCustNo);
+            //绑定用户抄表信息
+            console.log(info.VcAddr);
+            console.log(info.IntCustNo);
+            $("#VcAddrs").textbox("setValue", info.bVcAddr);
+            $("#IntCustNos").textbox("setValue", info.IntNo);
         }
-
-        //绑定查看详细信息的方法
-        function BindViewInfo() {
-            var ID = $("#grid").datagrid('getSelections')[0].ID;
-            //发送请求
-            $.getJSON("/User/FindByID?r=" + Math.random() + "&id=" + ID, function (info) {
-                $("#ID2").text(info.ID);
-            });
-        }
-
-        //绑定修改按钮的事件
-        function BindEditEvent() {
-            $("#btnAddOK").unbind("click").click(Insert);
-        }
-
+     
     </script>
 
     <style>
@@ -323,6 +365,13 @@
 
     <div id="loading" style="display: none;"><img alt="数据正在加载中..." src="~/Content/images/loading02.gif" /></div>
     <div class="easyui-layout" style="width:700px;height:700px;" fit="true">
+        <div data-options="region:'west',split:true,title:'',iconCls:'icon-book'" style="width: 230px; padding: 1px;">
+            <div class="easyui-tabs" style="width:200px;">
+                <div title="用户列表" style="padding:10px">
+                    <ul id="treeDept1"></ul>
+                </div>
+            </div>
+        </div>
 
         <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding:5px;height:auto">
             <!-------------------------------搜索框----------------------------------->
@@ -332,12 +381,42 @@
                     <div id="toolbar">
                         <table cellspacing="0" cellpadding="0">
                             <tr>
-                                <th style='padding:3px;'><label for="VcAddr">通信地址：</label></th>
-                                <td style='padding:3px;'><input type="text" id="VcAddr" class="text-info" style="width:100px" /></td>
-                                <th style='padding:3px;'><label for="IntCustNo">客户编号：</label></th>
-                                <td style='padding:3px;'><input type="text" id="IntCustNo" style="width:100px" /></td>
-                                <th style='padding:3px;'><label for="DteFreezd">冻结日期：</label></th>
-                                <td style='padding:3px;'><input type="text" class="easyui-datebox" id="DteFreeze" style="width:100px" /></td>
+                                <th style='padding: 3px;'>
+                                    <label for="txtIntNo">客户编号：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="txtIntNo" class="easyui-numberbox" style="width: 100px" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="txtNvcName">客户姓名：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="txtNvcName" style="width: 100px" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="txtNvcAddr">客户地址：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="txtNvcAddr" style="width: 100px" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="txtVcMobile">移动号码：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="txtVcMobile" class="easyui-numberbox" style="width: 100px" />
+                                </td>
+                                <th style='padding:3px;'>
+                                    <label for="DteFreezd">冻结日期：</label>
+                                </th>
+                                <td style='padding:3px;'>
+                                    <input type="text" class="easyui-datebox" id="StartDteFreeze" style="width:100px" value="true" />
+                                </td>
+                                <th style='padding:3px;'>
+                                    <label for="DteFreezd">-</label>
+                                </th>
+                                <td style='padding:3px;'>
+                                    <input type="text" class="easyui-datebox" id="EndDteFreeze" style="width:100px" value="true" />
+                                </td>
                                 <td style='padding:3px;text-align:right'>
                                     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch" onclick="BindSearchEvent()">查询</a>
                                 </td>
@@ -348,35 +427,29 @@
             </fieldset>
 
             <!-------------------------------详细信息展示表格----------------------------------->
-            <table id="grid" style="width: 940px" title="用户操作" data-options="iconCls:'icon-view'"></table>
+            <table id="usergrid" style="width: 940px" title="抄表信息" data-options="iconCls:'icon-view'"></table>
+            <table id="grid" style="width: 940px" title="用户信息" data-options="iconCls:'icon-view'"></table>
         </div>
     </div>
 
     <div style="display:none;">
         <!--------------------------添加信息的弹出层---------------------------->
-        <div id="DivAdd" class="easyui-dialog" style="width:750px;height:30%;padding:5px 5px"
+        <div id="DivAdd" class="easyui-dialog" style="width:550px;height:25%;padding:5px 5px"
              closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-add'">
-            <form id="ffAdd" method="post" novalidate="novalidate">
-                @*<input type="hidden" id="addIntID" name="IntID" />
-                    <input type="hidden" id="addIntUserID" name="IntUserID" />
-                    <input type="hidden" id="addIntStatus" name="IntStatus" />
-                    <input type="hidden" id="addDteOpen" name="DteOpen" />
-                    <input type="hidden" id="addDteCancel" name="DteCancel" />
-                    <input type="hidden" id="addDtCreate" name="DtCreate" />
-                    <input type="hidden" id="addIntHelper" name="IntHelper" />*@
+            <form id="ffAdd" method="post" novalidate="novalidate">              
                 <table id="tblAdd" class="view">
                     <tr>
                         <th>
                             <label for="VcAddrs">表地址：</label>
                         </th>
                         <td>
-                            <input class="easyui-textbox" type="text" id="VcAddrs" name="VcAddrs" style="width:99%;" data-options="required:true" />
+                            <input class="easyui-textbox" type="text" id="VcAddrs" name="VcAddrs" style="width:99%;" readonly data-options="required:true" />
                         </td>
                         <th>
                             <label for="IntCustNos">用户编号：</label>
                         </th>
                         <td>
-                            <input class="easyui-textbox" type="text" id="IntCustNos" name="IntCustNos" style="width:99%;" data-options="required:true" />
+                            <input class="easyui-textbox" type="text" id="IntCustNos" name="IntCustNos" style="width:99%;" readonly data-options="required:true" />
                         </td>
                     </tr>
                     <tr>
@@ -385,17 +458,17 @@
                         </th>
 
                         <td>
-                            <input class="easyui-datebox" type="text" id="DteFreezes" name="DteFreezes" style="width:99%;"data-options="required:true" />
+                            <input class="easyui-datebox" type="text" id="DteFreezes" name="DteFreezes" style="width:99%;" data-options="required:true" />
                         </td>
 
                         <th>
                             <label for="NumReading">读表数：</label>
                         </th>
                         <td>
-                            <input class="easyui-textbox" type="text" id="NumReading" name="NumReading" style="width:99%;"data-options="required:true"  />
+                            <input class="easyui-numberbox" type="text" id="NumReading" name="NumReading" style="width:99%;" data-options="required:true" />
                         </td>
                     </tr>
-                   
+
                     <tr>
                         <td colspan="4" style="text-align:right; padding-top:10px">
                             <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#DivAdd').dialog('close')">关闭</a>

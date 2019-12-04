@@ -26,7 +26,7 @@
         });
         var sNvcVillage = "";
         var sVcBuilding = "";
-
+        var name = "";
         var easyui_tree_options = {
 		    length : 0,  //层数
 		    getLevel : function(treeObj, node){	//treeObj为tree的dom对象，node为选中的节点
@@ -55,8 +55,8 @@
                     if (Treelevel == 4) {
                         ParentText = $("#treeDept1").tree("getParent", Text.target)
                     }
-                    queryData = { "WHC_Fuji": Text.text, "WHC_Text": node.text, "WHC_Treelevel": Treelevel.toString(), "WHC_TreePrentText": ParentText.text };
-                    InitGrid(queryData);
+                    queryData = { "WHC_Fuji": Text.text, "WHC_Text": node.text, "WHC_Treelevel": Treelevel.toString(), "WHC_TreePrentText": ParentText.text };   
+                    InitGrid(queryData); 
                 }
             });
             $("#loading").fadeOut(500);
@@ -90,8 +90,8 @@
                     { title: '客户名称', field: 'NvcName', width: 100, sortable: false, align: 'center' },
                     { title: '客户小区', field: 'NvcVillage', width: 100, sortable: false, align: 'center' },
                     { title: '客户楼栋', field: 'VcBuilding', width: 100, sortable: false, align: 'center' },
-                    { title: '客户单元', field: 'IntUnitNum', width: 80, sortable: false, align: 'center' },
-                    { title: '客户门牌号', field: 'IntRoomNum', width: 100, sortable: false, align: 'center' },
+                    { title: '客户单元', field: 'VcUnitNum', width: 80, sortable: false, align: 'center' },
+                    { title: '客户门牌号', field: 'VcRoomNum', width: 100, sortable: false, align: 'center' },
                     {
                         title: '存款余额', field: 'MonSum', width: 100, sortable: false, align: 'right',
                         formatter: function (val, rowObj, index) {
@@ -99,6 +99,7 @@
                             else return val;
                         }
                     },
+                    {title: '欠费总额', field: 'MonSumBill', width: 150, sortable: false, align: 'center'},
                     { title: '最后更新时间', field: 'DtLastUpd', width: 150, sortable: false, align: 'center' }
                 ]],
                 onLoadSuccess: function () {
@@ -196,8 +197,8 @@
                             return s;
                         }
                     },
-                    { title: '业务描述', field: 'VcDesc', width: 100, sortable: false, align: 'center' },
-                    { title: '票据号码', field: 'VcReceiptNo', width: 100, sortable: false, align: 'center' },
+                    //{ title: '业务描述', field: 'VcDesc', width: 100, sortable: false, align: 'center' },
+                    //{ title: '票据号码', field: 'VcReceiptNo', width: 100, sortable: false, align: 'center' },
                     {
                         title: '账务日期', field: 'DteAccount', width: 100, sortable: false, align: 'center',
                         formatter: function (val) {
@@ -243,26 +244,19 @@
                 remoteSort: false,            
                 queryParams: queryData,  //异步查询的参数
                 columns: [[
-                    { field: 'ck', checkbox: true },   //选择
+                    //{ field: 'ck', checkbox: true },   //选择
                     { title: 'ID', field: 'IntFeeID', width: 80, sortable: true, hidden: true },
-                    { title: '客户编号', field: 'IntCustNo', width: 80, sortable: true, align: 'right' },
-                    {
-                        title: '客户名称', field: 'ArcCustomerInfo.NvcName', width: 100, sortable: false, align: 'center',
-                        formatter: function (val, rowObj, index) {
-                            if (rowObj.ArcCustomerInfo)
-                                return rowObj.ArcCustomerInfo.NvcName;
-                        }
-                    },
+                    { title: '客户编号', field: 'IntCustNo', width: 80, sortable: true, align: 'right' },                    
                     { title: '费用年月', field: 'IntYearMon', width: 80, sortable: true, align: 'center' },
                     {
                         title: '费用日期', field: 'DteFee', width: 100, sortable: true, align: 'center',
                         formatter: function (val) {
-                            return val == "9999-09-09 00:00:00" ? "-" : val.substring(0, 10);  
+                            return val == "9999-09-09 00:00:00" ? "-" : val.substring(0, 10);
                         }
                     },
                     { title: '费用金额', field: 'MonFee', width: 80, sortable: true, align: 'right' },
                     { title: '实际执行费用金额', field: 'MonFeeExec', width: 110, sortable: true, align: 'right' },
-                    { title: '违约金', field: 'MonPenalty', width: 110, sortable: true, align: 'right' },
+                    { title: '违约金', field: 'MonPenal', width: 110, sortable: true, align: 'right' },
                     {
                         title: '状态', field: 'IntStatus', width: 80, sortable: true, align: 'center',
                         formatter: function (val, obj, index) {
@@ -308,14 +302,7 @@
                 columns: [[
                     { field: 'ck', checkbox: true },   //选择
                     { title: 'ID', field: 'IntFeeID', width: 80, sortable: true, hidden: true },
-                    { title: '客户编号', field: 'IntCustNo', width: 80, sortable: true, align: 'right' },
-                    {
-                        title: '客户名称', field: 'ArcCustomerInfo.NvcName', width: 100, sortable: false, align: 'center',
-                        formatter: function (val, rowObj, index) {
-                            if (rowObj.ArcCustomerInfo)
-                                return rowObj.ArcCustomerInfo.NvcName;
-                        }
-                    },
+                    { title: '客户编号', field: 'IntCustNo', width: 80, sortable: true, align: 'right' },                   
                     { title: '费用年月', field: 'IntYearMon', width: 80, sortable: true, align: 'center' },
                     {
                         title: '费用日期', field: 'DteFee', width: 80, sortable: true, align: 'center',
@@ -365,7 +352,7 @@
             }
             var data = { "WHC_IntCustNo": rows[0].IntCustNo};
             InitGridPayGet(data);
-            var name = rows[0].NvcName;
+            name = rows[0].NvcName;
             $("#divPayGet").dialog('open').dialog('setTitle', '【' + name + '】预存款明细');
         }
 
@@ -377,7 +364,7 @@
             }
             var data = { "IntCustNo": rows[0].IntCustNo };
             InitGridAccDebt(data);
-            var name = rows[0].NvcName;
+            name = rows[0].NvcName;
             $("#divAccDebt").dialog('open').dialog('setTitle', '【' + name + '】欠费记录');
         }
 
@@ -389,7 +376,7 @@
             }
             var data = { "IntCustNo": rows[0].IntCustNo };
             InitGridAccPayment(data);
-            var name = rows[0].NvcName;
+            name = rows[0].NvcName;
             $("#divAccPayment").dialog('open').dialog('setTitle', '【' + name + '】扣费记录');
         }
 
@@ -399,10 +386,12 @@
                 $.messager.alert("温馨提示", "请选择一条记录!");
                 return;
             }
-            var name = rows[0].NvcName;
+            name = rows[0].NvcName;
             $("#payIntCustNo").html(rows[0].IntCustNo);
             $("#payNvcName").html(name);
             $("#payMonSum").html(rows[0].MonSum);
+            $("#MonSumBill").html(rows[0].MonSumBill);
+            $("#CanUseMonSum").html(rows[0].MonSum-rows[0].MonSumBill);
             $("#payMoney").numberbox('setValue', '');
 
             $("#DivPay").dialog('open').dialog('setTitle', '【' + name + '】存款');
@@ -414,10 +403,10 @@
                 $.messager.alert("温馨提示", "请选择一条记录!");
                 return;
             }
-            var name = rows[0].NvcName;
+            name = rows[0].NvcName;
             $("#getIntCustNo").html(rows[0].IntCustNo);
             $("#getNvcName").html(name);
-            $("#getMonSum").html(rows[0].MonSum);
+            $("#getMonSum").html(rows[0].MonSum-rows[0].MonSumBill);
             $("#getMoney").numberbox('setValue', '');
             $("#DivGet").dialog('open').dialog('setTitle', '【' + name + '】取款');
         }
@@ -428,23 +417,18 @@
                 $.messager.alert("温馨提示", "请至少选择一条记录!");
                 return;
             }
-
             var validate = $("#ffPay").form('validate');
             if (validate == false) {
                 return false;
             }
-            var money = parseFloat($("#payMoney").numberbox('getValue'));
-            var name = rows[0].NvcName;
+            var money = $("#payMoney").numberbox('getValue');
+            name = rows[0].NvcName;
             var msg = "确认给【" + name + "】存款【" + money + "】元？";
-
             //然后确认发送异步请求的信息到后台删除数据
             $.messager.confirm("存款确认", msg, function (isAction) {
                 if (isAction) {
                     $.messager.progress({ text: '正在处理中,请稍后......' });
-
                     var custNo = rows[0].IntCustNo;
-                    //var monSum = rows[0].MonSum;
-
                     $.ajax({
                         url: '/Fee/PayGetMoney_Server?custNo=' + custNo,
                         type: 'post',
@@ -462,13 +446,12 @@
                                         window.open("PayGetMoneyPrint?flowNo=" + json.Data1);
                                     }
                                 });
-                                reloadGrid();
+                              $("#grid").datagrid("reload");
                             }
                             else {
                                 $.messager.alert("温馨提示", json.ErrorMessage);
                             }
                             Money();
-
                         },
                         error: function () {
                             showError("网络错误!");
@@ -485,28 +468,21 @@
                 $.messager.alert("温馨提示", "请至少选择一条记录!");
                 return;
             }
-
             var validate = $("#ffGet").form('validate');
             if (validate == false) {
                 return false;
-            }
-
-            var money = parseFloat($("#getMoney").val());
+            }        
+            var money = $("#getMoney").numberbox('getValue');
             if (money > rows[0].MonSum) {
                 $.messager.alert("温馨提示", "本次提取金额不能大于可提取余额!");
                 return false;
             }
-
-            var name = rows[0].NvcName;
+            name = rows[0].NvcName;
             var msg = "【" + name + "】确认取款【" + money + "】元？";
-
             $.messager.confirm("取款确认", msg, function (isAction) {
                 if (isAction) {
                     $.messager.progress({ text: '正在处理中,请稍后......' });
-
-                    var custNo = rows[0].IntCustNo;
-                    //var monSum = rows[0].MonSum;
-
+                    var custNo = rows[0].IntCustNo;                 
                     $.ajax({
                         url: '/Fee/PayGetMoney_Server?custNo=' + custNo,
                         type: 'post',
@@ -522,7 +498,7 @@
                                         window.open("PayGetMoneyPrint?flowNo=" + json.Data1);
                                     }
                                 });
-                                reloadGrid();
+                                 $("#grid").datagrid("reload");
                             }
                             else {
                                 $.messager.alert("温馨提示", json.ErrorMessage);
@@ -531,16 +507,18 @@
                         error: function () {
                             showError("网络错误!");
                             $.messager.progress('close');
-                        }
+                        } 
                     });
                 }
             });
         }
         function reloadGrid() {
             var queryData = {
-                KEY: $("#txtIntNo").val(),
-                "NvcVillage": sNvcVillage,
-                "VcBuilding": sVcBuilding
+                Key: $("#txtIntNo").val(),
+                WHC_IntCustNo: $("#txtIntNo").val(),
+                WHC_NvcName: $("#txtNvcName").val(),
+                WHC_NvcAddr: $("#txtNvcAddr").val(),
+                WHC_VcMobile: $("#txtVcMobile").val(),
             }
             //将值传递给
             InitGrid(queryData);
@@ -564,7 +542,6 @@
             var rows = $("#grid").datagrid("getSelections");
             //获取编号
             var line = rows[0].IntCustNo;
-
             //获取之前的金额
             var old = rows[0].MonSum;
             //存入的金额
@@ -576,27 +553,22 @@
                 data: { "IntCustNo": line },
                 async: false,
                 success: function (data) {
-                    var a = data[0].IntAutoSwitch;
-                    
+                    var a = data[0].IntAutoSwitch;                    
                     if (a == 1) {
                         if (old < 0) {
                             if (old + news > 0) {
                                 //执行开阀命令
                                 timeout = CommandTimeout;
                                 var arrMP = new Array();
-
                                 for (var i = 0; i < rows.length; i++) {
                                     arrMP.push(rows[i].IntMP);
                                 }
                                 var data = getClass1Param(rows[0].VcAddr, "2", arrMP);
-
                                 downloadCommand(data);
                                 alert("下发指令成功！");
                             }
                         }
-
                     }
-
                 }
             })
         }
@@ -617,7 +589,6 @@
 
         }
         var timeout = 10 * 1000;
-
         var timeoutCounter;
         var IsMeasureSuccess = false;
         function Measure() {
@@ -625,13 +596,11 @@
             IsMeasureSuccess = false;
             timeoutCounter = setTimeout(MeasureSuccess, timeout);
         }
-        function MeasureFailed(errMsg) {
-           
+        function MeasureFailed(errMsg) {          
                         if (IsMeasureSuccess) return;
                         loading.hide();
                         clearTimeout(timeoutCounter);
-                        showError('设置超时!' + (errMsg || ""));
-                    
+                        showError('设置超时!' + (errMsg || ""));                  
         }
         function MeasureSuccess() {
             IsMeasureSuccess = true;
@@ -698,11 +667,19 @@
                         <table cellspacing="0" cellpadding="0">
                             <tr>
                                 <th style='padding: 3px;'>
-                                    <label for="txtIntNo">关键词：</label>
+                                    <label for="txtIntNo">客户编号：</label>
                                 </th>
                                 <td style='padding: 3px;'>
-                                    <input type="text" id="txtIntNo" class="text-info" style="width: 100px" />
+                                    <input type="text" id="txtIntNo" class="easyui-numberbox" style="width: 100px" />
                                 </td>
+                                <th style='padding: 3px;'>
+                                    <label for="txtNvcName">客户姓名：</label>
+                                </th>
+                                <td style='padding:3px;'><input type="text" id="txtNvcName" style="width:100px" /></td>
+                                <th style='padding:3px;'><label for="txtNvcAddr">客户地址：</label></th>
+                                <td style='padding:3px;'><input type="text" id="txtNvcAddr" style="width:100px" /></td>
+                                <th style='padding:3px;'><label for="txtVcMobile">移动号码：</label></th>
+                                <td style='padding:3px;'><input type="text" id="txtVcMobile" class="easyui-numberbox" style="width:100px" /></td>
                                 <td style='padding: 3px; text-align: right'>
                                     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
                                 </td>
@@ -738,7 +715,7 @@
         </div>
 
         <!--------------------------编辑信息的弹出层---------------------------->
-        <div id="DivPay" class="easyui-dialog" style="width: 475px; height: 220px; padding: 5px 5px"
+        <div id="DivPay" class="easyui-dialog" style="width: 475px; height: 240px; padding: 5px 5px"
             closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-pay'">
             <form id="ffPay" method="post" novalidate="novalidate">
 
@@ -755,21 +732,29 @@
                     </tr>
                     <tr>
                         <th>
-                            <label for="payMonSum">余额</label>
+                            <label for="payMonSum">账户余额</label>
                         </th>
                         <td id="payMonSum"></td>
+                        <th>
+                            <label for="MonSumBill">欠款总额</label>
+                        </th>
+                        <td id="MonSumBill"></td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="CanUseMonSum">可用余额</label>
+                        </th>
+                        <td id="CanUseMonSum"></td>
                         <th>
                             <label for="payGetMoney">本次存款</label>
                         </th>
                         <td>
                             <input class="easyui-numberbox" type="text" id="payMoney" style="width: 99%;" name="GetMoney" data-options="required:true"
-                                min="0.01" max="100000000" precision="2" />
+                                   min="0.01" max="100000000" precision="2" />
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="4" style="text-align: right; padding-top: 10px">
-                            <br />
-                            <br />
+                        <td colspan="4" style="text-align: right; padding-top: 5px">                          
                             <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript: $('#DivPay').dialog('close')">关闭</a>
                             <a href="javascript:void(0)" class="easyui-linkbutton" id="btnPayOK" iconcls="icon-ok" >确定</a>
                         </td>
@@ -779,7 +764,7 @@
             </form>
         </div>
 
-        <div id="DivGet" class="easyui-dialog" style="width: 475px; height: 220px; padding: 5px 5px"
+        <div id="DivGet" class="easyui-dialog" style="width: 475px; height: 200px; padding: 5px 5px"
             closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-pay'">
             <form id="ffGet" method="post" novalidate="novalidate">
 
@@ -808,9 +793,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="4" style="text-align: right; padding-top: 10px">
-                            <br />
-                            <br />
+                        <td colspan="4" style="text-align: right; padding-top: 10px">                           
                             <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript: $('#DivGet').dialog('close')">关闭</a>
                             <a href="javascript:void(0)" class="easyui-linkbutton" id="btnGetOK" iconcls="icon-ok">确定</a>
                         </td>

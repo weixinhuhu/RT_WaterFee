@@ -48,10 +48,10 @@
         //实现对DataGird控件的绑定操作
         function InitGrid(queryData) {
             $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
-                url: '/Message/TemplateList',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                url: '/Message/TemplateList_Server',   //指向后台的Action来获取当前用户的信息的Json格式的数据
                 title: '模板列表',
                 iconCls: 'icon-view',
-                height: 670,
+                height: document.body.clientHeight * 0.9 ,
                 width: function () { return document.body.clientWidth * 0.9 },//自动宽度
                 nowrap: true,
                 autoRowHeight: true,
@@ -68,22 +68,24 @@
                 //idField: 'ID', //不设置idField，翻页不会记录选择
                 queryParams: queryData,  //异步查询的参数
                 columns: [[
-	                 { field: 'ck', checkbox: true },   //选择
-                     { title: '编号', field: 'ID', width: 60, sortable: true, align: 'center' },
-                     { title: '模板类型', field: 'TempType', width: 200, sortable: true, align: 'center' },
-                     { title: '模板名称', field: 'TempName', width: 250, sortable: true, align: 'center' },
-                     { title: '模板ID', field: 'TempID', width: 100, sortable: true, align: 'center' },
-                     {
-                         title: '模板状态', field: 'Status', width: 100, sortable: true, align: 'center',
-                         formatter: function (val, rowdata, index) {
-                             if (val == "1") {
-                                 return '启用';
-                             } else {
-                                 return '禁用';
-                             }
-                         }
-                     },
-                     { title: '建立时间', field: 'DtCreate', width: 180, sortable: true, align: 'center' }
+                    { field: 'ck', checkbox: true },   //选择
+                    { title: '编号', field: 'IntID', width: 60, sortable: true, align: 'center' },
+                    { title: '模板名称', field: 'NvcName', width: 100, sortable: true, align: 'center' },
+                    { title: '模板ID', field: 'VcAlyID', width: 100, sortable: true, align: 'center' },
+                    {title: '模板存储过程名称', field: 'NvcProc', width: 100, sortable: true, align: 'center',hidden: true},
+                    { title: '模板内容', field: 'NvcContent', width: 100, sortable: true, align: 'center' },
+                    {
+                        title: '模板状态', field: 'IntStatus', width: 100, sortable: true, align: 'center',
+                        formatter: function (val, rowdata, index) {
+                            if (val == "1") {
+                                return '启用';
+                            } else {
+                                return '禁用';
+                            }
+                        }
+                    },
+                    { title: '修改时间', field: 'DtLstUpd', width: 180, sortable: true, align: 'center' },
+                    { title: '建立时间', field: 'DtCreate', width: 180, sortable: true, align: 'center' }
                 ]],
                 onLoadSuccess: function () {
 
@@ -103,22 +105,14 @@
                         ShowEditOrViewDialog();//实现修改记录的方法
                     }
                 },
-                '-', {
-                    id: 'btnDelete',
-                    text: '删除',
-                    iconCls: 'icon-remove',
-                    handler: function () {
-                        Delete();//实现直接删除数据的方法
-                    }
-                },
                 //'-', {
-                //    id: 'btnView',
-                //    text: '查看',
-                //    iconCls: 'icon-table',
+                //    id: 'btnDelete',
+                //    text: '删除',
+                //    iconCls: 'icon-remove',
                 //    handler: function () {
-                //        //ShowMeterList();//实现查看记录详细信息的方法
+                //        Delete();//实现直接删除数据的方法
                 //    }
-                //},
+                //},               
                 '-', {
                     id: 'btnReload',
                     text: '刷新',
@@ -151,7 +145,9 @@
                 //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
                 //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
                 var queryData = {
-                    WHC_TempName: $("#TempName").val()
+                    WHC_TempName: $("#TempName").val(),
+                    WHC_IntID: $("#TempIntID").val(),
+                    WHC_IntStatus: $("#IntStatus").combobox('getValue')
                 }
                 //将值传递给
                 InitGrid(queryData);
@@ -234,13 +230,8 @@
                 if (validate == false) {
                     return false;
                 }
-
-                //修改控件的值为复选框的值
-                //$("#hIsExpire").val($("#IsExpire").is(':checked'))
-                //$("#hDeleted").val($("#Deleted").is(':checked'))
-
-                var postData = $("#ffAdd").serializeArray();
-                $.post("/MessageTemplate/Insert", postData, function (json) {
+                var postData = $("#ffAdd").serializeArray();             
+                $.post("/Message/InsOrUpd_Server", postData, function (json) {
                     var data = $.parseJSON(json);
                     if (data.Success) {
                         //添加成功  1.关闭弹出层，2.刷新DataGird
@@ -253,7 +244,7 @@
                         showError("添加失败:" + data.ErrorMessage, 3000);
                     }
                 }).error(function () {
-                    $.messager.alert("提示", "您未被授权使用该功能，请联系管理员进行处理。", 'warning');
+                    $.messager.alert("提示add", "您未被授权使用该功能，请联系管理员进行处理。", 'warning');
                 });
             });
         }
@@ -295,32 +286,18 @@
          
 
         //绑定编辑详细信息的方法
-        function BindEditInfo(row) {
-            //首先用户发送一个异步请求去后台实现方法
-            //var ID = $("#grid").datagrid("getSelections")[0].IntID;  //获取到了用用户选择的ID
+        function BindEditInfo(row) {          
             isAddOrEdit = 'edit';//新增对话框标识
-
-            //$("#ffAdd input[type='text']").val("");
             clearInput();
-
-            $("#editID").val(row.IntID);
-            $("#editTempType").val(row.TempType);
-            $("#editTempName").val(row.TempName);
-            $("#editTempID").val(row.TempID);
-            $("#editTempSQL").val(row.TempSQL);
-            $("#editTempContent").val(row.TempContent);
-            $("#ddlStatus").combobox("setValue", row.Status);
-            $("#editDtCreate").val("setValue", row.DtCreate);
-       
+            $("#editID").val(row.IntID);         
+            $("#editTempName").val(row.NvcName);
+            $("#editTempID").val(row.VcAlyID);
+            $("#editTempSQL").val(row.NvcProc);
+            $("#editTempContent").val(row.NvcContent);
+            $("#ddlStatus").combobox("setValue", row.IntStatus);           
+            $("#editDtCreate").val("setValue", row.DtCreate); 
             BindEditEvent();
-            $("#DivAdd").dialog('open').dialog('setTitle', '编辑短信模板');
-            //$.ajaxSettings.async = false;
-            //$.getJSON("/User/FindByID?r=" + Math.random() + "&id=" + ID, function (info) {
-            //    //赋值有几种方式：.datebox('setValue', info.Birthday);.combobox('setValue', info.Status);.val(info.Name);
-            //
-            //    isAddOrEdit = 'edit';//新增对话框标识
-            //});
-
+            $("#DivAdd").dialog('open').dialog('setTitle', '编辑短信模板');           
         }
   
         //绑定修改按钮的事件
@@ -331,14 +308,10 @@
                 var validate = $("#ffAdd").form('validate');
                 if (validate == false) {
                     return false;
-                }
-                  
-                //修改控件的值为复选框的值
-                //$("#hIsExpire").val($("#IsExpire").is(':checked'))
-                //$("#hDeleted").val($("#Deleted").is(':checked'))
-
+                }              
                 var postData = $("#ffAdd").serializeArray();
-                $.post("/MessageTemplate/Update?id=id", postData, function (json) {
+                console.log(postData);
+                $.post("/Message/InsOrUpd_Server", postData, function (json) {
                     var data = $.parseJSON(json);
                     if (data.Success) {
                         //添加成功  1.关闭弹出层，2.刷新DataGird
@@ -350,7 +323,7 @@
                         showError("编辑失败:" + data.ErrorMessage, 3000);
                     }
                 }).error(function () {
-                    $.messager.alert("提示", "您未被授权使用该功能，请联系管理员进行处理。", 'warning');
+                    $.messager.alert("提示1", "您未被授权使用该功能，请联系管理员进行处理。", 'warning');
                 });
             });
         }
@@ -406,10 +379,26 @@
                         <table cellspacing="0" cellpadding="0">
                             <tr>
                                 <th style='padding: 3px;'>
+                                    <label for="NvcName">模板编号：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="TempIntID" class="easyui-numberbox" style="width: 100px" />
+                                </td>
+                                <th style='padding: 3px;'>
                                     <label for="NvcName">模板名称：</label>
                                 </th>
                                 <td style='padding: 3px;'>
                                     <input type="text" id="TempName" class="text-info" style="width: 100px" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="IntStatus">模板状态：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <select id="IntStatus" class="easyui-combobox" style="width: 100px;">
+                                        <option value="-1">全部</option>
+                                        <option value="0">启用</option>
+                                        <option value="1">禁用</option>
+                                    </select>
                                 </td>
                                 <td style='padding: 3px; text-align: right'>
                                     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
@@ -434,23 +423,15 @@
             closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-add'">
 
             <form id="ffAdd" method="post" novalidate="novalidate">
-                <input type="hidden" id="editID" name="ID" />
+                <input type="hidden" id="editID" name="IntID" />            
                 <input type="hidden" id="editDtCreate" name="DtCreate" />
                 <table id="tblAdd" class="view">
-                    <tr>
-                        <th style="width: 15%">
-                            <label for="editVcAddr">模板类型(*)：</label>
-                        </th>
-                        <td style="width: 35%">
-                            <input class="easyui-validatebox" type="text" id="editTempType" style="width: 99%;" name="TempType" data-options="required:true,validType:'length[1,50]'" />
-                        </td>
-                    </tr>
                     <tr>
                         <th>
                             <label for="editNvcAddr">模板名称(*)：</label>
                         </th>
                         <td>
-                            <input class="easyui-validatebox" type="text" id="editTempName" name="TempName" style="width: 99%" data-options="required:true,validType:'length[1,50]'" />
+                            <input class="easyui-validatebox" type="text" id="editTempName" name="NvcName" style="width: 99%" data-options="required:true,validType:'length[1,50]'" />
                         </td>
                     </tr>
                     <tr>
@@ -458,7 +439,7 @@
                             <label for="editNvcAddr">模板ID(*)：</label>
                         </th>
                         <td>
-                            <input class="easyui-validatebox" type="text" id="editTempID" name="TempID" style="width: 99%" data-options="required:true,validType:'length[1,50]'" />
+                            <input class="easyui-validatebox" type="text" id="editTempID" name="VcAlyID" style="width: 99%" data-options="required:true,validType:'length[1,50]'" />
                         </td>
                     </tr>
                     <tr>
@@ -466,7 +447,7 @@
                             <label for="editNvcAddr">SQL语句(*)：</label>
                         </th>
                         <td>
-                            <textarea class="easyui-validatebox" id="editTempSQL" name="TempSQL" style="height: 50px; width: 99%" data-options="required:true,validType:'length[1,1000]'"></textarea>
+                            <textarea class="easyui-validatebox" id="editTempSQL" name="NvcProc" style="height: 50px; width: 99%" data-options="required:true,validType:'length[1,1000]'"></textarea>
                         </td>
                     </tr>
                     <tr>
@@ -474,7 +455,7 @@
                             <label for="editNvcAddr">模板内容(*)：</label>
                         </th>
                         <td>
-                            <textarea class="easyui-validatebox" id="editTempContent" name="TempContent" style="height: 50px; width: 99%" data-options="required:true,validType:'length[1,1000]'"></textarea>
+                            <textarea class="easyui-validatebox" id="editTempContent" name="NvcContent" style="height: 50px; width: 99%" data-options="required:true,validType:'length[1,1000]'"></textarea>
 
                         </td>
                     </tr>
@@ -483,7 +464,7 @@
                             <label for="ddlIntStatus">使用状态：</label>
                         </th>
                         <td>
-                            <select id="ddlStatus" name="Status" class="easyui-combobox" style="width: 100px;" data-options="required:true">
+                            <select id="ddlStatus" name="IntStatus" class="easyui-combobox" style="width: 100px;" data-options="required:true">
                                 <option value="1">启用</option>
                                 <option value="0">禁用</option>
                             </select>

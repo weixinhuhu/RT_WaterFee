@@ -17,4 +17,20 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="EasyTreeData" nillable="true" type="tns:EasyTreeData" />
+  <xs:complexType name="MeterConfig">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AlertVolt" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="AllowUsed" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CloseVolt" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FreezeDay" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="InitReading" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Point" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UpAmount" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UpTiming" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UpTimingUnit" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ValveMaint" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ValveRuning" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MeterConfig" nillable="true" type="tns:MeterConfig" />
 </xs:schema>

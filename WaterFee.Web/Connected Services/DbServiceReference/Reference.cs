@@ -1645,6 +1645,7 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.Generic.Dictionary<int, double>))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.EasyTreeData[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.EasyTreeData))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.MeterConfig))]
     public partial class CommonResult : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
@@ -1660,12 +1661,6 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         private object[] LstObjField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private object Obj1Field;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private object Obj2Field;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string StrData1Field;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -1673,6 +1668,12 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string StrData3Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Data.DataTable Tbl1Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Data.DataTable Tbl2Field;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -1724,32 +1725,6 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public object Obj1 {
-            get {
-                return this.Obj1Field;
-            }
-            set {
-                if ((object.ReferenceEquals(this.Obj1Field, value) != true)) {
-                    this.Obj1Field = value;
-                    this.RaisePropertyChanged("Obj1");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public object Obj2 {
-            get {
-                return this.Obj2Field;
-            }
-            set {
-                if ((object.ReferenceEquals(this.Obj2Field, value) != true)) {
-                    this.Obj2Field = value;
-                    this.RaisePropertyChanged("Obj2");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
         public string StrData1 {
             get {
                 return this.StrData1Field;
@@ -1784,6 +1759,32 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
                 if ((object.ReferenceEquals(this.StrData3Field, value) != true)) {
                     this.StrData3Field = value;
                     this.RaisePropertyChanged("StrData3");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Data.DataTable Tbl1 {
+            get {
+                return this.Tbl1Field;
+            }
+            set {
+                if ((object.ReferenceEquals(this.Tbl1Field, value) != true)) {
+                    this.Tbl1Field = value;
+                    this.RaisePropertyChanged("Tbl1");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Data.DataTable Tbl2 {
+            get {
+                return this.Tbl2Field;
+            }
+            set {
+                if ((object.ReferenceEquals(this.Tbl2Field, value) != true)) {
+                    this.Tbl2Field = value;
+                    this.RaisePropertyChanged("Tbl2");
                 }
             }
         }
@@ -2649,7 +2650,7 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         private string NvcNameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string NvcSQLField;
+        private string NvcProcField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string VcAlyIDField;
@@ -2756,14 +2757,14 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string NvcSQL {
+        public string NvcProc {
             get {
-                return this.NvcSQLField;
+                return this.NvcProcField;
             }
             set {
-                if ((object.ReferenceEquals(this.NvcSQLField, value) != true)) {
-                    this.NvcSQLField = value;
-                    this.RaisePropertyChanged("NvcSQL");
+                if ((object.ReferenceEquals(this.NvcProcField, value) != true)) {
+                    this.NvcProcField = value;
+                    this.RaisePropertyChanged("NvcProc");
                 }
             }
         }
@@ -2777,6 +2778,211 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
                 if ((object.ReferenceEquals(this.VcAlyIDField, value) != true)) {
                     this.VcAlyIDField = value;
                     this.RaisePropertyChanged("VcAlyID");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="MeterConfig", Namespace="http://schemas.datacontract.org/2004/07/DbServer.Model")]
+    [System.SerializableAttribute()]
+    public partial class MeterConfig : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string AlertVoltField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string AllowUsedField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string CloseVoltField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string FreezeDayField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string InitReadingField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string PointField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string UpAmountField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string UpTimingField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string UpTimingUnitField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ValveMaintField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ValveRuningField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string AlertVolt {
+            get {
+                return this.AlertVoltField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.AlertVoltField, value) != true)) {
+                    this.AlertVoltField = value;
+                    this.RaisePropertyChanged("AlertVolt");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string AllowUsed {
+            get {
+                return this.AllowUsedField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.AllowUsedField, value) != true)) {
+                    this.AllowUsedField = value;
+                    this.RaisePropertyChanged("AllowUsed");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string CloseVolt {
+            get {
+                return this.CloseVoltField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.CloseVoltField, value) != true)) {
+                    this.CloseVoltField = value;
+                    this.RaisePropertyChanged("CloseVolt");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string FreezeDay {
+            get {
+                return this.FreezeDayField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.FreezeDayField, value) != true)) {
+                    this.FreezeDayField = value;
+                    this.RaisePropertyChanged("FreezeDay");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string InitReading {
+            get {
+                return this.InitReadingField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.InitReadingField, value) != true)) {
+                    this.InitReadingField = value;
+                    this.RaisePropertyChanged("InitReading");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Point {
+            get {
+                return this.PointField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.PointField, value) != true)) {
+                    this.PointField = value;
+                    this.RaisePropertyChanged("Point");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string UpAmount {
+            get {
+                return this.UpAmountField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.UpAmountField, value) != true)) {
+                    this.UpAmountField = value;
+                    this.RaisePropertyChanged("UpAmount");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string UpTiming {
+            get {
+                return this.UpTimingField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.UpTimingField, value) != true)) {
+                    this.UpTimingField = value;
+                    this.RaisePropertyChanged("UpTiming");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string UpTimingUnit {
+            get {
+                return this.UpTimingUnitField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.UpTimingUnitField, value) != true)) {
+                    this.UpTimingUnitField = value;
+                    this.RaisePropertyChanged("UpTimingUnit");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ValveMaint {
+            get {
+                return this.ValveMaintField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ValveMaintField, value) != true)) {
+                    this.ValveMaintField = value;
+                    this.RaisePropertyChanged("ValveMaint");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ValveRuning {
+            get {
+                return this.ValveRuningField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ValveRuningField, value) != true)) {
+                    this.ValveRuningField = value;
+                    this.RaisePropertyChanged("ValveRuning");
                 }
             }
         }
@@ -2897,6 +3103,12 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/ArcMeter_Replace", ReplyAction="http://tempuri.org/IServiceDb/ArcMeter_ReplaceResponse")]
         System.Threading.Tasks.Task<string> ArcMeter_ReplaceAsync(WHC.WaterFeeWeb.DbServiceReference.MeterReplaceInfo MeterReplace);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/ArcCloseAccount", ReplyAction="http://tempuri.org/IServiceDb/ArcCloseAccountResponse")]
+        string ArcCloseAccount(int iCode, int iCustNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/ArcCloseAccount", ReplyAction="http://tempuri.org/IServiceDb/ArcCloseAccountResponse")]
+        System.Threading.Tasks.Task<string> ArcCloseAccountAsync(int iCode, int iCustNo);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/PriceType_Qry", ReplyAction="http://tempuri.org/IServiceDb/PriceType_QryResponse")]
         System.Data.DataTable PriceType_Qry(int iCode);
         
@@ -2946,10 +3158,10 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         System.Threading.Tasks.Task<string> PriceProperty_AddOrUpdateAsync(WHC.WaterFeeWeb.DbServiceReference.PriceProperty Property, WHC.WaterFeeWeb.DbServiceReference.PriceDetail[] LstPrice);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/SMS_Template_Qry", ReplyAction="http://tempuri.org/IServiceDb/SMS_Template_QryResponse")]
-        System.Data.DataTable SMS_Template_Qry(int iCode);
+        System.Data.DataTable SMS_Template_Qry(int iCode, WHC.WaterFeeWeb.DbServiceReference.SmsTemplate Template);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/SMS_Template_Qry", ReplyAction="http://tempuri.org/IServiceDb/SMS_Template_QryResponse")]
-        System.Threading.Tasks.Task<System.Data.DataTable> SMS_Template_QryAsync(int iCode);
+        System.Threading.Tasks.Task<System.Data.DataTable> SMS_Template_QryAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.SmsTemplate Template);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/SMS_Template_InsOrUpd", ReplyAction="http://tempuri.org/IServiceDb/SMS_Template_InsOrUpdResponse")]
         string SMS_Template_InsOrUpd(WHC.WaterFeeWeb.DbServiceReference.SmsTemplate Template);
@@ -3000,10 +3212,76 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         System.Threading.Tasks.Task<System.Data.DataTable> Account_GetDepositDetailAsync(int iUserID, System.DateTime DtStart, System.DateTime DtEnd);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetBillByCustNo", ReplyAction="http://tempuri.org/IServiceDb/Account_GetBillByCustNoResponse")]
-        System.Data.DataTable Account_GetBillByCustNo(int iCode, int iCustNo);
+        WHC.WaterFeeWeb.DbServiceReference.CommonResult Account_GetBillByCustNo(int iCode, int iCustNo);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetBillByCustNo", ReplyAction="http://tempuri.org/IServiceDb/Account_GetBillByCustNoResponse")]
-        System.Threading.Tasks.Task<System.Data.DataTable> Account_GetBillByCustNoAsync(int iCode, int iCustNo);
+        System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> Account_GetBillByCustNoAsync(int iCode, int iCustNo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetPaymentNotice", ReplyAction="http://tempuri.org/IServiceDb/Account_GetPaymentNoticeResponse")]
+        System.Data.DataTable Account_GetPaymentNotice(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetPaymentNotice", ReplyAction="http://tempuri.org/IServiceDb/Account_GetPaymentNoticeResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> Account_GetPaymentNoticeAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetPaymentDetail", ReplyAction="http://tempuri.org/IServiceDb/Account_GetPaymentDetailResponse")]
+        System.Data.DataTable Account_GetPaymentDetail(int iCode, int iFeeID, System.DateTime DtStart, System.DateTime DtEnd, WHC.WaterFeeWeb.DbServiceReference.Customer Cust);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Account_GetPaymentDetail", ReplyAction="http://tempuri.org/IServiceDb/Account_GetPaymentDetailResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> Account_GetPaymentDetailAsync(int iCode, int iFeeID, System.DateTime DtStart, System.DateTime DtEnd, WHC.WaterFeeWeb.DbServiceReference.Customer Cust);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/StatDepositData", ReplyAction="http://tempuri.org/IServiceDb/StatDepositDataResponse")]
+        WHC.WaterFeeWeb.DbServiceReference.CommonResult StatDepositData(int iCode, int iParamMode, string sParamValue, int iStatMode, System.DateTime DteBegin, System.DateTime DteEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/StatDepositData", ReplyAction="http://tempuri.org/IServiceDb/StatDepositDataResponse")]
+        System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> StatDepositDataAsync(int iCode, int iParamMode, string sParamValue, int iStatMode, System.DateTime DteBegin, System.DateTime DteEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/StatUsedWaterData", ReplyAction="http://tempuri.org/IServiceDb/StatUsedWaterDataResponse")]
+        WHC.WaterFeeWeb.DbServiceReference.CommonResult StatUsedWaterData(int iCode, int iParamMode, string sParamValue, System.DateTime DteBegin, System.DateTime DteEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/StatUsedWaterData", ReplyAction="http://tempuri.org/IServiceDb/StatUsedWaterDataResponse")]
+        System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> StatUsedWaterDataAsync(int iCode, int iParamMode, string sParamValue, System.DateTime DteBegin, System.DateTime DteEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/StatClientArcData", ReplyAction="http://tempuri.org/IServiceDb/StatClientArcDataResponse")]
+        WHC.WaterFeeWeb.DbServiceReference.CommonResult StatClientArcData(int iCode, System.DateTime DteBegin, System.DateTime DteEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/StatClientArcData", ReplyAction="http://tempuri.org/IServiceDb/StatClientArcDataResponse")]
+        System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> StatClientArcDataAsync(int iCode, System.DateTime DteBegin, System.DateTime DteEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/CollectData_Qry", ReplyAction="http://tempuri.org/IServiceDb/CollectData_QryResponse")]
+        System.Data.DataTable CollectData_Qry(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, System.DateTime DteStart, System.DateTime DteEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/CollectData_Qry", ReplyAction="http://tempuri.org/IServiceDb/CollectData_QryResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> CollectData_QryAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, System.DateTime DteStart, System.DateTime DteEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/CollectStatus_Qry", ReplyAction="http://tempuri.org/IServiceDb/CollectStatus_QryResponse")]
+        System.Data.DataTable CollectStatus_Qry(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, System.DateTime DteStart, System.DateTime DteEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/CollectStatus_Qry", ReplyAction="http://tempuri.org/IServiceDb/CollectStatus_QryResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> CollectStatus_QryAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, System.DateTime DteStart, System.DateTime DteEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/CollectData_Ins", ReplyAction="http://tempuri.org/IServiceDb/CollectData_InsResponse")]
+        string CollectData_Ins(int iCode, int iCustNo, string sAddr, System.DateTime DteFreeze, double dReading, string sUserID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/CollectData_Ins", ReplyAction="http://tempuri.org/IServiceDb/CollectData_InsResponse")]
+        System.Threading.Tasks.Task<string> CollectData_InsAsync(int iCode, int iCustNo, string sAddr, System.DateTime DteFreeze, double dReading, string sUserID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Terminal_SetMeterConfig", ReplyAction="http://tempuri.org/IServiceDb/Terminal_SetMeterConfigResponse")]
+        string Terminal_SetMeterConfig(int iCode, string sAddrs, WHC.WaterFeeWeb.DbServiceReference.MeterConfig MeterConf);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Terminal_SetMeterConfig", ReplyAction="http://tempuri.org/IServiceDb/Terminal_SetMeterConfigResponse")]
+        System.Threading.Tasks.Task<string> Terminal_SetMeterConfigAsync(int iCode, string sAddrs, WHC.WaterFeeWeb.DbServiceReference.MeterConfig MeterConf);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Terminal_GetMeterSetting", ReplyAction="http://tempuri.org/IServiceDb/Terminal_GetMeterSettingResponse")]
+        System.Data.DataTable Terminal_GetMeterSetting(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, WHC.WaterFeeWeb.DbServiceReference.Meter meter);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Terminal_GetMeterSetting", ReplyAction="http://tempuri.org/IServiceDb/Terminal_GetMeterSettingResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> Terminal_GetMeterSettingAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, WHC.WaterFeeWeb.DbServiceReference.Meter meter);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Terminal_GetValveTaskResult", ReplyAction="http://tempuri.org/IServiceDb/Terminal_GetValveTaskResultResponse")]
+        WHC.WaterFeeWeb.DbServiceReference.CommonResult Terminal_GetValveTaskResult(int iCode, string sParam, int iCmdType, System.DateTime DtStart, System.DateTime DtEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Terminal_GetValveTaskResult", ReplyAction="http://tempuri.org/IServiceDb/Terminal_GetValveTaskResultResponse")]
+        System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> Terminal_GetValveTaskResultAsync(int iCode, string sParam, int iCmdType, System.DateTime DtStart, System.DateTime DtEnd);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -3169,6 +3447,14 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
             return base.Channel.ArcMeter_ReplaceAsync(MeterReplace);
         }
         
+        public string ArcCloseAccount(int iCode, int iCustNo) {
+            return base.Channel.ArcCloseAccount(iCode, iCustNo);
+        }
+        
+        public System.Threading.Tasks.Task<string> ArcCloseAccountAsync(int iCode, int iCustNo) {
+            return base.Channel.ArcCloseAccountAsync(iCode, iCustNo);
+        }
+        
         public System.Data.DataTable PriceType_Qry(int iCode) {
             return base.Channel.PriceType_Qry(iCode);
         }
@@ -3233,12 +3519,12 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
             return base.Channel.PriceProperty_AddOrUpdateAsync(Property, LstPrice);
         }
         
-        public System.Data.DataTable SMS_Template_Qry(int iCode) {
-            return base.Channel.SMS_Template_Qry(iCode);
+        public System.Data.DataTable SMS_Template_Qry(int iCode, WHC.WaterFeeWeb.DbServiceReference.SmsTemplate Template) {
+            return base.Channel.SMS_Template_Qry(iCode, Template);
         }
         
-        public System.Threading.Tasks.Task<System.Data.DataTable> SMS_Template_QryAsync(int iCode) {
-            return base.Channel.SMS_Template_QryAsync(iCode);
+        public System.Threading.Tasks.Task<System.Data.DataTable> SMS_Template_QryAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.SmsTemplate Template) {
+            return base.Channel.SMS_Template_QryAsync(iCode, Template);
         }
         
         public string SMS_Template_InsOrUpd(WHC.WaterFeeWeb.DbServiceReference.SmsTemplate Template) {
@@ -3305,12 +3591,100 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
             return base.Channel.Account_GetDepositDetailAsync(iUserID, DtStart, DtEnd);
         }
         
-        public System.Data.DataTable Account_GetBillByCustNo(int iCode, int iCustNo) {
+        public WHC.WaterFeeWeb.DbServiceReference.CommonResult Account_GetBillByCustNo(int iCode, int iCustNo) {
             return base.Channel.Account_GetBillByCustNo(iCode, iCustNo);
         }
         
-        public System.Threading.Tasks.Task<System.Data.DataTable> Account_GetBillByCustNoAsync(int iCode, int iCustNo) {
+        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> Account_GetBillByCustNoAsync(int iCode, int iCustNo) {
             return base.Channel.Account_GetBillByCustNoAsync(iCode, iCustNo);
+        }
+        
+        public System.Data.DataTable Account_GetPaymentNotice(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust) {
+            return base.Channel.Account_GetPaymentNotice(iCode, Cust);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> Account_GetPaymentNoticeAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust) {
+            return base.Channel.Account_GetPaymentNoticeAsync(iCode, Cust);
+        }
+        
+        public System.Data.DataTable Account_GetPaymentDetail(int iCode, int iFeeID, System.DateTime DtStart, System.DateTime DtEnd, WHC.WaterFeeWeb.DbServiceReference.Customer Cust) {
+            return base.Channel.Account_GetPaymentDetail(iCode, iFeeID, DtStart, DtEnd, Cust);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> Account_GetPaymentDetailAsync(int iCode, int iFeeID, System.DateTime DtStart, System.DateTime DtEnd, WHC.WaterFeeWeb.DbServiceReference.Customer Cust) {
+            return base.Channel.Account_GetPaymentDetailAsync(iCode, iFeeID, DtStart, DtEnd, Cust);
+        }
+        
+        public WHC.WaterFeeWeb.DbServiceReference.CommonResult StatDepositData(int iCode, int iParamMode, string sParamValue, int iStatMode, System.DateTime DteBegin, System.DateTime DteEnd) {
+            return base.Channel.StatDepositData(iCode, iParamMode, sParamValue, iStatMode, DteBegin, DteEnd);
+        }
+        
+        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> StatDepositDataAsync(int iCode, int iParamMode, string sParamValue, int iStatMode, System.DateTime DteBegin, System.DateTime DteEnd) {
+            return base.Channel.StatDepositDataAsync(iCode, iParamMode, sParamValue, iStatMode, DteBegin, DteEnd);
+        }
+        
+        public WHC.WaterFeeWeb.DbServiceReference.CommonResult StatUsedWaterData(int iCode, int iParamMode, string sParamValue, System.DateTime DteBegin, System.DateTime DteEnd) {
+            return base.Channel.StatUsedWaterData(iCode, iParamMode, sParamValue, DteBegin, DteEnd);
+        }
+        
+        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> StatUsedWaterDataAsync(int iCode, int iParamMode, string sParamValue, System.DateTime DteBegin, System.DateTime DteEnd) {
+            return base.Channel.StatUsedWaterDataAsync(iCode, iParamMode, sParamValue, DteBegin, DteEnd);
+        }
+        
+        public WHC.WaterFeeWeb.DbServiceReference.CommonResult StatClientArcData(int iCode, System.DateTime DteBegin, System.DateTime DteEnd) {
+            return base.Channel.StatClientArcData(iCode, DteBegin, DteEnd);
+        }
+        
+        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> StatClientArcDataAsync(int iCode, System.DateTime DteBegin, System.DateTime DteEnd) {
+            return base.Channel.StatClientArcDataAsync(iCode, DteBegin, DteEnd);
+        }
+        
+        public System.Data.DataTable CollectData_Qry(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, System.DateTime DteStart, System.DateTime DteEnd) {
+            return base.Channel.CollectData_Qry(iCode, Cust, DteStart, DteEnd);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> CollectData_QryAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, System.DateTime DteStart, System.DateTime DteEnd) {
+            return base.Channel.CollectData_QryAsync(iCode, Cust, DteStart, DteEnd);
+        }
+        
+        public System.Data.DataTable CollectStatus_Qry(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, System.DateTime DteStart, System.DateTime DteEnd) {
+            return base.Channel.CollectStatus_Qry(iCode, Cust, DteStart, DteEnd);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> CollectStatus_QryAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, System.DateTime DteStart, System.DateTime DteEnd) {
+            return base.Channel.CollectStatus_QryAsync(iCode, Cust, DteStart, DteEnd);
+        }
+        
+        public string CollectData_Ins(int iCode, int iCustNo, string sAddr, System.DateTime DteFreeze, double dReading, string sUserID) {
+            return base.Channel.CollectData_Ins(iCode, iCustNo, sAddr, DteFreeze, dReading, sUserID);
+        }
+        
+        public System.Threading.Tasks.Task<string> CollectData_InsAsync(int iCode, int iCustNo, string sAddr, System.DateTime DteFreeze, double dReading, string sUserID) {
+            return base.Channel.CollectData_InsAsync(iCode, iCustNo, sAddr, DteFreeze, dReading, sUserID);
+        }
+        
+        public string Terminal_SetMeterConfig(int iCode, string sAddrs, WHC.WaterFeeWeb.DbServiceReference.MeterConfig MeterConf) {
+            return base.Channel.Terminal_SetMeterConfig(iCode, sAddrs, MeterConf);
+        }
+        
+        public System.Threading.Tasks.Task<string> Terminal_SetMeterConfigAsync(int iCode, string sAddrs, WHC.WaterFeeWeb.DbServiceReference.MeterConfig MeterConf) {
+            return base.Channel.Terminal_SetMeterConfigAsync(iCode, sAddrs, MeterConf);
+        }
+        
+        public System.Data.DataTable Terminal_GetMeterSetting(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, WHC.WaterFeeWeb.DbServiceReference.Meter meter) {
+            return base.Channel.Terminal_GetMeterSetting(iCode, Cust, meter);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> Terminal_GetMeterSettingAsync(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, WHC.WaterFeeWeb.DbServiceReference.Meter meter) {
+            return base.Channel.Terminal_GetMeterSettingAsync(iCode, Cust, meter);
+        }
+        
+        public WHC.WaterFeeWeb.DbServiceReference.CommonResult Terminal_GetValveTaskResult(int iCode, string sParam, int iCmdType, System.DateTime DtStart, System.DateTime DtEnd) {
+            return base.Channel.Terminal_GetValveTaskResult(iCode, sParam, iCmdType, DtStart, DtEnd);
+        }
+        
+        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> Terminal_GetValveTaskResultAsync(int iCode, string sParam, int iCmdType, System.DateTime DtStart, System.DateTime DtEnd) {
+            return base.Channel.Terminal_GetValveTaskResultAsync(iCode, sParam, iCmdType, DtStart, DtEnd);
         }
     }
 }

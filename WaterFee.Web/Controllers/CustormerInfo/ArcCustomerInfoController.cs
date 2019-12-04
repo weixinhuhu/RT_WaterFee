@@ -36,6 +36,8 @@ namespace WHC.WaterFeeWeb.Controllers
                 NvcAddr = Request["WHC_NvcAddr"] ?? "",
                 VcMobile = Request["WHC_VcMobile"] ?? ""
             };
+            var useno = Request["WHC_IntNo"] ?? "0";
+            custormerinfo.IntNo = useno.Equals("") ? 0 : useno.ToInt32();
 
             if (Strlevel == "1")
             {

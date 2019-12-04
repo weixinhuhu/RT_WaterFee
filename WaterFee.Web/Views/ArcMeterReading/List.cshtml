@@ -18,26 +18,26 @@
         var sNvcVillage = "";
         var sVcBuilding = "";
         $(function () {
-            initDeptTreeview();      
+            initDeptTreeview();
         });
-  
+
         var easyui_tree_options = {
-		    length : 0,  //层数
-		    getLevel : function(treeObj, node){	//treeObj为tree的dom对象，node为选中的节点
-			    while(node != null){
-				    node = $(treeObj).tree('getParent', node.target)
-				    easyui_tree_options.length++;
-			    }
-			    var length1 = easyui_tree_options.length;
-			    easyui_tree_options.length = 0;		//重置层数
-			    return length1;
-		    }
-	    }
+            length: 0,  //层数
+            getLevel: function (treeObj, node) {	//treeObj为tree的dom对象，node为选中的节点
+                while (node != null) {
+                    node = $(treeObj).tree('getParent', node.target)
+                    easyui_tree_options.length++;
+                }
+                var length1 = easyui_tree_options.length;
+                easyui_tree_options.length = 0;		//重置层数
+                return length1;
+            }
+        }
 
         function initDeptTreeview() {
             $("#loading").show();
             $('#treeDept1').tree({
-                url: '/ArcCustomerInfo/TreeCommunity',
+                url: '/ArcCustomerInfo/TreeCommunity_Server',
                 onBeforeSelect: function (node) {
                     fujiText = node.text;
                 },
@@ -48,16 +48,17 @@
                     var Treelevel = easyui_tree_options.getLevel(this, node);
 
                     var ParentText = "";
-                                                               
+
                     if (Treelevel == 4) {
 
                         ParentText = $("#treeDept1").tree("getParent", Text.target)
 
                     }
-                    
                     var queryData = {
-                        WHC_VcAddr: $("#VcAddr").val(),
-                        WHC_IntCustNo: $("#IntCustNo").val(),                   
+                        WHC_VcMobile: $("#VcMobile").val(),
+                        WHC_NvcName: $("#NvcName").val(),
+                        WHC_IntCustNo: $("#IntCustNo").val(),
+                        WHC_StratDteFreeze: $("#StartDteFreeze").datebox("getValue"),
                         WHC_EndDteFreeze: $("#EndDteFreeze").datebox("getValue"),
                         WHC_Fuji: Text.text,
                         WHC_Text: node.text,
@@ -73,17 +74,16 @@
         //实现对DataGird控件的绑定操作
         function InitGrid(queryData) {
             $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
-                url: '/ArcMeterReading/ListJson',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                url: '/ArcMeterReading/ListJson_Server',   //指向后台的Action来获取当前用户的信息的Json格式的数据
                 title: '日冻结数据查询',
                 iconCls: 'icon-view',
-                height: function () { document.body.clientHeight - 72 },
+                height: document.body.clientHeight * 0.9,
                 width: function () { return document.body.clientWidth * 0.9 },//自动宽度
                 nowrap: true,
                 autoRowHeight: true,
                 striped: true,
                 collapsible: true,
                 pagination: true,
-
                 pageSize: 50,
                 pageList: [50, 100, 200],
                 showRefresh: false,
@@ -95,48 +95,53 @@
                 //idField: 'ID', //不设置idField，翻页不会记录选择
                 queryParams: queryData,  //异步查询的参数
                 columns: [[
-                    { title: '冻结日期', field: 'DteFreeze', width: 200, sortable: true },
+                    {
+                        title: '冻结日期', field: 'DteFreeze', width: 120, sortable: true,
+                        formatter: function (val, rowObj, index) {
+                           return val == "9999-09-09 00:00:00" ? "-" : val.substring(0, 10);
+                        }
+                    },
                     { title: '读数', field: 'NumReading', width: 80, sortable: true },
                     { title: 'ID', field: 'IntID', width: 80, sortable: true, hidden: true },
                     { title: '用户编号', field: 'IntCustNo', width: 80, sortable: true },
                     { title: '用户姓名', field: 'NvcName', width: 80, sortable: true },
                     { title: '用户小区', field: 'NvcVillage', width: 80, sortable: true },
                     { title: '用户楼栋', field: 'VcBuilding', width: 80, sortable: true },
-                    { title: '用户单元', field: 'IntUnitNum', width: 80, sortable: true },
-                    { title: '用户门牌号', field: 'IntRoomNum', width: 80, sortable: true },
+                    { title: '用户单元', field: 'VcUnitNum', width: 80, sortable: true },
+                    { title: '用户门牌号', field: 'VcRoomNum', width: 80, sortable: true },
                     { title: '表通信地址', field: 'VcAddr', width: 150, sortable: true },
-                    { title: '客户编号', field: 'IntCustNo', width: 150, sortable: true },
+                    //{ title: '客户编号', field: 'IntCustNo', width: 150, sortable: true },
                     //{ title: '读取日期', field: 'DteReading', width: 180, sortable: true },
-                   
+
                     { title: '状态码', field: 'Word', width: 80, sortable: true },
                     {
-                         title: '状态', field: 'IntStatus', width: 80, sortable: true,
-                         formatter: function (val, rowObj, index) {
-                             if (val == "0") return "在用";
-                             else return "停用";
-                         }
-                     },
-                   // { title: '最后更新时间', field: 'DtLastUpd', width: 150, sortable: true },
+                        title: '表状态', field: 'IntStatus', width: 80, sortable: true,
+                        formatter: function (val, rowObj, index) {
+                            if (val == "0") return "在用";
+                            else return "停用";
+                        }
+                    },
+                    // { title: '最后更新时间', field: 'DtLastUpd', width: 150, sortable: true },
                     //{ title: '创建时间', field: 'DtCreate', width: 180, sortable: true },
                     { title: '备注', field: 'VcDesc', align: 'center', width: 100, sortable: true }
                 ]],
-                onLoadSuccess: function () {                 
-                },                    
+                onLoadSuccess: function () {
+                },
                 onDblClickRow: function (rowIndex, rowData) {
-                    
+
                 }
-            })       
+            })
         };
 
         //绑定搜索按钮的的点击事件
         function SearchEvent() {
             var queryData = {
-                WHC_VcAddr: $("#VcAddr").val(),
-                WHC_IntCustNo: $("#IntCustNo").val(),           
+                WHC_VcMobile: $("#VcMobile").val(),
+                WHC_NvcName: $("#NvcName").val(),
+                WHC_IntCustNo: $("#IntCustNo").val(),
+                WHC_StratDteFreeze: $("#StartDteFreeze").datebox("getValue"),
                 WHC_EndDteFreeze: $("#EndDteFreeze").datebox("getValue"),
-                "NvcVillage": sNvcVillage,
-                "VcBuilding": sVcBuilding
-            }
+            };
             InitGrid(queryData);
             return false;
         }
@@ -197,10 +202,37 @@
                     <div id="toolbar">
                         <table cellspacing="0" cellpadding="0">
                             <tr>
-                                <th style='padding:3px;'><label for="VcAddr">关键词：</label></th>
-                                <td style='padding:3px;'><input type="text" id="VcAddr" class="text-info" style="width:100px" /></td>
-                                <th style='padding:3px;'><label for="DteFreezd">冻结日期：</label></th>
-                                <td style='padding:3px;'><input type="text" class="easyui-datebox" id="EndDteFreeze" style="width:100px"  value="true"/></td>
+                                <th style='padding: 3px;'>
+                                    <label for="IntCustNO">用户编号：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="IntCustNo" class="easyui-numberbox" style="width: 130px" maxlength="16" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="NvcName">用户名：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="NvcName" class="text-info" style="width: 130px" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="VcAddr">电话号码：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="VcMobile" class="easyui-numberbox" style="width: 130px" maxlength="16" />
+                                </td>
+
+                                <th style='padding:3px;'>
+                                    <label for="DteFreezd">日期：</label>
+                                </th>
+                                <td style='padding:3px;'>
+                                    <input type="text" class="easyui-datebox" id="StartDteFreeze" style="width:100px" value="true" />
+                                </td>
+                                <th style='padding:3px;'>
+                                    <label for="DteFreezd">-</label>
+                                </th>
+                                <td style='padding:3px;'>
+                                    <input type="text" class="easyui-datebox" id="EndDteFreeze" style="width:100px" value="true" />
+                                </td>
                                 <td style='padding:3px;text-align:right'>
                                     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch" onclick="SearchEvent()">查询</a>
                                 </td>

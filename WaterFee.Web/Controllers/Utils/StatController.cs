@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
-using WHC.MVCWebMis.Controllers;
+using Newtonsoft.Json;
 
 namespace WHC.WaterFeeWeb.Controllers
 {
@@ -68,7 +66,88 @@ namespace WHC.WaterFeeWeb.Controllers
             }
             return ToJsonContentDate(result);
         }
-
+        /// <summary>
+        /// 用水量查询
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult StatUsedWaterData_Server() {
+            CommonResult result = new CommonResult();
+            var endcode = Session["IntEndCode"] ?? "0";
+            var DteBegin = Request["WHC_dtStart"].ToDateTime();
+            var DteEnd = Request["WHC_dtEnd"].ToDateTime();          
+            var paramMode = Request["WHC_paramMode"] ?? "0";
+            var paramValue = Request["WHC_paramValue"] ?? "";
+            try
+            {
+                var rs = new DbServiceReference.ServiceDbClient().StatUsedWaterData(endcode.ToString().ToInt(), paramMode.ToInt(), paramValue,  DteBegin, DteEnd);
+                if (rs.IsSuccess)
+                {
+                    DataTable dts = JsonConvert.DeserializeObject<DataTable>(rs.StrData3);
+                    if (dts.Rows.Count > 0)
+                    {
+                        int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
+                        int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
+                        DataTable dat = new DataTable();
+                        //复制源的架构和约束
+                        dat = dts.Clone();
+                        // 清除目标的所有数据
+                        dat.Clear();
+                        //对数据进行分页
+                        for (int i = (page - 1) * rows; i < page * rows && i < dts.Rows.Count; i++)
+                        {
+                            dat.ImportRow(dts.Rows[i]);
+                        }
+                        //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
+                        int total = dts.Rows.Count;
+                        var dt = new { total, rows = dat };
+                        result.Success = true;
+                        return ToJsonContentDate(dt);
+                    }
+                }
+                else
+                {
+                    result.ErrorMessage = rs.ErrorMsg;
+                    result.Success = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMessage = "查询失败!错误如下:" + ex.Message;
+            }
+            return ToJsonContentDate(result);
+        }
+        /// <summary>
+        /// 用水量统计
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult StatUsedWaterDataTotal_Server()
+        {
+            CommonResult result = new CommonResult();
+            var endcode = Session["IntEndCode"] ?? "0";
+            var DteBegin = Request["WHC_dtStart"].ToDateTime();
+            var DteEnd = Request["WHC_dtEnd"].ToDateTime();
+            var paramMode = Request["WHC_paramMode"] ?? "0";
+            var paramValue = Request["WHC_paramValue"] ?? "";
+            try
+            {
+                var rs = new DbServiceReference.ServiceDbClient().StatUsedWaterData(endcode.ToString().ToInt(), paramMode.ToInt(), paramValue, DteBegin, DteEnd);
+                if (rs.IsSuccess)
+                {
+                    result.Data1 = rs.StrData1;
+                    result.Data2 = rs.StrData2;
+                }
+                else
+                {
+                    result.ErrorMessage = rs.ErrorMsg;
+                    result.Success = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMessage = "查询失败!错误如下:" + ex.Message;
+            }
+            return ToJsonContentDate(result);
+        }
 
         // GET: 客户档案统计
         public ActionResult StatClientArc()
@@ -77,6 +156,82 @@ namespace WHC.WaterFeeWeb.Controllers
         }
 
         //客户档案统计
+        public ActionResult StatClientArcData_Server() {
+            CommonResult result = new CommonResult();
+            var endcode = Session["IntEndCode"] ?? "0";
+            var DteBegin = Request["WHC_dtStart"].ToDateTime();
+            var DteEnd = Request["WHC_dtEnd"].ToDateTime();         
+            try
+            {
+                var rs = new DbServiceReference.ServiceDbClient().StatClientArcData(endcode.ToString().ToInt() ,DteBegin, DteEnd);
+                if (rs.IsSuccess)
+                {
+                    DataTable dts = JsonConvert.DeserializeObject<DataTable>(rs.StrData1);
+                    if (dts.Rows.Count > 0)
+                    {
+                        int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
+                        int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
+                        DataTable dat = new DataTable();
+                        //复制源的架构和约束
+                        dat = dts.Clone();
+                        // 清除目标的所有数据
+                        dat.Clear();
+                        //对数据进行分页
+                        for (int i = (page - 1) * rows; i < page * rows && i < dts.Rows.Count; i++)
+                        {
+                            dat.ImportRow(dts.Rows[i]);
+                        }
+                        //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
+                        int total = dts.Rows.Count;
+                        var dt = new { total, rows = dat };
+                        result.Success = true;
+                        return ToJsonContentDate(dt);
+                    }
+                }
+                else
+                {
+                    result.ErrorMessage = rs.ErrorMsg;
+                    result.Success = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMessage = "查询失败!错误如下:" + ex.Message;
+            }
+            return ToJsonContentDate(result);
+
+        }
+
+        public ActionResult StatClientArcDataTotal_Server()
+        {
+            CommonResult result = new CommonResult();
+            var endcode = Session["IntEndCode"] ?? "0";
+            var DteBegin = Request["WHC_dtStart"].ToDateTime();
+            var DteEnd = Request["WHC_dtEnd"].ToDateTime();
+            try
+            {
+                var rs = new DbServiceReference.ServiceDbClient().StatClientArcData(endcode.ToString().ToInt(), DteBegin, DteEnd);
+                if (rs.IsSuccess)
+                {
+                    DataTable dts = JsonConvert.DeserializeObject<DataTable>(rs.StrData1);
+                    if (dts.Rows.Count > 0)
+                    {
+                        result.Data1 = dts.Rows.Count.ToString();
+                    }
+                }
+                else
+                {
+                    result.ErrorMessage = rs.ErrorMsg;
+                    result.Success = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMessage = "查询失败!错误如下:" + ex.Message;
+            }
+            return ToJsonContentDate(result);
+
+        }
         public ActionResult StatClientArcData()
         {
             CommonResult result = new CommonResult();
@@ -117,7 +272,6 @@ namespace WHC.WaterFeeWeb.Controllers
             }
             return ToJsonContentDate(result);
         }
-
 
         //预存流水账统计
         public ActionResult StatDeposit()
@@ -170,6 +324,87 @@ namespace WHC.WaterFeeWeb.Controllers
                 else
                 {
                     result.ErrorMessage = "查询失败!错误如下:" + ret;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMessage = "查询失败!错误如下:" + ex.Message;
+            }
+            return ToJsonContentDate(result);
+        }
+
+        public ActionResult StatDepositData_Server()
+        {
+            CommonResult result = new CommonResult();
+            var endcode = Session["IntEndCode"] ?? "0";
+            var DteBegin = Request["WHC_dtStart"].ToDateTime();
+            var DteEnd = Request["WHC_dtEnd"].ToDateTime();
+            var StatMode = Request["WHC_iStatMode"] ?? "0";
+            var paramMode = Request["WHC_paramMode"] ?? "0";
+            var paramValue = Request["WHC_paramValue"] ?? "";
+            try
+            {
+                var rs = new DbServiceReference.ServiceDbClient().StatDepositData(endcode.ToString().ToInt(), paramMode.ToInt(), paramValue, StatMode.ToInt(), DteBegin, DteEnd);
+                if (rs.IsSuccess)
+                {
+                    DataTable dts = JsonConvert.DeserializeObject<DataTable>(rs.StrData3);
+                    if (dts.Rows.Count > 0)
+                    {
+
+                        int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
+                        int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
+                        DataTable dat = new DataTable();
+                        //复制源的架构和约束
+                        dat = dts.Clone();
+                        // 清除目标的所有数据
+                        dat.Clear();
+                        //对数据进行分页
+                        for (int i = (page - 1) * rows; i < page * rows && i < dts.Rows.Count; i++)
+                        {
+                            dat.ImportRow(dts.Rows[i]);
+                        }
+                        //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
+                        int total = dts.Rows.Count;
+                        var dt = new { total, rows = dat };
+                        result.Success=true;
+                        return ToJsonContentDate(dt);
+                    }
+                }
+                else
+                {
+                    result.ErrorMessage = rs.ErrorMsg;
+                    result.Success = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMessage = "查询失败!错误如下:" + ex.Message;
+            }
+            return ToJsonContentDate(result);
+        }
+
+
+        public ActionResult StatDepositDataTotal_Server()
+        {
+            CommonResult result = new CommonResult();
+            var endcode = Session["IntEndCode"] ?? "0";
+            var DteBegin = Request["WHC_dtStart"].ToDateTime();
+            var DteEnd = Request["WHC_dtEnd"].ToDateTime();
+            var StatMode = Request["WHC_iStatMode"] ?? "0";
+            var paramMode = Request["WHC_paramMode"] ?? "0";
+            var paramValue = Request["WHC_paramValue"] ?? "";
+            try
+            {
+                var rs = new DbServiceReference.ServiceDbClient().StatDepositData(endcode.ToString().ToInt(), paramMode.ToInt(), paramValue, StatMode.ToInt(), DteBegin, DteEnd);
+                if (rs.IsSuccess)
+                {
+                    result.Data1 = rs.StrData1;
+                    result.Data2 = rs.StrData2;
+                }
+                else
+                {
+                    result.ErrorMessage = rs.ErrorMsg;
+                    result.Success = false;
                 }
             }
             catch (Exception ex)

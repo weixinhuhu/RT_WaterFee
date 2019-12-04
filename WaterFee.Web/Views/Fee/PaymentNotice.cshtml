@@ -72,7 +72,10 @@
                 }
             });
             var queryData = {
-
+                WHC_IntCustNo: $("#txtIntNo").val(),
+                WHC_NvcName: $("#txtNvcName").val(),
+                WHC_NvcAddr: $("#txtNvcAddr").val(),
+                WHC_VcMobile: $("#txtVcMobile").val()
             };//可添加一些预设条件
             InitGrid(queryData);
             BindSearchEvent();
@@ -82,10 +85,10 @@
         //实现对DataGird控件的绑定操作
         function InitGrid(queryData) {
             $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
-                url: '/Fee/GetPaymentNoticeList',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                url: '/Fee/GetPaymentNoticeList_Server',   //指向后台的Action来获取当前用户的信息的Json格式的数据
                 title: '账务未收',
                 iconCls: 'icon-view',
-                height: function () { document.body.clientHeight * 0.9 - 30 },
+                height: document.body.clientHeight * 0.9 - 30,
                 width: function () { return document.body.clientWidth * 0.9 },//自动宽度
                 nowrap: true,
                 autoRowHeight: true,
@@ -101,48 +104,18 @@
                 //idField: 'ID', //不设置idField，翻页不会记录选择
                 queryParams: queryData,  //异步查询的参数
                 columns: [[
-	                 { field: 'ck', checkbox: true },   //选择
-                     { title: 'ID', field: 'IntFeeID', width: 80, sortable: true, hidden: true },
-                    { title: '客户编号', field: 'IntCustNo', width: 80, sortable: true, align: 'center' },
-                     {
-                         title: '客户名称', field: 'ArcCustomerInfo.NvcName', width: 100, sortable: false, align: 'center',
-                         formatter: function (val, rowObj, index) {
-                             if (rowObj.ArcCustomerInfo)
-                                 return rowObj.ArcCustomerInfo.NvcName;
-                         }
-                    },
-                    {
-                        title: '客户小区', field: 'ArcCustomerInfo.NvcVillage', width: 100, sortable: true, align: 'center',
-                        formatter: function (val, rowObj, index) {
-                            if (rowObj.ArcCustomerInfo)
-                                return rowObj.ArcCustomerInfo.NvcVillage;
-                        }
-                    },
-                    {
-                        title: '客户楼栋', field: 'ArcCustomerInfo.VcBuilding', width: 100, sortable: true, align: 'center',
-                        formatter: function (val, rowObj, index) {
-                            if (rowObj.ArcCustomerInfo)
-                                return rowObj.ArcCustomerInfo.VcBuilding;
-                        }
-                    },
-                    {
-                        title: '客户单元', field: 'ArcCustomerInfo.IntUnitNum', width: 100, sortable: true, align: 'center',
-                        formatter: function (val, rowObj, index) {
-                            if (rowObj.ArcCustomerInfo)
-                                return rowObj.ArcCustomerInfo.VcBuilding;
-                        }
-                    },
-                    {
-                        title: '客户门牌号', field: 'ArcCustomerInfo.IntRoomNum', width: 100, sortable: true, align: 'center',
-                        formatter: function (val, rowObj, index) {
-                            if (rowObj.ArcCustomerInfo)
-                                return rowObj.ArcCustomerInfo.IntRoomNum;
-                        }
-                    },
-                     { title: '欠费月数', field: 'IntYearMon', width: 80, sortable: true, align: 'right' },
-                     { title: '欠费总金额', field: 'MonFee', width: 100, sortable: true, align: 'right' },
-                     
-                     //{ title: '建立时间', field: 'DtCreate', width: 100, sortable: true }
+                    { field: 'ck', checkbox: true },   //选择
+                    { title: 'ID', field: 'IntFeeID', width: 80, sortable: true, hidden: true },
+                    { title: '客户编号', field: '客户编号', width: 80, sortable: true, align: 'center' },
+                    { title: '客户姓名', field: '客户姓名', width: 100, sortable: false, align: 'center' },
+                    { title: '客户小区', field: '客户小区', width: 100, sortable: true, align: 'center' },
+                    { title: '客户楼栋', field: '客户楼栋', width: 100, sortable: true, align: 'center' },
+                    { title: '客户单元', field: '客户单元', width: 100, sortable: true, align: 'center' },
+                    { title: '客户门牌', field: '客户门牌', width: 100, sortable: true, align: 'center' },
+                    { title: '欠费月数', field: '欠费月数', width: 80, sortable: true, align: 'right' },
+                    { title: '欠费总金额', field: '欠费总金额', width: 100, sortable: true, align: 'right' },
+
+                    //{ title: '建立时间', field: 'DtCreate', width: 100, sortable: true }
                 ]],
                 onLoadSuccess: function () {
                 },
@@ -178,9 +151,9 @@
                 //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
                 var queryData = {
                     WHC_IntCustNo: $("#txtIntNo").val(),
-                    //WHC_NvcName: $("#txtNvcName").val(),
-                    //WHC_NvcAddr: $("#txtNvcAddr").val(),
-                    //WHC_VcMobile: $("#txtVcMobile").val()
+                    WHC_NvcName: $("#txtNvcName").val(),
+                    WHC_NvcAddr: $("#txtNvcAddr").val(),
+                    WHC_VcMobile: $("#txtVcMobile").val()
                 }
                 //将值传递给
                 InitGrid(queryData);
@@ -219,12 +192,12 @@
                             <tr>
                                 <th style='padding:3px;'><label for="txtIntNo">客户编号：</label></th>
                                 <td style='padding:3px;'><input type="text" id="txtIntNo" class="text-info" style="width:100px" /></td>
-                                @*<th style='padding:3px;'><label for="txtNvcName">客户姓名：</label></th>
+                                <th style='padding:3px;'><label for="txtNvcName">客户姓名：</label></th>
                                     <td style='padding:3px;'><input type="text" id="txtNvcName" style="width:100px" /></td>
                                     <th style='padding:3px;'><label for="txtNvcAddr">客户地址：</label></th>
                                     <td style='padding:3px;'><input type="text" id="txtNvcAddr" style="width:100px" /></td>
                                     <th style='padding:3px;'><label for="txtVcMobile">移动号码：</label></th>
-                                    <td style='padding:3px;'><input type="text" id="txtVcMobile" style="width:100px" /></td>*@
+                                    <td style='padding:3px;'><input type="text" id="txtVcMobile" style="width:100px" /></td>
                                 <td style='padding:3px;text-align:right'>
                                     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
                                 </td>

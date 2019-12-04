@@ -22,10 +22,8 @@
                     return;
                 }
             });
-            var queryData = {
-
-            };//可添加一些预设条件
-            InitGrid(queryData);
+            easyui("#DtStart").val(new Date().Format());
+            easyui("#DtEnd").val(new Date().Format());
             BindSearchEvent();
         });
 
@@ -33,7 +31,7 @@
         //实现对DataGird控件的绑定操作
         function InitGrid(queryData) {
             $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
-                url: '/AccPayment/CounterReverseData',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                url: '/AccPayment/CounterReverseData_Server',   //指向后台的Action来获取当前用户的信息的Json格式的数据
                 title: '账务实收列表',
                 iconCls: 'icon-view',
                 height: document.body.clientHeight * 0.9 - 30,
@@ -53,71 +51,47 @@
                 //idField: 'ID', //不设置idField，翻页不会记录选择
                 queryParams: queryData,  //异步查询的参数
                 columns: [[
-	                 { field: 'ck', checkbox: true },   //选择
-                     { title: 'ID', field: 'IntFeeID', width: 80, sortable: true, hidden: true },
-                     { title: '客户编号', field: 'IntCustNo', width: 80, sortable: true, align: 'right' },
-                     {
-                         title: '客户名称', field: 'ArcCustomerInfo.NvcName', width: 100, sortable: false, align: 'center',
-                         formatter: function (val, rowObj, index) {
-                             if (rowObj.ArcCustomerInfo)
-                                 return rowObj.ArcCustomerInfo.NvcName;
-                         }
-                    },
+                    { field: 'ck', checkbox: true },   //选择
+                    { title: 'ID', field: 'IntFeeID', width: 80, sortable: true, hidden: true },
+                    { title: '客户编号', field: 'IntCustNo', width: 80, sortable: true, align: 'right' },
+                    { title: '客户名称', field: 'NvcName', width: 100, sortable: false, align: 'center' },
+                    { title: '客户小区', field: 'NvcVillage', width: 100, sortable: true, align: 'center' },
+                    { title: '客户楼栋', field: 'VcBuilding', width: 100, sortable: true, align: 'center' },
+                    { title: '客户门牌号', field: 'VcRoomNum', width: 100, sortable: true, align: 'center' },
+                    { title: '费用年月', field: 'IntYearMon', width: 80, sortable: true, align: 'center' },
                     {
-                        title: '客户小区', field: 'ArcCustomerInfo.NvcVillage', width: 100, sortable: true, align: 'center',
+                        title: '费用日期', field: 'DteFee', width: 80, sortable: true, align: 'center',
                         formatter: function (val, rowObj, index) {
-                            if (rowObj.ArcCustomerInfo)
-                                return rowObj.ArcCustomerInfo.NvcVillage;
+                            return new Date(val.replace("-", "/")).Format();
                         }
                     },
                     {
-                        title: '客户楼栋', field: 'ArcCustomerInfo.VcBuilding', width: 100, sortable: true, align: 'center',
+                        title: '销账日期', field: 'DtePay', width: 80, sortable: true, align: 'center',
                         formatter: function (val, rowObj, index) {
-                            if (rowObj.ArcCustomerInfo)
-                                return rowObj.ArcCustomerInfo.VcBuilding;
+                            return new Date(val.replace("-", "/")).Format();
                         }
                     },
                     {
-                        title: '客户门牌号', field: 'ArcCustomerInfo.IntRoomNum', width: 100, sortable: true, align: 'center',
+                        title: '计划截止日期', field: 'DteEnd', width: 100, sortable: true, align: 'center',
                         formatter: function (val, rowObj, index) {
-                            if (rowObj.ArcCustomerInfo)
-                                return rowObj.ArcCustomerInfo.IntRoomNum;
+                            return new Date(val.replace("-", "/")).Format();
                         }
                     },
-                     { title: '费用年月', field: 'IntYearMon', width: 80, sortable: true, align: 'center' },
-                     {
-                         title: '费用日期', field: 'DteFee', width: 80, sortable: true, align: 'center',
-                         formatter: function (val, rowObj, index) {
-                             return new Date(val.replace("-", "/")).Format();
-                         }
-                     },
-                     {
-                         title: '销账日期', field: 'DtePay', width: 80, sortable: true, align: 'center',
-                         formatter: function (val, rowObj, index) {
-                             return new Date(val.replace("-", "/")).Format();
-                         }
-                     },
-                     {
-                         title: '计划截止日期', field: 'DteEnd', width: 100, sortable: true, align: 'center',
-                         formatter: function (val, rowObj, index) {
-                             return new Date(val.replace("-", "/")).Format();
-                         }
-                     },
-                     {
-                         title: '实际截止日期', field: 'DteEndExec', width: 100, sortable: true, align: 'center',
-                         formatter: function (val, rowObj, index) {
-                             return new Date(val.replace("-", "/")).Format();
-                         }
-                     },
-                     { title: '费用金额', field: 'MonFee', width: 80, sortable: true, align: 'right' },
-                     { title: '实际执行费用金额', field: 'MonFeeExec', width: 110, sortable: true, align: 'right' },
-                     { title: '违约金', field: 'MonPenalty', width: 80, sortable: true, align: 'right' },
-                     { title: '违约天数', field: 'IntDays', width: 80, sortable: true, align: 'right' },
-                     { title: '销账单位代码', field: 'IntPayUnit', width: 80, sortable: true, align: 'center' },
-                     { title: '销账方式代码', field: 'IntPayMode', width: 80, sortable: true, align: 'center' },
-                     { title: '操作员', field: 'VcChargeNo', width: 80, sortable: true, align: 'center' },
-                     { title: '流水号', field: 'VcFlowNo', width: 80, sortable: true, align: 'center' },
-                     { title: '建立时间', field: 'DtCreate', width: 100, sortable: true }
+                    {
+                        title: '实际截止日期', field: 'DteEndExec', width: 100, sortable: true, align: 'center',
+                        formatter: function (val, rowObj, index) {
+                            return new Date(val.replace("-", "/")).Format();
+                        }
+                    },
+                    { title: '费用金额', field: 'MonFee', width: 80, sortable: true, align: 'right' },
+                    { title: '实际执行费用金额', field: 'MonFeeExec', width: 110, sortable: true, align: 'right' },
+                    { title: '违约金', field: 'MonPenalty', width: 80, sortable: true, align: 'right' },
+                    { title: '违约天数', field: 'IntDays', width: 80, sortable: true, align: 'right' },
+                    { title: '销账单位代码', field: 'IntPayUnit', width: 80, sortable: true, align: 'center' },
+                    { title: '销账方式代码', field: 'IntPayMode', width: 80, sortable: true, align: 'center' },
+                    { title: '操作员', field: 'VcChargeNo', width: 80, sortable: true, align: 'center' },
+                    { title: '流水号', field: 'VcFlowNo', width: 80, sortable: true, align: 'center' },
+                    { title: '建立时间', field: 'DtCreate', width: 100, sortable: true }
                 ]],
                 onLoadSuccess: function () {
                 },
@@ -171,10 +145,12 @@
         function reloadGrid() {
             var queryData = {
                 Key: $("#txtIntNo").val(),
-                //WHC_IntCustNo: $("#txtIntNo").val(),
-                //WHC_NvcName: $("#txtNvcName").val(),
-                //WHC_NvcAddr: $("#txtNvcAddr").val(),
-                //WHC_VcMobile: $("#txtVcMobile").val()
+                WHC_IntCustNo: $("#txtIntNo").val(),
+                WHC_NvcName: $("#txtNvcName").val(),
+                WHC_NvcAddr: $("#txtNvcAddr").val(),
+                WHC_VcMobile: $("#txtVcMobile").val(),
+                WHC_DtStart: easyui("#DtStart").val(),
+                WHC_DtEnd: easyui("#DtEnd").val()
             }
             //将值传递给
             InitGrid(queryData);
@@ -244,9 +220,31 @@
                         <table cellspacing="0" cellpadding="0">
                             <tr>
                                 <th style='padding: 3px;'>
-                                    <label for="txtIntNo">关键词：</label></th>
+                                    <label for="txtIntNo">客户编号：</label>
+                                </th>
                                 <td style='padding: 3px;'>
-                                    <input type="text" id="txtIntNo" class="text-info" style="width: 100px" /></td>
+                                    <input type="text" id="txtIntNo" class="text-info" style="width: 100px" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="txtNvcName">客户姓名：</label>
+                                </th>
+                                <td style='padding:3px;'><input type="text" id="txtNvcName" style="width:100px" /></td>
+                                <th style='padding:3px;'><label for="txtNvcAddr">客户地址：</label></th>
+                                <td style='padding:3px;'><input type="text" id="txtNvcAddr" style="width:100px" /></td>
+                                <th style='padding:3px;'><label for="txtVcMobile">移动号码：</label></th>
+                                <td style='padding:3px;'><input type="text" id="txtVcMobile" style="width:100px" /></td>
+                                <th style='padding: 3px;'>
+                                    <label for="txtIntNo">起始日期：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="DtStart" class="easyui-datebox" style="width: 100px" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="txtIntNo">-</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <input type="text" id="DtEnd" class="easyui-datebox" style="width: 100px" />
+                                </td>
                                 <td style='padding: 3px; text-align: right'>
                                     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
                                 </td>
@@ -260,7 +258,5 @@
             <table id="grid" style="width: 940px" title="用户操作" data-options="iconCls:'icon-view'"></table>
         </div>
     </div>
-
-
 </body>
 </html>

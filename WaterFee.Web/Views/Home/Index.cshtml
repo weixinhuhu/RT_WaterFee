@@ -94,16 +94,16 @@
             }
         });
 
-        function showSubMenu(url, title, menuCategory, defaultIcon) {
-            if (defaultIcon == null || defaultIcon == "") {
-                defaultIcon = "icon-table";
-            }
-            addTab(title, url, "icon " + defaultIcon);
-            Clearnav();
-            if (menuCategory != "") {
-                addNav(_menus[menuCategory]);
-            }
-        }
+        //function showSubMenu(url, title, menuCategory, defaultIcon) {
+        //    if (defaultIcon == null || defaultIcon == "") {
+        //        defaultIcon = "icon-table";
+        //    }
+        //    addTab(title, url, "icon " + defaultIcon);
+        //    Clearnav();
+        //    if (menuCategory != "") {
+        //        addNav(_menus[menuCategory]);
+        //    }
+        //}
 	</script>
 
     <script type="text/javascript">
@@ -163,13 +163,7 @@
             <div region="north" id="header">
                 <div class="userinfo" style="display:block">
                     <font color="red">@ViewBag.FullName</font>，您好！
-                </div>
-                <ul class="navigation" style="display:block">
-                    @Html.Raw(@ViewBag.HeaderScript)
-                    @*          <li><a href="#" onclick="showSubMenu('/User/Index', '用户管理', 'default')">权限管理</a></li>
-                        <li><a href="#" onclick="showSubMenu('../Commonpage/MyJob.aspx', '事务中心开发中...', 'point', 'icon-organ')">事务中心</a></li>
-                        <li><a href="#" onclick="showSubMenu('../Commonpage/building.htm', '合同起草开发中...', '')">合同起草</a></li>*@
-                </ul>
+                </div>              
                 <ul class="button">
                     <li>
                         当前时间：<b id="date"></b>
@@ -192,13 +186,7 @@
 
             <!--左侧导航菜单-->
             <div region="west" split="true" title="导航菜单" style="width:200px;padding:1px;overflow:hidden;">
-                <div id="nav" class="easyui-accordion" fit="true" border="false">
-                    @* <div id="aa" title="主功能菜单" iconCls="icon-computer" style="padding:10px;overflow:auto;" selected="true">
-                            <ul>
-                                <li><div><a ref="91001" href="javascript:void(0)" onclick="javascript:ShowPasswordDialog()" ><span class="icon icon-lock" >&nbsp;</span><span class="nav">脚本功能</span></a></div></li>
-                                <li><div><a ref="91002" href="#" rel="ChangePassword.aspx" ><span class="icon icon-lock" >&nbsp;</span><span class="nav">打开页面功能</span></a></div></li>
-                            </ul>
-                        </div>*@
+                <div id="nav" class="easyui-accordion" fit="true" border="false">                
                 </div>
             </div>
 

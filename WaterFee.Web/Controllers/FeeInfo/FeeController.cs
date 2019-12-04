@@ -193,7 +193,7 @@ namespace WHC.WaterFeeWeb.Controllers
         /// <returns></returns>       
         public ActionResult GetAccDebtByIntCustNo_Server()
         {
-            var custno = Request["WHC_IntCustNo"] ?? "0";
+            var custno = Request["IntCustNo"] ?? "0";
             var endcode = Session["EndCode"] ?? "0";
             DbServiceReference.ServiceDbClient DbServer = new DbServiceReference.ServiceDbClient();
             var dts = DbServer.Account_GetDebtByCustNo(endcode.ToString().ToInt32(), custno.ToInt32());
@@ -218,46 +218,26 @@ namespace WHC.WaterFeeWeb.Controllers
         /// <summary>
         /// 获取未收财务
         /// </summary>
-        /// <returns></returns>
-        public ActionResult GetPaymentNoticeList()
+        /// <returns></returns>  
+        public ActionResult GetPaymentNoticeList_Server()
         {
-            string where = GetPagerCondition();
-            PagerInfo pagerInfo = GetPagerInfo();
-            var list = baseBLL.FindWithPager(where, pagerInfo);
-
-            var listNew = list.GroupBy(o => new { o.IntCustNo }).Select(n => new
+            var endcode = Session["IntEndCode"] ?? "0";
+            var CustNo = Request["WHC_IntCustNo"]??"";
+            var NvcName = Request["WHC_NvcName"] ?? "";
+            var NvcAddr = Request["WHC_NvcAddr"] ?? "";
+            var VcMobile = Request["WHC_VcMobile"] ?? "";
+            var custinfo = new DbServiceReference.Customer
             {
-                IntCustNo = n.Key.IntCustNo,
-                //VcCustName = "",//客户名称
-                IntMonthCount = n.Count(x => x.IntCustNo == n.Key.IntCustNo),
-                MonFee = n.Where(x => x.IntCustNo == n.Key.IntCustNo).Sum(x => x.MonFee),
-                //VcAddr = ""//地址
-            });
-            if (list.Count > 0)
-            {
-                list = new List<Core.Entity.AccDebt>();
-                var ids = string.Join(",", listNew.Select(n => n.IntCustNo).ToArray());
-                where = " IntNo in ({0}) ".FormatWith(ids);
-                pagerInfo.CurrenetPageIndex = 1;
-                var customerList = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.FindWithPager(where, pagerInfo);
-                if (customerList.Count > 0)
-                {
-                    foreach (var item in listNew)
-                    {
-                        var info = customerList.Where(n => n.IntNo == item.IntCustNo).FirstOrDefault();
-                        list.Add(new Core.Entity.AccDebt()
-                        {
-                            ArcCustomerInfo = info,
-                            IntCustNo = item.IntCustNo,
-                            MonFee = item.MonFee,
-                            IntYearMon = item.IntMonthCount
-                        });
-                    }
-                }
-            }
-            var result = new { total = pagerInfo.RecordCount, rows = list };
+                IntNo = CustNo == "" ? 0 : CustNo.ToInt(),
+                NvcName = NvcName,
+                NvcAddr = NvcAddr,
+                VcMobile = VcMobile
+            };
+            var dt = new DbServiceReference.ServiceDbClient().Account_GetPaymentNotice(endcode.ToString().ToInt(), custinfo);
+            var result = new { total = dt.Rows.Count, rows = dt };
             return ToJsonContentDate(result);
         }
+
 
         //柜台冲正
         public ActionResult CounterReverse()
@@ -387,31 +367,33 @@ namespace WHC.WaterFeeWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult CloseAccount_Query(string custNo)
+        public ActionResult CloseAccount_Query_Server(string custNo)
         {
             CommonResult result = new CommonResult();
+            var endcode = Session["EndCode"].ToString() ?? "0";
+            var intcustno = custNo ?? "0";
             try
             {
-                //CREATEPROCEDURE[dbo].[up_BillQry]
-                //@iCustNo INTEGER,   --< !--客户编号-- >
-                //@sReturn VARCHAR(MAX)OUTPUT-- < !--0:成功，其它为错误描述-- >
-
-                lock (objLock)
-                {
-                    var sFlowNo = GetFlowNo();
-                    string ret = null;
-                    var ds = QueryBill(custNo, out ret);
-                    if (ret == "0")
+                var rs = new DbServiceReference.ServiceDbClient().Account_GetBillByCustNo(endcode.ToInt32(), intcustno.ToInt32());
+                if (rs.IsSuccess)
+                {                  
+                    if (rs.Tbl1.Rows.Count > 0)
                     {
-                        result.Data1 = Newtonsoft.Json.JsonConvert.SerializeObject(ds.Tables[0]);
-                        var dt = new { total = ds.Tables[1].Rows.Count, rows = ds.Tables[1] };
-                        result.Obj1 = dt;
+                        result.Data1 = Newtonsoft.Json.JsonConvert.SerializeObject(rs.Tbl1);
+                        var dt = new { total = rs.Tbl2.Rows.Count, rows = rs.Tbl2 };
                         result.Success = true;
+                        result.Obj1 = dt;
+                        result.Data2 = rs.Tbl2.Rows.Count.ToString();
+                        //result.Data2 = "2";
                     }
                     else
                     {
-                        result.ErrorMessage = "查询欠费失败!错误如下:" + ret;
+                        result.ErrorMessage = "未查询到用户号为：【"+custNo+"】 的用户档案";
                     }
+                }
+                else
+                {
+                    result.ErrorMessage = "查询欠费失败!错误如下:" + rs.ErrorMsg;
                 }
             }
             catch (Exception ex)
@@ -427,21 +409,22 @@ namespace WHC.WaterFeeWeb.Controllers
         /// <param name="custNo"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult CloseAccount_Close(string custNo)
+        public ActionResult CloseAccount_Close_Server(string custNo)
         {
             CommonResult result = new CommonResult();
             try
             {
-                var no = Convert.ToInt32(custNo);
-                var sql = "update ArcCustomerInfo set IntStatus=4 where IntNo=" + no;
-                var isOk = BLLFactory<Core.BLL.AccPayment>.Instance.SqlExecute(sql);
-                if (isOk > 0)
+                var endcode = Session["EndCode"].ToString() ?? "0";
+                var intcustno = custNo ?? "0";
+                var flag = new DbServiceReference.ServiceDbClient().ArcCloseAccount(endcode.ToInt32(), intcustno.ToInt32());
+                
+                if (flag == "0")
                 {
-                    result.Success = true;
+                    result.Success = true;                 
                 }
                 else
                 {
-                    result.ErrorMessage = "操作失败!";
+                    result.ErrorMessage = "操作失败! "+ flag;
                 }
             }
             catch (Exception ex)
@@ -463,49 +446,21 @@ namespace WHC.WaterFeeWeb.Controllers
         }
         public ActionResult PaymentNoticeExport()
         {
-            var intCustNo = Request["WHC_IntCustNo"];
-            string where = GetPagerCondition();
-            PagerInfo pagerInfo = GetPagerInfo();
-            var list = baseBLL.FindWithPager(where, pagerInfo);
-
-            var listNew = list.GroupBy(o => new { o.IntCustNo }).Select(n => new
+            var endcode = Session["IntEndCode"] ?? "0";
+            var CustNo = Request["WHC_IntCustNo"];
+            var NvcName = Request["WHC_NvcName"];
+            var NvcAddr = Request["WHC_NvcAddr"];
+            var VcMobile = Request["WHC_VcMobile"];
+            var custinfo = new DbServiceReference.Customer
             {
-                IntCustNo = n.Key.IntCustNo,
-                //VcCustName = "",//客户名称
-                IntMonthCount = n.Count(x => x.IntCustNo == n.Key.IntCustNo),
-                MonFee = n.Where(x => x.IntCustNo == n.Key.IntCustNo).Sum(x => x.MonFee),
-                //VcAddr = ""//地址
-            });
-            if (list.Count > 0)
+                IntNo = CustNo == "" ? 0 : CustNo.ToInt(),
+                NvcName = NvcName,
+                NvcAddr = NvcAddr,
+                VcMobile = VcMobile
+            };
+            var dt = new DbServiceReference.ServiceDbClient().Account_GetPaymentNotice(endcode.ToString().ToInt(), custinfo);
+            if (dt.Rows.Count > 0)
             {
-                var columns = "客户编号,客户名称,欠费月数,欠费总金额,地址".Split(',');
-                var dt = new System.Data.DataTable();
-                foreach (var item in columns)
-                {
-                    //if (item == "欠费总金额" || item == "欠费月数")
-                    //    dt.Columns.Add(item, typeof(decimal));
-                    //else
-                    dt.Columns.Add(item, typeof(string));
-                }
-
-                var ids = string.Join(",", listNew.Select(n => n.IntCustNo).ToArray());
-                where = " IntNo in ({0}) ".FormatWith(ids);
-                pagerInfo.CurrenetPageIndex = 1;
-                var customerList = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.FindWithPager(where, pagerInfo);
-                if (customerList.Count > 0)
-                {
-                    foreach (var item in listNew)
-                    {
-                        var row = dt.NewRow();
-                        var info = customerList.Where(n => n.IntNo == item.IntCustNo).FirstOrDefault();
-                        row["客户编号"] = item.IntCustNo;
-                        row["客户名称"] = info.NvcName;
-                        row["欠费月数"] = item.IntMonthCount;
-                        row["欠费总金额"] = item.MonFee;
-                        row["地址"] = info.NvcAddr;
-                        dt.Rows.Add(row);
-                    }
-                }
                 //导出目录创建与清空
                 var root = Server.MapPath("~\\");
                 var dir = new System.IO.DirectoryInfo(root + "temp\\");
@@ -518,13 +473,10 @@ namespace WHC.WaterFeeWeb.Controllers
                     }
                 }
                 catch { }
-
                 var filename = dir + Guid.NewGuid().ToString() + ".xls";
-
                 var ds = new System.Data.DataSet();
                 ds.Tables.Add(dt);
                 ExcelHelper.DataSetToExcel(ds, filename);
-
                 return Redirect(filename.Replace(root, "/").Replace("\\", "/"));
             }
             return View();
@@ -540,6 +492,7 @@ namespace WHC.WaterFeeWeb.Controllers
         public ActionResult PayGetMoneyPrint(string flowNo)
         {
             var endcode = Session["EndCode"] ?? "0";
+
             var dt = new DbServiceReference.ServiceDbClient().Account_GetDepositInvoiceInfo(endcode.ToString().ToInt32(), flowNo);
             if (dt.Rows.Count > 0)
             {
@@ -549,7 +502,8 @@ namespace WHC.WaterFeeWeb.Controllers
                 ViewBag.NvcVillage = dt.Rows[0]["NvcVillage"].ToString();
                 ViewBag.NvcAddr = dt.Rows[0]["NvcAddr"].ToString();
                 ViewBag.VcType = dt.Rows[0]["VcType"].ToString();
-                ViewBag.MonAmount = dt.Rows[0]["MonAmount"].ToString();
+                var MonAmount = dt.Rows[0]["MonAmount"].ToString().ToDouble();
+                ViewBag.MonAmount = MonAmount.ToString("#0.00");
                 ViewBag.DteAccount = dt.Rows[0]["DteAccount"].ToString();
                 ViewBag.VcFlowNo = dt.Rows[0]["VcFlowNo"].ToString();
                 ViewBag.UserName = dt.Rows[0]["UserName"].ToString();
@@ -563,21 +517,28 @@ namespace WHC.WaterFeeWeb.Controllers
         /// <returns></returns>
         public ActionResult PrintTicketDetail(int IntFeeID)
         {
-            var model = BLLFactory<Core.DALSQL.AccPayment>.Instance.FindByID(IntFeeID);
-            if (model != null)
+            var endcode = Session["IntEndCode"] ?? "0";         
+            var DtStart = Request["WHC_DtStart"] ?? DateTime.Now.ToString();
+            var Dtend = Request["WHC_DtEnd"] ?? DateTime.Now.ToString(); ;         
+            var custinfo = new DbServiceReference.Customer();           
+            var dt = new DbServiceReference.ServiceDbClient().Account_GetPaymentDetail(endcode.ToString().ToInt(), IntFeeID, DtStart.ToDateTime(), Dtend.ToDateTime(), custinfo);
+            if (dt.Rows.Count > 0)
             {
-                var custInfo = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.Find(" IntNo=" + model.IntCustNo);
-                ViewBag.FeeInfo = model;
-                ViewBag.DteFee = model.DteFee.ToYyyyMMdd();
-                ViewBag.DtePay = model.DtePay.ToYyyyMMdd();
-                ViewBag.CustInfo = custInfo.Count > 0 ? custInfo.First() : new Core.Entity.ArcCustomerInfo();
-            }
-            else
-            {
-                ViewBag.DteFee = "";
-                ViewBag.DtePay = "";
-                ViewBag.FeeInfo = new Core.Entity.AccPayment();
-                ViewBag.CustInfo = new Core.Entity.ArcCustomerInfo();
+                ViewBag.IntCustNo = dt.Rows[0]["IntCustNo"].ToString();
+                ViewBag.NvcName = dt.Rows[0]["NvcName"].ToString();
+                ViewBag.VcRoomNum = dt.Rows[0]["VcRoomNum"].ToString();
+                ViewBag.NvcVillage = dt.Rows[0]["NvcVillage"].ToString();
+                ViewBag.NvcAddr = dt.Rows[0]["NvcAddr"].ToString();
+                ViewBag.IntYearMon = dt.Rows[0]["IntYearMon"].ToString();               
+                ViewBag.DteFee = dt.Rows[0]["DteFee"].ToString();
+                var MonFee = dt.Rows[0]["MonFee"].ToString().ToDouble();
+                ViewBag.MonFee = MonFee.ToString("#0.00");
+                var MonPenalty = dt.Rows[0]["MonPenalty"].ToString().ToDouble();
+                ViewBag.MonPenalty = MonPenalty.ToString("#0.00"); ;
+                ViewBag.IntDays = dt.Rows[0]["IntDays"].ToString();
+                ViewBag.VcFlowNo = dt.Rows[0]["VcFlowNo"].ToString();
+                ViewBag.IntPayUnit = dt.Rows[0]["IntPayUnit"].ToString();
+                ViewBag.VcChargeNo = dt.Rows[0]["VcChargeNo"].ToString();
             }
             return View();
         }

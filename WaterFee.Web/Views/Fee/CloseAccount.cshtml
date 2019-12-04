@@ -76,8 +76,6 @@
             InitGrid(queryData);
             BindSearchEvent();
         });
-
-
         //实现对DataGird控件的绑定操作
         function InitGrid(queryData) {
             $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
@@ -99,9 +97,7 @@
                 remoteSort: false,
                 //idField: 'ID', //不设置idField，翻页不会记录选择
                 queryParams: queryData,  //异步查询的参数
-                columns: [[
-	                 //{ field: 'ck', checkbox: true },   //选择
-                     //{ title: 'ID', field: 'IntFeeID', width: 80, sortable: true, hidden: true },
+                columns: [[	                
                      //费用编号 费用日期 计算水量 欠费 违约金
                      { title: '费用编号', field: '费用编号', width: 100, sortable: true, align: 'center' },
                      {
@@ -114,50 +110,17 @@
                      { title: '欠费', field: '欠费', width: 100, sortable: true, align: 'center' },
                      { title: '违约金', field: '违约金', width: 100, sortable: true, align: 'center' }
 
-                ]],
-                onLoadSuccess: function () {
-                },
-                //toolbar: [{
-                //    id: 'btnFee',
-                //    text: '结清欠款并销户',
-                //    iconCls: 'icon-add',
-                //    handler: function () {
-                //        Fee();
-                //    }
-                //}, '-', {
-                //    id: 'btnReload',
-                //    text: '刷新',
-                //    iconCls: 'icon-reload',
-                //    handler: function () {
-                //        //实现刷新栏目中的数据
-                //        $("#grid").datagrid("reload");
-                //    }
-                //}],
-
-
-                //onDblClickRow: function (rowIndex, rowData) {
-                //    $('#grid').datagrid('uncheckAll');
-                //    $('#grid').datagrid('checkRow', rowIndex);
-                //    Fee();
-                //}
-            });
-            //var heightMargin = $("#toolbar").height() + 60;
-            //var widthMargin = $(document.body).width() - $("#tb").width();
-            //// 第一次加载时和当窗口大小发生变化时，自动变化大小
-            //$('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
-            //$(window).resize(function () {
-            //    $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
-            //});
+                ]]
+                         
+            });           
         };
 
         var TotalMoney;
-
         function FeeOK() {
             var validate = $("#ffAdd").form('validate');
             if (validate == false) {
                 return false;
             }
-
             var rows = $("#grid").datagrid("getSelections");
             if (rows.length < 1) {
                 $.messager.alert("温馨提示", "请至少选择一条财务记录进行缴费!");
@@ -172,9 +135,7 @@
                 //title: '温馨提示',
                 text: '正在处理中,请稍后......'
             });
-
             setTimeout("$.messager.progress('close')", 3000);
-
             for (var i = 0; i < rows.length; i++) {
             }
         }
@@ -185,19 +146,28 @@
                 $("#lblRetMoney").html(retMoney.toFixed(2));
             }
         }
-
-        var isOwn = true;
-        function queryFee() {
-            isOwn = true;
-            var custNo = $("#txtIntNo").val();
+        function InitData() {
+            $("#txtCustNo").html("");
+            $("#txtName").html("");
+            $("#txtArea").html("");
+            $("#txtBuilding").html("");
+            $("#txtAddress").html("");
+            $("#txtMode").html("");
+            $("#grid").datagrid('loadData',{ total: 0, rows: [] });
+        }
+        var gridrow = 0;
+        function queryFee() { 
+            //清空数据
+            InitData()
+            isOwn = true; 
+            var custNo = $("#txtIntNo").val();         
             if (custNo == "") {
                 showError("请输入客户编号!", 1500);
                 return;
             }
-            $.messager.progress({ text: '正在处理中,请稍后......' });
-
+            $.messager.progress({ text: '正在处理中,请稍后......' })
             $.ajax({
-                url: '/Fee/CloseAccount_Query?custNo=' + custNo,
+                url: '/Fee/CloseAccount_Query_Server?custNo=' + custNo,
                 type: 'post',
                 dataType: 'json',
                 data: {},
@@ -206,8 +176,10 @@
                     console.log(json);
                     $.messager.progress('close');
                     if (json.Success && json.Data1) {
-                        var data = JSON.parse(json.Data1);
-                        console.log(data);
+                        var data = JSON.parse(json.Data1);  
+                        var rowcount = JSON.parse(json.Data2); 
+                        //console.log(rowcount);
+                        //console.log(data);
                         if (data.length > 0) {
                             $("#txtCustNo").html(custNo);
                             $("#txtName").html(data[0].户名);
@@ -216,12 +188,8 @@
                             $("#txtAddress").html(data[0].地址);
                             $("#txtMode").html(data[0].账务模式);
                         }
-                        $("#grid").datagrid("loadData", json.Obj1);
-                        if (json.Obj1) {
-                            isOwn = json.Obj1.total > 0;
-                            if (isOwn)
-                                $.messager.alert("温馨提示", "当前客户有欠款,请先把欠款结清再进行销户操作!");
-                        }
+                        $("#grid").datagrid("loadData", json.Obj1);     
+                        gridrow = rowcount;
                     }
                     else {
                         $.messager.alert("温馨提示", json.ErrorMessage);
@@ -238,20 +206,11 @@
         function BindSearchEvent() {
             //按条件进行查询数据，首先我们得到数据的值
             $("#btnSearch").click(function () {
-                queryFee();
-                //得到用户输入的参数
-                //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
-                //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
-                var queryData = {
-                    WHC_IntCustNo: $("#txtIntNo").val(),
-                }
-                //将值传递给
-                //InitGrid(queryData);
+                queryFee();                     
                 return false;
             });
 
             $("#btnClose").click(closeAccount);
-
             $.extend($.fn.validatebox.defaults.rules, {
                 //校验正整数，并计算码洋
                 oninputMY: {
@@ -267,43 +226,43 @@
                 }
             });
         }
-        function closeAccount() { 
+        function closeAccount() {          
             var custNo = $("#txtCustNo").html();
             if (custNo == "") {
-                showError("请输入客户编号!", 1500);
+                showError("请先查询客户欠费信息!", 1500);
                 return;
             }
-            if (isOwn) {
+            if (gridrow>0) {
                 $.messager.alert("温馨提示", "当前客户有欠款,请先把欠款结清再进行销户操作!");
                 return false;
             }
-            $.messager.progress({ text: '正在处理中,请稍后......' });
-
-            $.ajax({
-                url: '/Fee/CloseAccount_Close?custNo=' + custNo,
-                type: 'post',
-                dataType: 'json',
-                data: {},
-                //async: false,
-                success: function (json) {
-                    $.messager.progress('close');
-                    if (json.Success) {
-                        showTips("销户成功!");
-                    }
-                    else {
-                        $.messager.alert("温馨提示", json.ErrorMessage);
-                    }
-                },
-                error: function () {
-                    showError("网络错误!");
-                    $.messager.progress('close');
+            $.messager.confirm("销户确认", "是否确定对客户编号【" + custNo + "】的用户进行销户操作?", function (isAction) {
+                if (isAction) {
+                    $.messager.progress({ text: '正在处理中,请稍后......' });
+                    $.ajax({
+                        url: '/Fee/CloseAccount_Close_Server?custNo=' + custNo,
+                        type: 'post',
+                        dataType: 'json',
+                        data: {},
+                        //async: false,
+                        success: function (json) {
+                            $.messager.progress('close');
+                            if (json.Success) {
+                                showTips("销户成功!");
+                            }
+                            else {
+                                $.messager.alert("温馨提示", json.ErrorMessage);
+                            }
+                        },
+                        error: function () {
+                            showError("网络错误!");
+                            $.messager.progress('close');
+                        }
+                    });
                 }
-            });
+            });                  
         }
-
     </script>
-
-
 </head>
 <body>
 
@@ -323,7 +282,7 @@
                                 <th style='padding: 3px;'>
                                     <label for="txtIntNo">客户编号：</label></th>
                                 <td style='padding: 3px;'>
-                                    <input type="text" id="txtIntNo" class="text-info" style="width: 100px" /></td>
+                                    <input class="easyui-numberbox" type="text" id="txtIntNo"  style="width: 100px" /></td>
                                 @*<th style='padding: 3px;'>
                                     <label for="txtNvcName">客户姓名：</label></th>
                                 <td style='padding: 3px;'>
@@ -418,9 +377,7 @@
                             <label for="addVcBuilding">费用总额¥：</label>
                         </th>
                         <td id="lblTotalMoney" colspan="3" style="color: red; font-size: 30px; height: 35px; line-height: 33px;"></td>
-
                     </tr>
-
                     <tr>
                         <th>
                             <label for="addVcBuilding">本次实收¥：</label>
@@ -429,16 +386,13 @@
                             <input class="easyui-validatebox" type="text" id="addPayMoney" autocomplete="off" style="color: red; font-size: 28px; width: 99%; height: 35px; line-height: 33px;" name="PayMoney"
                                 data-options="validType:'oninputMY',required:true" min="0" max="100000000" precision="2" />
                         </td>
-
                     </tr>
                     <tr>
                         <th>
                             <label for="addVcBuilding">本次找回¥：</label>
                         </th>
                         <td id="lblRetMoney" colspan="3" style="color: red; font-size: 30px; height: 35px; line-height: 33px;"></td>
-
                     </tr>
-
                     <tr>
                         <td colspan="4" style="text-align: right; padding-top: 10px">@*<a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#DivAdd').dialog('close')">关闭</a>*@
                             <a href="javascript:void(0)" class="easyui-linkbutton" id="btnAddOK" iconcls="icon-ok" style="padding-left: 10px; padding-right: 20px; height: 35px; line-height: 33px; font-size: 16px;">结清欠款并销户</a>

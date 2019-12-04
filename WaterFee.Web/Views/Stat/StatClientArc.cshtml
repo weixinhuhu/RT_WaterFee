@@ -71,7 +71,7 @@
         function InitGrid(queryData) {
             //console.log(queryData);
             $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
-                url: '/Stat/StatClientArcData',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                url: '/Stat/StatClientArcData_Server',   //指向后台的Action来获取当前用户的信息的Json格式的数据
                 title: '用户档案统计',
                 iconCls: 'icon-view',
                 height: document.body.clientHeight * 0.9 - 30,
@@ -101,15 +101,23 @@
                              //else return new Date(val.replace(/-/g, "/")).Format();
                          }
                      },
-                     { title: '户名', field: '户名', width: 80, sortable: true, align: 'center' },
-                     { title: '地址', field: '地址', width: 120, sortable: true, align: 'center' },
-                     { title: '手机号', field: '手机号', width: 100, sortable: true, align: 'center' },
-                     { title: '身份证号', field: '身份证号', width: 150, sortable: true, align: 'center' },
-                     { title: '合同号', field: '合同号', width: 100, sortable: true, align: 'center' },
-                     { title: '微信号', field: '微信号', width: 100, sortable: true, align: 'center' },
-                     { title: '开户日期', field: '开户日期', width: 66, sortable: true, align: 'center' },
-                     { title: '创建日期', field: '创建日期', width: 66, sortable: true, align: 'center' },
-                     { title: '财务模式', field: '财务模式', width: 100, sortable: true, align: 'center' }
+                    { title: '户名', field: '户名', width: 80, sortable: true, align: 'center' },
+                    { title: '地址', field: '地址', width: 120, sortable: true, align: 'center' },
+                    { title: '手机号', field: '手机号', width: 100, sortable: true, align: 'center' },
+                    { title: '身份证号', field: '身份证号', width: 150, sortable: true, align: 'center' },
+                    { title: '合同号', field: '合同号', width: 100, sortable: true, align: 'center' },
+                    { title: '微信号', field: '微信号', width: 100, sortable: true, align: 'center' },
+                    {
+                        title: '开户日期', field: '开户日期', width: 120, sortable: true, align: 'center', formatter: function (val) {
+                            return val == "9999-09-09 00:00:00" ? "-" : val.substring(0, 10);
+                        }
+                    },
+                    {
+                        title: '创建日期', field: '创建日期', width: 120, sortable: true, align: 'center', formatter: function (val) {
+                            return val == "9999-09-09 00:00:00" ? "-" : val.substring(0, 10);
+                        }
+                    },
+                     { title: '账务模式', field: '账务模式', width: 100, sortable: true, align: 'center' }
                 ]],
                 onLoadSuccess: function () {
 
@@ -147,7 +155,29 @@
             //    $('#grid').resizeDataGrid(heightMargin, widthMargin, 0, 0);
             //});
         };
-
+         function getTotleDetail() {
+            var start = $("#txtDateStart").datebox('getValue');
+            var end = $("#txtDateEnd").datebox('getValue');
+            if (!start || !end) {
+                alert("开始日期或结束日期不能为空!");
+                return false;
+            }
+            var queryData = {              
+                WHC_dtStart: start,
+                WHC_dtEnd: end
+            }
+            $.ajax({
+                url: '/Stat/StatClientArcDataTotal_Server',
+                type: 'post',
+                dataType: 'json',
+                data: queryData,
+                success: function (json) {
+                    var data1 = JSON.parse(json.Data1);                     
+                    var Newtitle = '用户档案统计  日期  【' + start + ' 至 ' + end + '】 总用户数 【' + data1 + ' 人】';
+                  $('#grid').datagrid("getPanel").panel("setTitle",Newtitle)
+                }              
+            });
+        }
         //绑定搜索按钮的的点击事件
         function BindSearchEvent() {
             //按条件进行查询数据，首先我们得到数据的值
@@ -162,9 +192,10 @@
                     return false;
                 }
                 var queryData = {
-                    dtStart: start,
-                    dtEnd: end
+                    WHC_dtStart: start,
+                    WHC_dtEnd: end
                 }
+                getTotleDetail();
                 //将值传递给
                 InitGrid(queryData);
                 return false;

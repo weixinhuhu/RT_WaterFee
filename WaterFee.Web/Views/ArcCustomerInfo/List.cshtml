@@ -15,12 +15,20 @@
     <script type="text/javascript">
         //标识是新增还是编辑对话框弹出，用于删除附件的操作
         var isAddOrEdit = 'add';
-        $(function () {       
+        $(function () { 
+            $(document).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    $("#btnSearch").click();
+                    return;
+                }
+            });
+             //绑定查询按钮事件
+            BindSearchEvent();
             //初始化导航树
-            initDeptTreeview();  
-            var queryData = {};
-            //初始化Datagrid表格数据
-            InitGrid(queryData);
+            initDeptTreeview();           
+            //var queryData = {};
+            ////初始化Datagrid表格数据
+            //InitGrid(queryData);
             //价格属性
             InitPriceProperty();
             txtddlPriceProperty();
@@ -29,10 +37,7 @@
             //账务编码        
             txtYFVcDesc();
             //价格属性事件
-            meterIntChannal();
-            $("#grid").datagrid("");
-            //绑定查询按钮事件
-            BindSearchEvent();
+            meterIntChannal();             
         });
         var isAdd = false;
         function InputNvcName(obj) {
@@ -93,7 +98,6 @@
                     { title: '客户类型', field: 'NvcCustType', width: 80, sortable: true },
                     {
                         title: '账务模式', field: 'YFVcDesc', width: 80, align: 'center', sortable: true
-
                     },
                     {
                         title: '状态', field: 'IntStatus', width: 80, sortable: true, formatter: function (val) {
@@ -592,7 +596,7 @@
                                     <label for="txtIntNo">客户编号：</label>
                                 </th>
                                 <td style='padding: 3px;'>
-                                    <input type="text" id="txtIntNo" class="text-info" style="width: 100px" />
+                                    <input type="text" id="txtIntNo" class="easyui-numberbox" style="width: 100px" />
                                 </td>
                                 <th style='padding: 3px;'>
                                     <label for="txtNvcName">客户姓名：</label>
@@ -610,7 +614,7 @@
                                     <label for="txtVcMobile">移动号码：</label>
                                 </th>
                                 <td style='padding: 3px;'>
-                                    <input type="text" id="txtVcMobile" style="width: 100px" />
+                                    <input type="text" id="txtVcMobile" class="easyui-numberbox" style="width: 100px" />
                                 </td>
                                 <td style='padding: 3px; text-align: right'>
                                     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
@@ -643,8 +647,6 @@
                         <input type="hidden" id="addDtCreate" name="DtCreate" />
                         <input type="hidden" id="addIntHelper" name="IntHelper:number" value="0" />
                         <input type="hidden" id="addIntPriceNo" name="IntPriceNo:number" value="0" />
-
-
                         <table id="tblAdd" class="view">
                             <tr>
                                 <th>

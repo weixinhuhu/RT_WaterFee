@@ -53,84 +53,46 @@ namespace WHC.WaterFeeWeb.Controllers
         public ActionResult List()
         {
             return View();
-        }
-
-        public ActionResult ListJson()
+        }    
+        public ActionResult ListJson_Server()
         {
-            string where = "";
-            string sql;
-            string WHC_VcAddr = Request["WHC_VcAddr"];          
-            string WHC_EndDteFreeze = Request["WHC_EndDteFreeze"];
-           
+            var endcode = Session["EndCode"]??"";
+            var WHC_StartDteFreeze = Request["WHC_StratDteFreeze"].ToDateTime();
+            var WHC_EndDteFreeze = Request["WHC_EndDteFreeze"].ToDateTime();
             var fuji = Request["WHC_Fuji"];
             var Text = Request["WHC_Text"];
             var Strlevel = Request["WHC_Treelevel"];
             var ParentText = Request["WHC_TreePrentText"];
+            var customerinfo = new DbServiceReference.Customer()
+            {
+                NvcName = Request["WHC_NvcName"] ?? "",
+                VcMobile = Request["WHC_VcMobile"] ?? "",                   
+            };
+            var custno = Request["WHC_IntCustNo"] ?? "0";
+            customerinfo.IntNo = custno == "" ? 0 : custno.ToInt();
 
             if (Strlevel == "1")
             {
-                where += " and NvcVillage = '所有小区' ";
-            }
-
+                customerinfo.NvcVillage = "所有小区";
+            };
             if (Strlevel == "2")
             {
-                where += " and NvcVillage = '" + Text + "' ";
+                customerinfo.NvcVillage = Text;
             }
-
             if (Strlevel == "3")
             {
-                where += " and NvcVillage = '" + fuji + "' ";
-                where += "  and VcBuilding='" + Text + "'";
+                customerinfo.NvcVillage = fuji;
+                customerinfo.VcBuilding = Text;
             }
-
             if (Strlevel == "4")
             {
-                where += " and NvcVillage = '" + ParentText + "' ";
-                where += " and VcBuilding = '" + fuji + "' ";
-                where += "  and IntUnitNum='" + Text + "'";
+                customerinfo.NvcVillage = ParentText;
+                customerinfo.VcBuilding = fuji;
+                customerinfo.VcUnitNum = Text;
             }
+            //调用后台服务获取集中器信息          
+            var dts = new DbServiceReference.ServiceDbClient().CollectData_Qry(endcode.ToString().ToInt(),customerinfo, WHC_StartDteFreeze, WHC_EndDteFreeze);
 
-            if (WHC_VcAddr != "")
-            {
-                where += "  AND ( A.NvcName LIKE  '%" + WHC_VcAddr + "%'";
-                where += "  OR NvcVillage LIKE  '%" + WHC_VcAddr + "%'";
-                where += "  OR IntUnitNum LIKE  '%" + WHC_VcAddr + "%'";
-                where += "  OR IntRoomNum LIKE  '%" + WHC_VcAddr + "%'";
-                where += "  OR C.VcAddr LIKE   '%" + WHC_VcAddr + "%'";
-                where += "  OR VcMobile LIKE   '%" + WHC_VcAddr + "%'";
-                where += "  OR A.IntNo LIKE   '%" + WHC_VcAddr + "%')";
-            }
-
-            if (WHC_EndDteFreeze != "")
-            {
-                where += "  and DteFreeze = '" + WHC_EndDteFreeze + "'";
-            }
-
-            //20190704
-            sql = @" SELECT DISTINCT C.DteFreeze,
-                           NvcName,
-                           VcMobile,
-                           NvcVillage,
-                           VcBuilding,
-                           IntUnitNum,
-                           IntRoomNum,
-                           VcAddr,
-                           IntCustNo,
-                           DteReading,
-                           NumReading,
-                           a.IntStatus,
-                           dbo.uf_TransStatusWord(VcStatus) Word,
-                           b.VcDesc
-                    FROM ArcMeterReading C
-                        LEFT JOIN DictMeterReadingFlag B
-                            ON C.IntFlag = B.IntCode
-                        LEFT JOIN dbo.ArcCustomerInfo A
-                            ON C.IntCustNo = A.IntNo
-                    WHERE (1 = 1) ";
-
-            sql += where + "order by DteFreeze desc";
-
-            var dts = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.SqlTable(sql);
             int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
             int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
 
@@ -149,42 +111,113 @@ namespace WHC.WaterFeeWeb.Controllers
             var result = new { total = total, rows = dat };
             return ToJsonContentDate(result);
         }
-
         public ActionResult CollectStat()
         {
             return View();
         }
-
-        public ActionResult CollectStatJson()
+        public ActionResult CollectStatJson_Server()
         {
-            //检查用户是否有权限，否则抛出MyDenyAccessException异常
-            base.CheckAuthorized(AuthorizeKey.ListKey);
+            var endcode = Session["EndCode"] ?? "";
+            var WHC_StartDteFreeze = Request["WHC_StratDteFreeze"].ToDateTime();
+            var WHC_EndDteFreeze = Request["WHC_EndDteFreeze"].ToDateTime();
+            var fuji = Request["WHC_Fuji"];
+            var Text = Request["WHC_Text"];
+            var Strlevel = Request["WHC_Treelevel"];
+            var ParentText = Request["WHC_TreePrentText"];
+            var customerinfo = new DbServiceReference.Customer()
+            {
+                NvcName = Request["WHC_NvcName"] ?? "",
+                VcMobile = Request["WHC_VcMobile"] ?? "",
+            };
+            var custno = Request["WHC_IntCustNo"] ?? "0";
+            customerinfo.IntNo = custno == "" ? 0 : custno.ToInt();
 
-            var start = Request["WHC_DteFreezeStart"];
+            if (Strlevel == "1")
+            {
+                customerinfo.NvcVillage = "所有小区";
+            };
+            if (Strlevel == "2")
+            {
+                customerinfo.NvcVillage = Text;
+            }
+            if (Strlevel == "3")
+            {
+                customerinfo.NvcVillage = fuji;
+                customerinfo.VcBuilding = Text;
+            }
+            if (Strlevel == "4")
+            {
+                customerinfo.NvcVillage = ParentText;
+                customerinfo.VcBuilding = fuji;
+                customerinfo.VcUnitNum = Text;
+            }
+            //调用后台服务获取集中器信息          
+            var dts = new DbServiceReference.ServiceDbClient().CollectStatus_Qry(endcode.ToString().ToInt(), customerinfo,WHC_StartDteFreeze, WHC_EndDteFreeze);
 
-            var end = Request["WHC_DteFreezeEnd"];
+            int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
+            int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
 
-            var sb = new System.Text.StringBuilder();
-            sb.Append("select max(NumReading)-min(NumReading) Reading,IntCustNo from ArcMeterReading where 1=1 ");
-            if (start.IsDateTime())
-                sb.AppendFormat(" and DteFreeze>='{0}' ", start);
-            if (end.IsDateTime())
-                sb.AppendFormat(" and DteFreeze<='{0}' ", end);
-            sb.Append(" group by IntCustNo");
+            DataTable dat = new DataTable();
+            //复制源的架构和约束
+            dat = dts.Clone();
+            // 清除目标的所有数据
+            dat.Clear();
+            //对数据进行分页
+            for (int i = (page - 1) * rows; i < page * rows && i < dts.Rows.Count; i++)
+            {
+                dat.ImportRow(dts.Rows[i]);
+            }
+            //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
+            int total = dts.Rows.Count;
+            var result = new { total = total, rows = dat };
+            return ToJsonContentDate(result);
+        }
+        public ActionResult CollectStatJsonTotal_Server()
+        {
+            CommonResult result = new CommonResult();
+            var endcode = Session["EndCode"] ?? "";
+            var WHC_StartDteFreeze = Request["WHC_StratDteFreeze"].ToDateTime();
+            var WHC_EndDteFreeze = Request["WHC_EndDteFreeze"].ToDateTime();
+            var fuji = Request["WHC_Fuji"];
+            var Text = Request["WHC_Text"];
+            var Strlevel = Request["WHC_Treelevel"];
+            var ParentText = Request["WHC_TreePrentText"];
+            var customerinfo = new DbServiceReference.Customer()
+            {
+                NvcName = Request["WHC_NvcName"] ?? "",
+                VcMobile = Request["WHC_VcMobile"] ?? "",
+            };
+            var custno = Request["WHC_IntCustNo"] ?? "0";
+            customerinfo.IntNo = custno == "" ? 0 : custno.ToInt();
 
-            var dt = BLLFactory<Core.DALSQL.ArcMeterReading>.Instance.SqlTable(sb.ToString());
-            var list = new List<CollectStatModel>();
+            if (Strlevel == "1")
+            {
+                customerinfo.NvcVillage = "所有小区";
+            };
+            if (Strlevel == "2")
+            {
+                customerinfo.NvcVillage = Text;
+            }
+            if (Strlevel == "3")
+            {
+                customerinfo.NvcVillage = fuji;
+                customerinfo.VcBuilding = Text;
+            }
+            if (Strlevel == "4")
+            {
+                customerinfo.NvcVillage = ParentText;
+                customerinfo.VcBuilding = fuji;
+                customerinfo.VcUnitNum = Text;
+            }
+            //调用后台服务获取集中器信息          
+            var dts = new DbServiceReference.ServiceDbClient().CollectStatus_Qry(endcode.ToString().ToInt(), customerinfo, WHC_StartDteFreeze, WHC_EndDteFreeze);
             var m = new CollectStatModel();
-            foreach (DataRow item in dt.Rows)
+            foreach (DataRow item in dts.Rows)
             {
                 m.Used += item["Reading"].ToString().ToDecimalOrZero();
-            }
-            m.Count = dt.Rows.Count;
-            list.Add(m);
-
-            //Json格式的要求{total:22,rows:{}}
-            //构造成Json的格式传递
-            var result = new { total = list.Count, rows = list };
+            }      
+            result.Data1 = dts.Rows.Count.ToString();
+            result.Data2 = m.Used.ToString();
             return ToJsonContentDate(result);
         }
 
@@ -193,8 +226,6 @@ namespace WHC.WaterFeeWeb.Controllers
             public int Count { get; set; }
             public decimal Used { get; set; }
         }
-
-
 
         public ActionResult CollectChart()
         {
@@ -626,57 +657,35 @@ namespace WHC.WaterFeeWeb.Controllers
             var VcUserID = Request["VcUserID"];
             var DteChange = Request["DteChange"];
             var DtCreate = Request["DtCreate"];
-
             string sql = "insert into ArcMeterChange (IntCustNo,VcAddrOld,VcAddrNew,NumReading,IntType,NVcDesc,VcUserID,DteChange,DtCreate) values (" + IntCustNo + ",'" + VcAddrOld + "','" + VcAddrNew + "','" + NumReading + "'," + IntType + ",'" + NVcDesc + "','" + VcUserID + "','" + DteChange + "','" + DtCreate + "')";
-
             var num = PROJECT.SqlHelper.ExecteNonQueryText(sql);
-
-
-
             return ToJsonContentDate(num);
-
-
         }
 
 
         public ActionResult ManualMeterReading()
         {
-
             return View();
         }
         [HttpPost]
-        public ActionResult WriteNumReading()
+        public ActionResult WriteNumReading_Server()
         {
-
             CommonResult result = new CommonResult();
-            result.Success = false;
-            List<SqlParameter> lichange = new List<SqlParameter>();
-
+            var endcode = Session["EndCode"] ?? "0";          
             var IntCustNo = Request["IntCustNo"];
             var VcAddr = Request["VcAddr"];
-            var DteFreeze = Request["DteFreeze"];
-            var NumReading = Request["NumReading"];
-            //需改参数
-            lichange.Add(new SqlParameter("@iCustNo", SqlDbType.Int) { Value = IntCustNo });
-            lichange.Add(new SqlParameter("@sMeterAddr", SqlDbType.VarChar, 16) { Value = VcAddr });
-            lichange.Add(new SqlParameter("@DteFreeze", SqlDbType.VarChar, 64) { Value = DteFreeze });
-            lichange.Add(new SqlParameter("@fReading", SqlDbType.NVarChar, 16) { Value = NumReading });
-            lichange.Add(new SqlParameter("@sReturn", SqlDbType.VarChar, 64) { Direction = ParameterDirection.Output });
-            //需改存储过程名
-            BLLFactory<Core.BLL.ArcMeterReading>.Instance.ExecStoreProc("up_SaveReading_Track", lichange);
-
-
-            if (lichange[4].Value.ToString() == "0")
+            var DteFreeze = Request["DteFreeze"].ToDateTime();
+            var NumReading = Request["NumReading"].ToDouble();
+            var rs = new DbServiceReference.ServiceDbClient().CollectData_Ins(endcode.ToString().ToInt(),IntCustNo.ToInt32(),VcAddr,DteFreeze,NumReading, CurrentUser.ID.ToString());
+            if (rs == "0")
             {
-                result.Success = true;
+                result.Success=true;
             }
             else
             {
-                result.ErrorMessage = "执行up_ImportArchive存储过程出错!错误如下:" + lichange[4].Value.ToString();
+                result.ErrorMessage = rs;
             }
             return ToJsonContent(result);
-
         }
-
     }
 }
