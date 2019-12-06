@@ -15,15 +15,8 @@
 
     <script type="text/javascript">
         $(function () {
-            initDeptTreeview();
-            var queryData = {
-                WHC_VcMobile: $("#VcMobile").val(),
-                WHC_NvcName: $("#NvcName").val(),
-                WHC_IntCustNo: $("#IntCustNo").val(),
-                WHC_StratDteFreeze: $("#StartDteFreeze").datebox("getValue"),
-                WHC_EndDteFreeze: $("#EndDteFreeze").datebox("getValue"),
-            };
-           // InitGrid(queryData);
+            initDeptTreeview();            
+            InitGrid();
             BindSearchEvent();
         });
 

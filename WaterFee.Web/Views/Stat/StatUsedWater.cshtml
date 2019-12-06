@@ -62,7 +62,7 @@
                 }
             });
             //easyui("#txtDate").val(new Date().Format());
-
+            InitGrid();
             BindSearchEvent();
         });
 
@@ -151,7 +151,7 @@
                 var start = $("#txtDateStart").datebox('getValue');
                 var end = $("#txtDateEnd").datebox('getValue');
                 if (!start || !end) {
-                    alert("开始日期或结束日期不能为空!");
+                    $.messager.alert("开始日期或结束日期不能为空!");
                     return false;
                 }
                 var queryData = {

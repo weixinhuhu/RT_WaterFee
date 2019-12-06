@@ -17,19 +17,42 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="EasyTreeData" nillable="true" type="tns:EasyTreeData" />
+  <xs:complexType name="ArrayOfMeterConfigTree">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="MeterConfigTree" nillable="true" type="tns:MeterConfigTree" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfMeterConfigTree" nillable="true" type="tns:ArrayOfMeterConfigTree" />
+  <xs:complexType name="MeterConfigTree">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:EasyTreeData">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Data" nillable="true" type="tns:MeterConfig" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="MeterConfigTree" nillable="true" type="tns:MeterConfigTree" />
   <xs:complexType name="MeterConfig">
     <xs:sequence>
-      <xs:element minOccurs="0" name="AlertVolt" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="AllowUsed" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="CloseVolt" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="FreezeDay" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="InitReading" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="Point" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="UpAmount" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="UpTiming" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="UpTimingUnit" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="ValveMaint" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="ValveRuning" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DtCreate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DtLstUpd" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IntEndCode" type="xs:int" />
+      <xs:element minOccurs="0" name="IntID" type="xs:int" />
+      <xs:element minOccurs="0" name="VcAlertVolt" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcAllowUsed" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcCloseVolt" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcDesc" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcFreezeDay" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcInitReading" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcPoint" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcUpAmount" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcUpTiming" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcUpTimingUnit" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcUserID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcUserIDUpd" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcValveMaint" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcValveRuning" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="MeterConfig" nillable="true" type="tns:MeterConfig" />

@@ -13,11 +13,11 @@
     <script src="~/Scripts/ComponentUtil.js"></script>
     <script src="../../Content/My97DatePicker/WdatePicker.js"></script>
     <script src="~/Scripts/dbjs.js"></script>
-    <script type="text/javascript">
-        var sNvcVillage = "";
-        var sVcBuilding = "";
+    <script type="text/javascript">     
         var username = "";
         $(function () {
+            var queryData = {};
+            Init(queryData);       
             initDeptTreeview();
         });
 
@@ -37,7 +37,7 @@
         function initDeptTreeview() {
             $("#loading").show();
             $('#treeDept1').tree({
-                url: '/ArcCustomerInfo/TreeCommunity',
+                url: '/ArcCustomerInfo/TreeCommunity_Server',
                 onBeforeSelect: function (node) {
                     fujiText = node.text;
 
@@ -65,8 +65,8 @@
                         WHC_Text: node.text,
                         WHC_Treelevel: Treelevel.toString(),
                         WHC_TreePrentText: ParentText.text
-                    };
-                    submits(queryData);
+                    }; 
+                    Init(queryData);
                 }
             });
             $("#loading").fadeOut(500);
@@ -74,7 +74,7 @@
 
 
         //前端调用webserver
-        function setControler(sAddr, iCmdType) {
+        @*function setControler(sAddr, iCmdType) {
 
             var iUserNo = '@Session["UserID"]';         
             loading.show();
@@ -125,7 +125,7 @@
                 loading.hide();
                 showError(ex,5000);
             };
-        }
+        }*@
 
         var IDgridOpenClose = '#gridOpenClose';
 
@@ -148,8 +148,8 @@
             ////插入数据库方式
             //SettingMeterValve(sAddr, iCmdType);
 
-            //webserver方式
-            setControler(sAddr, iCmdType)
+            ////webserver方式
+            //setControler(sAddr, iCmdType)
         };
 
         function SettingMeterValve(sAddr, iCmdType) {
@@ -172,7 +172,7 @@
         }
 
         //信息查询
-        function submits(queryData) {
+        function Init(queryData) {
             $(IDgridOpenClose).datagrid({   //定位到Table标签，Table标签的ID是grid
                 url: '/ArcMeterInfo/ListByIntConID_Submit',   //指向后台的Action来获取当前用户的信息的Json格式的数据
                 // title: '水表列表',
@@ -190,29 +190,46 @@
                 //sortName: 'ID',    //根据某个字段给easyUI排序
                 sortOrder: 'asc',
                 remoteSort: false,
+               
                 //singleSelect: true,
                 idField: 'IntID', //不设置idField，翻页不会记录选择
                 queryParams: queryData,  //异步查询的参数
                 columns: [[
                     { field: 'ck', checkbox: true },   //选择
                     { title: '编号', field: 'IntID', width: 60, sortable: true,hidden:true},
-                    { title: '通信地址', field: 'VcAddr', width: 100, sortable: true },
-                    { title: '客户编号', field: 'IntCustNO', width: 100, align: 'center', sortable: true },
-                    { title: '客户名称', field: 'VcCustName', width: 100, align: 'center', sortable: true },
-                    { title: '手机号', field: 'VcMobile', width: 80, sortable: true },
-                    { title: '用户小区', field: 'NvcVillage', width: 80, sortable: true },
+                    { title: '通信地址', field: 'VcAddr', width: 120, sortable: true },
+                    { title: '客户编号', field: 'IntCustNO', width: 120, align: 'center', sortable: true },
+                    { title: '客户名称', field: 'VcCustName', width: 120, align: 'center', sortable: true },
+                    { title: '手机号', field: 'VcMobile', width: 120, sortable: true },
+                    { title: '用户小区', field: 'NvcVillage', width: 120, sortable: true },
                     { title: '用户楼栋', field: 'VcBuilding', width: 80, sortable: true },
                     { title: '用户单元', field: 'IntUnitNum', width: 80, sortable: true },
                     { title: '用户门牌号', field: 'IntRoomNum', width: 80, sortable: true },
-                    { title: '账户余额', field: 'Fee', width: 80, sortable: true },
+                    {
+                        title: '账户余额', field: 'Fee', width: 80, sortable: true,align: 'right',
+                        //改变cell字体
+                        formatter: function (value, index, row) {
+                            if (value <= 0) { return '<span style="color:red">' + value + '</span>' } else {
+                                return '<span style="color:green">' + value + '</span>'
+                            }
+                        }
+                    },
                     //{ title: '安装地址', field: 'NvcAddr', width: 120, sortable: true },
                     //{ title: '条形码', field: 'VcBarCode', width: 100, align: 'center', sortable: true }
                 ]],
                 onLoadSuccess: function () {
+                    $(this).datagrid('clearSelections');
                 },
+                //改变行背景颜色
+                //rowStyler: function (index, row) {
+                //    if (row.Fee <= 0) {
+                //        return 'background-color:#FFF0F5;';
+                //    }
+                //},
                 onDblClickRow: function (rowIndex, rowData) {
 
                 }
+
             });
         };
         function submit() {
@@ -221,11 +238,9 @@
                 "NvcName": $("#NvcName").val(),
                 "VcMobile": $("#VcMobile").val(),
                 "VcAddr": $("#VcAddr").val(),
-                "flag": $("#flag").combobox("getValue"),
-                "NvcVillage": sNvcVillage,
-                "VcBuilding": sVcBuilding
+                "flag": $("#flag").combobox("getValue"),              
             };
-            submits(queryData);
+            Init(queryData);
             return false;
         }
 
@@ -300,14 +315,15 @@
                 </fieldset>
                 <div id="divTab" class="easyui-tabs">
                     <div id="divOpenClose" title="远程开关阀" style="padding: 10px" data-options="iconCls:'icon-key'">
-                        <table id="gridOpenClose" style="width: 940px" title="用户列表" data-options="iconCls:'icon-view'"></table>
                         <div style="margin: 2px;">
+                            <label for="txtNvcAddr">控制指令：</label>
                             <select id="ddlOpenClose" name="ddlOpenClose" class="easyui-combobox" style="width: 100px;" data-options="required:true">
                                 <option value="1">关阀</option>
                                 <option value="2">开阀</option>
                             </select>
                             <a href="#" style="width: 100px;" class="easyui-linkbutton" iconcls="icon-ok" name="btnSaveOpenClose" onclick="getSelectVcAddr()">下发指令</a>
                         </div>
+                        <table id="gridOpenClose" style="width: 940px" title="用户列表" data-options="iconCls:'icon-view'"></table                        
                     </div>
                 </div>
             </div>

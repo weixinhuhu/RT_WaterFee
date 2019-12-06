@@ -292,6 +292,24 @@
   <wsdl:message name="IServiceDb_Terminal_GetValveTaskResult_OutputMessage">
     <wsdl:part name="parameters" element="tns:Terminal_GetValveTaskResultResponse" />
   </wsdl:message>
+  <wsdl:message name="IServiceDb_Param_MeterConfig_GetTree_InputMessage">
+    <wsdl:part name="parameters" element="tns:Param_MeterConfig_GetTree" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Param_MeterConfig_GetTree_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Param_MeterConfig_GetTreeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Param_MeterConfig_Qry_InputMessage">
+    <wsdl:part name="parameters" element="tns:Param_MeterConfig_Qry" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Param_MeterConfig_Qry_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Param_MeterConfig_QryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Param_MeterConfig_Opr_InputMessage">
+    <wsdl:part name="parameters" element="tns:Param_MeterConfig_Opr" />
+  </wsdl:message>
+  <wsdl:message name="IServiceDb_Param_MeterConfig_Opr_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Param_MeterConfig_OprResponse" />
+  </wsdl:message>
   <wsdl:portType name="IServiceDb">
     <wsdl:operation name="SayHello">
       <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/SayHello" message="tns:IServiceDb_SayHello_InputMessage" />
@@ -480,6 +498,18 @@
     <wsdl:operation name="Terminal_GetValveTaskResult">
       <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/Terminal_GetValveTaskResult" message="tns:IServiceDb_Terminal_GetValveTaskResult_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/Terminal_GetValveTaskResultResponse" message="tns:IServiceDb_Terminal_GetValveTaskResult_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Param_MeterConfig_GetTree">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/Param_MeterConfig_GetTree" message="tns:IServiceDb_Param_MeterConfig_GetTree_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/Param_MeterConfig_GetTreeResponse" message="tns:IServiceDb_Param_MeterConfig_GetTree_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Param_MeterConfig_Qry">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/Param_MeterConfig_Qry" message="tns:IServiceDb_Param_MeterConfig_Qry_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/Param_MeterConfig_QryResponse" message="tns:IServiceDb_Param_MeterConfig_Qry_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Param_MeterConfig_Opr">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServiceDb/Param_MeterConfig_Opr" message="tns:IServiceDb_Param_MeterConfig_Opr_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServiceDb/Param_MeterConfig_OprResponse" message="tns:IServiceDb_Param_MeterConfig_Opr_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IServiceDb" type="tns:IServiceDb">
@@ -900,6 +930,33 @@
     </wsdl:operation>
     <wsdl:operation name="Terminal_GetValveTaskResult">
       <soap:operation soapAction="http://tempuri.org/IServiceDb/Terminal_GetValveTaskResult" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Param_MeterConfig_GetTree">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/Param_MeterConfig_GetTree" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Param_MeterConfig_Qry">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/Param_MeterConfig_Qry" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Param_MeterConfig_Opr">
+      <soap:operation soapAction="http://tempuri.org/IServiceDb/Param_MeterConfig_Opr" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

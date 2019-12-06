@@ -10,31 +10,39 @@
 
     <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
     <script src="~/Scripts/ComponentUtil.js"></script>
-
     <script src="../../Content/My97DatePicker/WdatePicker.js"></script>
     <script src="~/Scripts/dbjs.js"></script>
-   
+
     <script type="text/javascript">
         var sNvcVillage = "";
         var sVcBuilding = "";
 
         $(function () {
+            InitGrid();
+            GetMeterSettingInfo();
             initDeptTreeview();
         });
 
         var easyui_tree_options = {
-		length : 0,  //层数
-		getLevel : function(treeObj, node){	//treeObj为tree的dom对象，node为选中的节点
-			while(node != null){
-				node = $(treeObj).tree('getParent', node.target)
-				easyui_tree_options.length++;
-			}
-			var length1 = easyui_tree_options.length;
-			easyui_tree_options.length = 0;		//重置层数
-			return length1;
-		    }
-	    }
-
+            length: 0,  //层数
+            getLevel: function (treeObj, node) {	//treeObj为tree的dom对象，node为选中的节点
+                while (node != null) {
+                    node = $(treeObj).tree('getParent', node.target)
+                    easyui_tree_options.length++;
+                }
+                var length1 = easyui_tree_options.length;
+                easyui_tree_options.length = 0;		//重置层数
+                return length1;
+            }
+        }
+        function GetMeterSettingInfo() {
+            $('#MeterSettingInfo').combobox({
+                url: '/ArcMeterInfo/GetParam_MeterConfigTreeJson_Server',
+                valueField: 'id',
+                textField: 'text',
+                required: true,
+            });
+        }
         function initDeptTreeview() {
             $("#loading").show();
             $('#treeDept1').tree({
@@ -56,7 +64,7 @@
                         WHC_Treelevel: Treelevel.toString(),
                         WHC_TreePrentText: ParentText.text
                     };
-                    submits(queryData);
+                    InitGrid(queryData);
                 }
             });
             $("#loading").fadeOut(500);
@@ -76,154 +84,44 @@
                     sAddr += "," + rows[i].VcAddr;
                 }
             }
-           // alert(sAddr);
-            ChrAllowUsed = $("#ChrAllowUsed").val();
-            ChrFreezeDay = $("#ChrFreezeDay").val();
-            ChrValveMaint = $("#ChrValveMaint").val();
-            ChrUpTiming = $("#ChrUpTiming").val();
-            ChrUpTimingUnit = $("#flag").combobox('getValue');
-            ChrUpAmount = $("#ChrUpAmount").val();
-            SettingMeterInfo_web(sAddr, ChrAllowUsed, ChrFreezeDay, ChrValveMaint, ChrUpTiming, ChrUpTimingUnit, ChrUpAmount);
+            if (sAddr == "") {
+                showError("档案数据中无表号信息!");
+                return null;
+            }
+            var MeterInfoTypeNo = $('#MeterSettingInfo').combobox('getValue');
+            if (MeterInfoTypeNo == "" || MeterInfoTypeNo == null) {
+                showError("选择需要下发的表参数类型!");
+                return null;
+            }
+            SettingMeterInfo(sAddr, MeterInfoTypeNo);
         };
 
-        function SettingMeterInfo(sAddr, ChrAllowUsed, ChrFreezeDay, ChrValveMaint, ChrUpTiming, ChrUpTimingUnit, ChrUpAmount) {
+        function SettingMeterInfo(sAddr, MeterInfoTypeNo) {
             loading.show();
             $.ajax({
-                url: '/ArcMeterInfo/SettingMeterInfo',
+                url: '/ArcMeterInfo/SettingMeterInfo_Server',
                 dataType: 'json',
-                data: { sAddr: sAddr, ChrAllowUsed: ChrAllowUsed, ChrFreezeDay: ChrFreezeDay, ChrValveMaint: ChrValveMaint, ChrUpTiming: ChrUpTiming, ChrUpTimingUnit: ChrUpTimingUnit, ChrUpAmount: ChrUpAmount },
+                data: { sAddr: sAddr, sMeterInfoTypeNo: MeterInfoTypeNo },
                 success: function (result) {
                     if (result.Success) {
                         loading.hide();
-                        alert("任务下发成功");
+                        showTips("任务下发成功");
+                        $('#gridSettingInfo').datagrid('uncheckAll');
+                        $("#grid").datagrid("reload");
                     } else {
                         loading.hide();
-                        alert("任务下发失败");
+                        showError("任务下发失败： " + result.showError);
                     }
                 }
             });
             return false;
         }
 
-        //补0
-        function pad(num, n) {
-            var len = num.toString().length;
-            while (len < n) {
-                num = "0" + num;
-                len++;
-            }
-            return num;
-        }
-
-        function SettingMeterInfo_web(sAddr, ChrAllowUsed, ChrFreezeDay, ChrValveMaint, ChrUpTiming, ChrUpTimingUnit, ChrUpAmount) {
-            var iUserNo = '@Session["UserID"]';
-
-            if (ChrAllowUsed != "") {
-                AllowUsed = pad(parseInt(ChrAllowUsed).toString(16), 2);
-            } else {
-                AllowUsed = "FF";
-            }
-             
-            if (ChrFreezeDay != "") {
-                ChrFreezeDay = pad(parseInt(ChrFreezeDay).toString(16), 2);
-            } else {
-                ChrFreezeDay = "FF";
-            }
-
-            if (ChrValveMaint != "") {
-                ChrValveMaint = pad(parseInt(ChrValveMaint).toString(16),4);
-            } else {
-                ChrValveMaint = "FFFF";
-            }
-
-            if (ChrUpTiming != "") {
-                ChrUpTiming = pad(parseInt(ChrUpTiming).toString(16), 4);
-            } else {
-                ChrUpTiming = "FFFF";
-            }
-
-            if (ChrUpTimingUnit != "") {
-                ChrUpTimingUnit = pad(parseInt(ChrUpTimingUnit).toString(16), 2);
-            } else {
-                ChrUpTimingUnit = "FF";
-            }
-
-            if (ChrUpAmount != "") {
-                ChrUpAmount = pad(parseInt(ChrUpAmount).toString(16), 4);
-            } else {
-                ChrUpAmount = "FFFF";
-            }
-
-            var sConfig = {
-                SamplePoint: 'FF',
-                InitReading: 'FFFFFFFF',
-                AlertVolt: 'FFFF',
-                CloseVolt: 'FFFF',
-                AllowUsed: AllowUsed,
-                FreezeDay: ChrFreezeDay,
-                ValveMaint: ChrValveMaint,
-                UploadTime: ChrUpTiming,
-                UpTimeUnit: ChrUpTimingUnit,
-                UpAmount: ChrUpAmount,
-                ValveRun: 'FF',
-                UpdateTime: 'FFFFFFFFFFFF',
-                MeterAddr: 'FFFFFFFFFFFFFF',
-                StatusWord: 'FFFF'
-            };
-          
-            loading.show();
-            //这是我们在第一步中创建的Web服务的地址
-            var URL = "http://118.190.199.54:9009/FrontService/FrontService.asmx";
-            //在这处我们拼接
-            var str = JSON.stringify(sConfig);
-            iUserNo = parseInt(iUserNo)
-            data = '<?xml version="1.0" encoding="utf-8"?>';
-            data = data + '<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">';
-            data = data + '<soap12:Body>';
-            data = data + '<SendMeterConfigCmd xmlns="http://tempuri.org/" >';
-            data = data + '<sAddr>' + sAddr + '</sAddr>';
-            data = data + '<sConfig>' + str + '</sConfig>';
-            data = data + '<iUserNo>' + iUserNo+ '</iUserNo>';
-            data = data + '</SendMeterConfigCmd>';
-            data = data + '</soap12:Body>';
-            data = data + '</soap12:Envelope>';
-            alert(data);
-            try {
-                //创建异步对象
-                var xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-                xmlhttp.Open("POST", URL, false);
-                xmlhttp.SetRequestHeader("Content-Type", "application/soap+xml");
-                xmlhttp.Send(data);
-                if (xmlhttp.readyState == 4) {
-                    if (xmlhttp.status == 200) {
-                        var textHTML = xmlhttp.responseText;
-                        alert(textHTML);
-                        var result = jQuery.parseXML(textHTML);
-                        $(result).find('SendMeterConfigCmdResponse').each(function () {
-                            result=$(this).children('SendMeterConfigCmdResult').text();
-                        });
-                        if (result == "0")
-                        {
-                            showTips("指令下发成功！")
-                        } else
-                        {
-                            showError("指令下发失败！",5000)
-                        }
-                    }
-                }
-                loading.hide();
-            }
-            catch (ex) {
-                loading.hide();
-                showError(ex,5000);
-            };
-        }
-
         //信息查询
-        function submits(queryData) {
+        function InitGrid(queryData) {
             $('#gridSettingInfo').datagrid({   //定位到Table标签，Table标签的ID是grid
-                url: '/ArcMeterInfo/SettingMangger',   //指向后台的Action来获取当前用户的信息的Json格式的数据
-                height: document.body.clientHeight *0.7,
+                url: '/ArcMeterInfo/SettingMangger_Server',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                height: document.body.clientHeight * 0.75,
                 width: function () { return document.body.clien6tWidth * 0.8 - 20 },//自动宽度
                 nowrap: true,
                 autoRowHeight: true,
@@ -232,6 +130,7 @@
                 pagination: true,
                 pageSize: 50,
                 pageList: [50, 100, 200],
+                //singleSelect: true,
                 rownumbers: true,
                 //sortName: 'ID',    //根据某个字段给easyUI排序
                 sortOrder: 'asc',
@@ -241,40 +140,85 @@
                 queryParams: queryData,  //异步查询的参数
                 columns: [[
                     { field: 'ck', checkbox: true },   //选择
-                    { title: '编号', field: 'intId', width: 60, sortable: true, hidden: true},
+                    { title: '编号', field: 'intId', width: 60, sortable: true, hidden: true },
                     { title: '通信地址', field: 'VcAddr', width: 100, sortable: true },
                     { title: '客户编号', field: 'IntNo', width: 100, sortable: true },
                     { title: '用户名称', field: 'NvcName', width: 100, sortable: true },
                     { title: '用户小区', field: 'NvcVillage', width: 80, sortable: true },
                     { title: '用户楼栋', field: 'VcBuilding', width: 80, sortable: true },
-                    { title: '用户单元', field: 'IntUnitNum', width: 80, sortable: true },
-                    { title: '用户门牌号', field: 'IntRoomNum', width: 80, sortable: true },
+                    { title: '用户单元', field: 'VcUnitNum', width: 80, sortable: true },
+                    { title: '用户门牌号', field: 'VcRoomNum', width: 80, sortable: true },
                     { title: '用户电话', field: 'VcMobile', width: 120, sortable: true },
-                    { title: '月冻结日', field: 'ChrFreezeDay', width: 80, sortable: true },
-                    { title: '阀门维护时间', field: 'ChrValveMaint', width: 120, sortable: true },
-                    { title: '定时上传时间', field: 'ChrUpTiming' + 'ChrUpTimingUnit', width: 100, sortable: true },
-                    // { title: '单位', field: 'VcBarCode', width: 100,  sortable: true },
-                    { title: '定量上传值', field: 'ChrUpAmount ', width: 100, sortable: true },
-                    { title: '应急用水使用时间(小时)', field: 'ChrAllowUsed', width: 100, sortable: true }
-                ]],
+                
+                    //{ title: '采样点', field: 'VcPoint', width: 80, hidden: true },
+                    //{ title: '初始读数', field: 'VcInitReading', width: 80, hidden: true },
+                    //{ title: '报警电压', field: 'VcAlertVolt', width: 80, hidden: true },
+                    //{ title: '关阀电压', field: 'VcCloseVolt', width: 80, hidden: true },
+                    { title: '应急用水(小时)', field: 'ChrAllowUsed', width: 80, hidden: true },
+                    { title: '月冻结日', field: 'ChrFreezeDay', width: 80, hidden: true },
+                    { title: '阀门维护时间(小时)', field: 'ChrValveMaint', width: 120, hidden: true },
+                    { title: '定时上传时间', field: 'ChrUpTiming', width: 80, hidden: true },
+                    {
+                        title: '单位', field: 'ChrUpTimingUnit', width: 80, hidden: true, formatter: function (val) {
+                            if (val == 1) return "分";
+                            if (val == 2) return "小时";
+                            if (val == 3) return "天";
+                            else return val;
+                        }
+                    },
+                    { title: '定量上传值', field: 'ChrUpAmount', width: 80, hidden: true },
+                   // { title: '阀门运行时间', field: 'VcValveRuning', width: 80, hidden: true },
+                    {
+                        field: 'opt', title: '查看表端参数', width: 200, align: 'center',
+                        formatter: function () {
+                            var btn = '<a class="detail" onclick=" ShowDetail()"  href="javascript:void(0)">详情</a>';
+                            return btn;
+                        }
+                    }]],
                 onLoadSuccess: function () {
+                    $('.detail').linkbutton({ text: '双击查看', plain: true, iconCls: 'icon-add' });
                 },
                 onDblClickRow: function (rowIndex, rowData) {
-
+                    $('#gridSettingInfo').datagrid('uncheckAll');
+                    $('#gridSettingInfo').datagrid('checkRow', rowIndex);
+                    ShowEditOrViewDialog();
                 }
             });
         };
-
-        function submit() {
+        ShowDetail = function () {
+          // ShowEditOrViewDialog();
+        }
+        //修改或查看明细信息（绑定显示数据）
+        function ShowEditOrViewDialog() {
+            //首先取出来用户选择的数据的ID
+            var rows = $("#gridSettingInfo").datagrid("getSelections");
+            BindEditInfo(rows[0]);
+            $("#DivAdd").dialog('open').dialog('setTitle','用户名【'+rows[0].NvcName+'】表端参数信息');         
+        }
+        //绑定编辑详细信息的方法
+        function BindEditInfo(info) {
+            if (info == null) {
+                showError("数据有误!");
+                return false;
+            }
+            console.log(info);           
+            $("#VcAllowUsed").val(info.ChrAllowUsed);
+            $("#VcFreezeDay").val(info.ChrFreezeDay);
+            $("#VcUpTiming").val(info.ChrUpTiming);
+            $("#VcUpTimingUnit").combobox('setValue', info.ChrUpTimingUnit);
+            $("#VcUpAmount").val(info.ChrUpAmount);
+            $("#VcValveMaint").val(info.ChrValveMaint);
+        }
+        function Query() {
             var queryData = {
-                "IntCustNO": $("#IntCustNO").val(),
-                "NvcVillage": sNvcVillage,
-                "VcBuilding": sVcBuilding
+                WHC_IntNo: $("#txtIntNo").val(),
+                WHC_NvcName: $("#txtNvcName").val(),
+                WHC_NvcAddr: $("#txtNvcAddr").val(),
+                WHC_VcMobile: $("#txtVcMobile").val()
             };
-            submits(queryData);
+            InitGrid(queryData);
             return false;
         }
-
         //对象居中的函数，调用例子：$("#loading").center();
         jQuery.fn.center = function () {
             this.css("position", "absolute");
@@ -285,7 +229,42 @@
             return this;
         }
     </script>
+    <style>
+        table.view {
+            border: 1px solid #A8CFEB;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+            vertical-align: top;
+            height: 98%;
+            width: 98%;
+        }
 
+        .view th {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #F1F6FF;
+        }
+
+        .view td {
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            height: 23px;
+            width: 150px;
+            border: 1px solid silver;
+            background-color: #FAFCFF;
+        }
+
+        .view input {
+            width: 99%;
+        }
+    </style>
 </head>
 <body>
     <div id="loading" style="display: none;">
@@ -293,7 +272,7 @@
     </div>
     <div class="easyui-layout" style="width: 700px; height: 700px;" fit="true">
         <div data-options="region:'west',split:true,title:'',iconCls:'icon-book'" style="width: 230px; padding: 1px;">
-            <div class="easyui-tabs" style="width:200px;">              
+            <div class="easyui-tabs" style="width:200px;">
                 <div title="用户列表" style="padding:10px;">
                     <ul id="treeDept1"></ul>
                 </div>
@@ -306,72 +285,122 @@
                     <table cellspacing="0" cellpadding="0">
                         <tr>
                             <th style='padding: 3px;'>
-                                <label for="NvcName">关键词：</label>
+                                <label for="txtIntNo">客户编号：</label>
                             </th>
                             <td style='padding: 3px;'>
-                                <input type="text" id="IntCustNO" class="text-info" style="width: 100px" />
+                                <input type="text" id="txtIntNo" class="easyui-numberbox" style="width: 100px" />
                             </td>
+                            <th style='padding: 3px;'>
+                                <label for="txtNvcName">客户姓名：</label>
+                            </th>
+                            <td style='padding:3px;'><input type="text" id="txtNvcName" style="width:100px" /></td>
+                            <th style='padding:3px;'><label for="txtNvcAddr">客户地址：</label></th>
+                            <td style='padding:3px;'><input type="text" id="txtNvcAddr" style="width:100px" /></td>
+                            <th style='padding:3px;'><label for="txtVcMobile">移动号码：</label></th>
+                            <td style='padding:3px;'><input type="text" id="txtVcMobile" class="easyui-numberbox" style="width:100px" /></td>
                             <td style='padding: 3px; text-align: right'>
-                                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch" onclick="submit()">查询</a>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </fieldset>
-            <fieldset id="condition1">
-                <legend>参数设置</legend>
-                <div id="toolbar">
-                    <table cellspacing="0" cellpadding="0">
-                        <tr>
-                            <th style='padding: 3px;'>
-                                <label for="ChrFreezeDay">月冻结日：</label>
-                            </th>
-                            <td style='padding: 3px;'>
-                                <input type="text" id="ChrFreezeDay" class="text-info" style="width: 70px" maxlength="2" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" />
-                            </td>
-                            <th style='padding: 3px;'>
-                                <label for="ChrValveMaint">阀门维护时间(小时)：</label>
-                            </th>
-                            <td style='padding: 3px;'>
-                                <input type="text" id="ChrValveMaint" class="text-info" style="width: 70px" maxlength="4" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" />
-                            </td>
-                            <th style='padding: 3px;'>
-                                <label for="ChrUpTiming">定时上传时间：</label>
-                            </th>
-                            <td style='padding: 3px;'>
-                                <input type="text" id="ChrUpTiming" class="text-info" style="width: 70px" maxlength="4" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" />
-                            </td>
-                            <td style='padding: 3px;'>
-                                <select id="flag" name="flag" class="easyui-combobox" style="width: 50px;" data-options="required:true">
-                                    <option value="1">分</option>
-                                    <option value="2">小时</option>
-                                    <option value="3">天</option>
-                                </select>
-                            </td>
-                            <th style='padding: 3px;'>
-                                <label for="ChrUpAmount">定量上传值：</label>
-                            </th>
-                            <td style='padding: 3px;'>
-                                <input type="text" id="ChrUpAmount" class="text-info" style="width: 70px" maxlength="4" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" />
-                            </td>
-                            <th style='padding: 3px;'>
-                                <label for="ChrAllowUsed">应急用水时间：</label>
-                            </th>
-                            <td style='padding: 3px;'>
-                                <input type="text" id="ChrAllowUsed" class="text-info" style="width: 70px" maxlength="2" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" />
-                            </td>
-                            <td style='padding: 3px; text-align: right'>
-                                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="getSelectVcAddr()">设置</a>
+                                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch" onclick="Query()">查询</a>
                             </td>
                         </tr>
                     </table>
                 </div>
             </fieldset>
             <div id="divTab" class="easyui-tabs">
-                <div id="divSettingManger" title="参数管理" style="padding: 10px" data-options="iconCls:'icon-key'">
-                    <table id="gridSettingInfo" style="width: 940px" title="用户水表参数信息" data-options="iconCls:'icon-view'"></table>
+                <div id="divOpenClose" title="表参数下发" style="padding: 10px" data-options="iconCls:'icon-key'">
+                    <div style="margin: 2px;">
+                        <label for="txtNvcAddr">表参数类型：</label>
+                        <select id="MeterSettingInfo" name="MeterSettingInfo" class="easyui-combobox" style="width: 100px;" data-options="required:true"></select>
+                        <a href="#" style="width: 100px;" class="easyui-linkbutton" iconcls="icon-ok" name="btnSaveOpenClose" onclick="getSelectVcAddr()">下发指令</a>
+                    </div>
+                    <!-------------------------------详细信息展示表格----------------------------------->               
+                    <table id="gridSettingInfo" style="width: 940px" title="用户信息" data-options="iconCls:'icon-view'"></table>
                 </div>
             </div>
+        </div>
+    </div>
+    <div style="display:none;">
+        <!--------------------------添加信息的弹出层---------------------------->
+        <div id="DivAdd" class="easyui-dialog" style="width:auto;height:auto;padding:5px 5px"
+             closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-add'">
+            <form id="ffAdd" method="post" novalidate="novalidate">
+                <table id="tblAdd" class="view">
+                    @*<tr>
+                        <th>
+                            <label for="Point">采样点：</label>
+                        </th>
+                        <td>
+                            <input type="text" id="VcPoint" name="VcPoint" class="text-info" style="width: 99%" maxlength="2" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" readonly />
+                        </td>
+                        <th>
+                            <label for="InitReading">初始读数：</label>
+                        </th>
+                        <td>
+                            <input type="text" id="VcInitReading" name="VcInitReading" style="width:99%;" maxlength="8" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" readonly />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="AlertVolt">报警电压：</label>
+                        </th>
+                        <td>
+                            <input type="text" id="VcAlertVolt" name="VcAlertVolt" class="text-info" style="width: 99%" maxlength="4" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" readonly />
+                        </td>
+                        <th>
+                            <label for="CloseVolt">关阀电压：</label>
+                        </th>
+                        <td>
+                            <input type="text" id="VcCloseVolt" name="VcCloseVolt" style="width:99%;" maxlength="4" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" readonly />
+                        </td>
+                    </tr>*@
+                    <tr>
+                        <th>
+                            <label for="addDteStart">月冻结日：</label>
+                        </th>
+                        <td>
+                            <input type="text" id="VcFreezeDay" name="VcFreezeDay" class="text-info" style="width: 99%" maxlength="4" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" readonly />
+                        </td>
+                        <th>
+                            <label for="addDteEnd">阀门维护时间(小时)：</label>
+                        </th>
+                        <td>
+                            <input type="text" id="VcValveMaint" name="VcValveMaint" class="text-info" style="width: 99%" maxlength="4" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" readonly />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="ChrUpTiming">定时上传时间：</label>
+                        </th>
+                        <td>
+                            <input type="text" id="VcUpTiming" name="VcUpTiming" class="text-info" style="width: 65%" maxlength="4" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" readonly />
+                            <select id="VcUpTimingUnit" name="VcUpTimingUnit" class="easyui-combobox" style="width: 30%;">
+                                <option value="1">分</option>
+                                <option value="2">小时</option>
+                                <option value="3">天</option>
+                            </select>
+                        </td>
+                        <th style='padding: 3px;'>
+                            <label for="ChrUpAmount">定量上传值：</label>
+                        </th>
+                        <td>
+                            <input type="text" id="VcUpAmount" name="VcUpAmount" class="text-info" style="width: 99%" maxlength="4" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" readonly />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="ChrAllowUsed">应急用水时间：</label>
+                        </th>
+                        <td>
+                            <input type="text" id="VcAllowUsed" name="VcAllowUsed" class="text-info" style="width: 99%" maxlength="2" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" readonly />
+                        </td>
+                        @*<th>
+                            <label for="ValveRuning">阀门运行时间：</label>
+                        </th>
+                        <td>
+                            <input type="text" id="VcValveRuning" name="VcValveRuning" class="text-info" style="width: 99%" maxlength="2" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" readonly />
+                        </td>*@
+                    </tr>
+                </table>
+            </form>
         </div>
     </div>
 </body>

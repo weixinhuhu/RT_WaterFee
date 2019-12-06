@@ -891,7 +891,7 @@
       <xs:sequence>
         <xs:element minOccurs="0" name="iCode" type="xs:int" />
         <xs:element minOccurs="0" name="sAddrs" nillable="true" type="xs:string" />
-        <xs:element xmlns:q34="http://schemas.datacontract.org/2004/07/DbServer.Model" minOccurs="0" name="MeterConf" nillable="true" type="q34:MeterConfig" />
+        <xs:element minOccurs="0" name="iParamID" type="xs:int" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -906,8 +906,8 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="iCode" type="xs:int" />
-        <xs:element xmlns:q35="http://schemas.datacontract.org/2004/07/DbServer.DTO" minOccurs="0" name="Cust" nillable="true" type="q35:Customer" />
-        <xs:element xmlns:q36="http://schemas.datacontract.org/2004/07/DbServer.DTO" minOccurs="0" name="meter" nillable="true" type="q36:Meter" />
+        <xs:element xmlns:q34="http://schemas.datacontract.org/2004/07/DbServer.DTO" minOccurs="0" name="Cust" nillable="true" type="q34:Customer" />
+        <xs:element xmlns:q35="http://schemas.datacontract.org/2004/07/DbServer.DTO" minOccurs="0" name="meter" nillable="true" type="q35:Meter" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -944,7 +944,61 @@
   <xs:element name="Terminal_GetValveTaskResultResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q37="http://schemas.datacontract.org/2004/07/DbServer.DTO" minOccurs="0" name="Terminal_GetValveTaskResultResult" nillable="true" type="q37:CommonResult" />
+        <xs:element xmlns:q36="http://schemas.datacontract.org/2004/07/DbServer.DTO" minOccurs="0" name="Terminal_GetValveTaskResultResult" nillable="true" type="q36:CommonResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Param_MeterConfig_GetTree">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iCode" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Param_MeterConfig_GetTreeResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q37="http://schemas.datacontract.org/2004/07/DbServer.Model" minOccurs="0" name="Param_MeterConfig_GetTreeResult" nillable="true" type="q37:ArrayOfMeterConfigTree" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Param_MeterConfig_Qry">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iCode" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Param_MeterConfig_QryResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Param_MeterConfig_QryResult" nillable="true">
+          <xs:complexType>
+            <xs:annotation>
+              <xs:appinfo>
+                <ActualType Name="DataTable" Namespace="http://schemas.datacontract.org/2004/07/System.Data" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+              </xs:appinfo>
+            </xs:annotation>
+            <xs:sequence>
+              <xs:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+              <xs:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Param_MeterConfig_Opr">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q38="http://schemas.datacontract.org/2004/07/DbServer.Model" minOccurs="0" name="MeterConf" nillable="true" type="q38:MeterConfig" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Param_MeterConfig_OprResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Param_MeterConfig_OprResult" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

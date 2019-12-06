@@ -203,79 +203,49 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContentDate(dt);
         }
         //设置参数
-        public ActionResult SettingMangger()
+        public ActionResult SettingMangger_Server()
         {
-            string where = "";
-            string sql;    
-            string WHC_IntCustNo = Request["IntCustNO"];        
+            var endcode = Session["EndCode"] ?? "0";
+            var Strlevel = Request["WHC_Treelevel"];
             var fuji = Request["WHC_Fuji"];
             var Text = Request["WHC_Text"];
-            var Strlevel = Request["WHC_Treelevel"];
             var ParentText = Request["WHC_TreePrentText"];
+            var custormerinfo = new Customer()
+            {
+                NvcName = Request["WHC_NvcName"] ?? "",
+                NvcAddr = Request["WHC_NvcAddr"] ?? "",
+                VcMobile = Request["WHC_VcMobile"] ?? ""
+            };
+            var useno = Request["WHC_IntNo"] ?? "0";
+            custormerinfo.IntNo = useno.Equals("") ? 0 : useno.ToInt32();
 
             if (Strlevel == "1")
             {
-                where = " and NvcVillage = '所有小区' ";
-            }
+                custormerinfo.NvcVillage = "所有小区";
+            };
 
             if (Strlevel == "2")
             {
-                where = " and NvcVillage = '" + Text + "' ";
+                custormerinfo.NvcVillage = Text;
             }
 
             if (Strlevel == "3")
             {
-                where = " and NvcVillage = '" + fuji + "' ";
-                where += "  and VcBuilding='" + Text + "'";
+                custormerinfo.NvcVillage = fuji;
+                custormerinfo.VcBuilding = Text;
             }
 
             if (Strlevel == "4")
             {
-                where = " and NvcVillage = '" + ParentText + "' ";
-                where += " and VcBuilding = '" + fuji + "' ";
-                where += "  and IntUnitNum='" + Text + "'";
+                custormerinfo.NvcVillage = ParentText;
+                custormerinfo.VcBuilding = fuji;
+                custormerinfo.VcUnitNum = Text;
             }
 
-            if (WHC_IntCustNo != "")
-            {
-                where += "  AND ( A.NvcName LIKE  '%" + WHC_IntCustNo + "%'";
-                where += "  OR NvcVillage LIKE  '%" + WHC_IntCustNo + "%'";
-                where += "  OR IntUnitNum LIKE  '%" + WHC_IntCustNo + "%'";
-                where += "  OR IntRoomNum LIKE  '%" + WHC_IntCustNo + "%'";
-                where += "  OR C.VcAddr LIKE   '%" + WHC_IntCustNo + "%'";
-                where += "  OR VcMobile LIKE   '%" + WHC_IntCustNo + "%'";
-                where += "  OR A.IntNo LIKE   '%" + WHC_IntCustNo + "%')";
-            }
-            
-            //20190704
-            sql = @"  SELECT 
-                        A.intId ,
-                        A.IntNo ,
-		                C.VcAddr,
-                        A.NvcName,
-                        NvcVillage ,
-                        VcMobile ,
-                        VcBuilding ,
-                        IntUnitNum ,
-                        IntRoomNum ,
-                        B.ChrFreezeDay ,
-                        B.ChrValveMaint ,
-                        ChrUpTiming ,
-                        CASE B.ChrUpTimingUnit
-                          WHEN 1 THEN '分'
-                          WHEN 2 THEN '小时'
-                          WHEN 3 THEN '天'
-                        END ChrUpTimingUnit,
-                        B.ChrUpAmount ,
-                        B.ChrAllowUsed
-                 FROM   dbo.ArcCustomerInfo A
-		                LEFT JOIN dbo.ArcMeterInfo C ON A.IntNo=C.IntCustNO
-                        LEFT JOIN dbo.ArcMeterConfig B ON C.VcAddr = B.VcAddr
-                 WHERE  1 = 1";
-
-            sql += where;
-       
-            var dts = BLLFactory<Core.BLL.ArcMeterInfo>.Instance.SqlTable(sql);
+            //调用后台服务获取集中器信息
+            ServiceDbClient DbServer = new ServiceDbClient();
+            var dts = DbServer.Terminal_GetMeterSetting(endcode.ToString().ToInt32(), custormerinfo,new Meter());
+         
             int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
             int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
 
@@ -296,16 +266,14 @@ namespace WHC.WaterFeeWeb.Controllers
         }
 
         public ActionResult ListByIntConID_Data(string WHC_IntConID)
-        {
-           
+        {          
             var sb = new System.Text.StringBuilder();
             sb.Append(" SELECT B.IntID 编号, B.Repeater1,B.Repeater2,B.Repeater3,A.* ");
             sb.Append(" ,C.NvcAddr VcCustAddr,C.NvcName VcCustName ");
             sb.AppendFormat(" FROM uf_GetDeviceID({0}) B, ArcMeterInfo A ", WHC_IntConID);
             sb.AppendFormat(" left join ArcCustomerInfo C on C.IntNo=A.IntCustNo ");
             sb.Append(" WHERE A.IntConID = B.IntID and a.INtStatus=0  ORDER BY A.IntMP ");
-             
-
+            
             var dt = BLLFactory<Core.BLL.ArcCustomerInfo>.Instance.SqlTable(sb.ToString());
             var listCustNo = new List<string>();
             foreach (DataRow item in dt.Rows)
@@ -792,11 +760,13 @@ namespace WHC.WaterFeeWeb.Controllers
         }
         public ActionResult ChangeTB()
         {
-
             return View();
         }
 
-
+        public ActionResult MeterSettingInfo()
+        {
+            return View();
+        }
         public static string HttpPost(string url, string body)
         {
             //ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
@@ -846,70 +816,121 @@ namespace WHC.WaterFeeWeb.Controllers
 
             return ToJsonContent(result);
         }
- 
-        public ActionResult SettingMeterInfo(String sAddr, String ChrAllowUsed, String ChrFreezeDay, String ChrValveMaint, String ChrUpTiming, String ChrUpTimingUnit, String ChrUpAmount)
+        /// <summary>
+        /// 查询参数信息 用于前端下拉框
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult GetParam_MeterConfigTreeJson_Server()
+        {
+            var endcode = Session["EndCode"] ?? "0";
+            ServiceDbClient DbServer = new ServiceDbClient();
+            var tree = new ServiceDbClient().Param_MeterConfig_GetTree(endcode.ToString().ToInt());
+            return ToJsonContentDate(tree);
+        }
+        /// <summary>
+        /// 查询参数信息
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Param_MeterConfig_Qry()
+        {
+            var endcoed = Session["EndCode"] ?? "";
+            var dts = new ServiceDbClient().Param_MeterConfig_Qry(endcoed.ToString().ToInt());
+
+            int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
+            int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
+
+            DataTable dat = new DataTable();
+            //复制源的架构和约束
+            dat = dts.Clone();
+            // 清除目标的所有数据
+            dat.Clear();
+            //对数据进行分页
+            for (int i = (page - 1) * rows; i < page * rows && i < dts.Rows.Count; i++)
+            {
+                dat.ImportRow(dts.Rows[i]);
+            }
+            //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
+            int total = dts.Rows.Count;
+            var result = new { total = total, rows = dat };
+            return ToJsonContentDate(result);        
+        }
+
+        public ActionResult Param_MeterConfig_Ins(MeterConfig MeterConf)
         {
             CommonResult result = new CommonResult();
-            result.Success = false;
-            List<SqlParameter> settingmetervale = new List<SqlParameter>();
-            try
+            var endcode = Session["EndCode"] ?? "0";
+            MeterConf.IntID = 0;
+            MeterConf.VcUserID = CurrentUser.ID.ToString();
+            MeterConf.VcUserIDUpd = CurrentUser.ID.ToString();    
+            MeterConf.IntEndCode =endcode.ToString().ToInt32();          
+            MeterConf.DtCreate = DateTime.Now;
+            var rs = new ServiceDbClient().Param_MeterConfig_Opr(MeterConf);
+            if (rs == "0")
             {
-                if (ChrAllowUsed != "") {
-                    ChrAllowUsed = Ten2Hex(ChrAllowUsed).PadLeft(2, '0');
-                };
-                if (ChrFreezeDay != "")
-                {
-                    ChrFreezeDay = Ten2Hex(ChrFreezeDay).PadLeft(4, '0');
-                };
-                if (ChrValveMaint != "")
-                {
-                    ChrValveMaint = Ten2Hex(ChrValveMaint).PadLeft(4, '0');
-                };
-                if (ChrUpTiming != "")
-                {
-                    ChrUpTiming = Ten2Hex(ChrUpTiming).PadLeft(4, '0');
-                };
-                if (ChrUpAmount != "")
-                {
-                    ChrUpAmount = Ten2Hex(ChrUpAmount).PadLeft(4, '0');
-                };
-
-
-                //把需要改的数据以list形式带入到存储过程（有参）
-                settingmetervale.Add(new SqlParameter("@sAddrs", SqlDbType.NVarChar) { Value = sAddr });
-                settingmetervale.Add(new SqlParameter("@ChrPoint", SqlDbType.VarChar,2) { Value = "" });
-                settingmetervale.Add(new SqlParameter("@ChrInitReading", SqlDbType.VarChar,8) { Value = "" });
-                settingmetervale.Add(new SqlParameter("@ChrAlertVolt", SqlDbType.VarChar, 2) { Value = "" });
-                settingmetervale.Add(new SqlParameter("@ChrCloseVolt", SqlDbType.VarChar, 2) { Value = "" });
-                settingmetervale.Add(new SqlParameter("@ChrAllowUsed", SqlDbType.VarChar, 2) { Value = ChrAllowUsed });
-                settingmetervale.Add(new SqlParameter("@ChrFreezeDay", SqlDbType.VarChar, 2) { Value = ChrFreezeDay });
-                settingmetervale.Add(new SqlParameter("@ChrValveMaint", SqlDbType.VarChar, 4) { Value = ChrValveMaint });
-                settingmetervale.Add(new SqlParameter("@ChrUpTiming", SqlDbType.VarChar, 4) { Value = ChrUpTiming });
-                settingmetervale.Add(new SqlParameter("@ChrUpTimingUnit", SqlDbType.VarChar, 2) { Value = ChrUpTimingUnit.PadLeft(2, '0') });
-                settingmetervale.Add(new SqlParameter("@ChrUpAmount", SqlDbType.VarChar, 4) { Value = ChrUpAmount });
-                settingmetervale.Add(new SqlParameter("@ChrValveRuning", SqlDbType.VarChar, 2) { Value = "" });
-                settingmetervale.Add(new SqlParameter("@sReturn", SqlDbType.VarChar, 256) { Direction = ParameterDirection.Output });
-                BLLFactory<Core.BLL.ArcMeterInfo>.Instance.ExecStoreProc("up_TaskConfigBatch_NB", settingmetervale);
-
-                if (settingmetervale[12].Value.ToString() == "0")
+                result.Success = true;
+            }
+            else
+            {
+                result.Success = false;
+                result.ErrorMessage = rs;
+            }
+            return ToJsonContent(result);
+}
+        public ActionResult Param_MeterConfig_Upd(MeterConfig MeterConf)
+        {
+            CommonResult result = new CommonResult();
+            var endcode = Session["EndCode"] ?? "0";
+            MeterConf.VcUserIDUpd = CurrentUser.ID.ToString()?? "";
+            MeterConf.IntEndCode = endcode.ToString().ToInt32();
+            MeterConf.DtLstUpd = DateTime.Now;
+            var rs = new ServiceDbClient().Param_MeterConfig_Opr(MeterConf);
+            if (rs == "0")
+            {
+                result.Success = true;
+            }
+            else
+            {
+                result.Success = false;
+                result.ErrorMessage = rs;
+            }
+            return ToJsonContent(result);
+        }
+        /// <summary>
+        /// 设置参数
+        /// </summary>
+        /// <param name="sAddr"></param>
+        /// <param name="ChrAllowUsed"></param>
+        /// <param name="ChrFreezeDay"></param>
+        /// <param name="ChrValveMaint"></param>
+        /// <param name="ChrUpTiming"></param>
+        /// <param name="ChrUpTimingUnit"></param>
+        /// <param name="ChrUpAmount"></param>
+        /// <returns></returns>
+        public ActionResult SettingMeterInfo_Server(String sAddr, String sMeterInfoTypeNo)
+        {
+            CommonResult result = new CommonResult();
+            var endcode = Session["EndCode"] ?? "0";
+            var meterSettingtypeno= sMeterInfoTypeNo.ToInt();
+            try
+            { 
+                var rs = new ServiceDbClient().Terminal_SetMeterConfig(endcode.ToString().ToInt(), sAddr, meterSettingtypeno);
+                if (rs == "0")
                 {
                     result.Success = true;
                 }
                 else
                 {
                     result.Success = false;
+                    result.ErrorMessage = rs;
                 }
-
             }
             catch (Exception ex)
             {
                 var err = ex.ToString();
                 result.Success = false;
             }
-
             return ToJsonContent(result);
         }
-
 
         /// <summary>
         /// 从十进制转换到十六进制

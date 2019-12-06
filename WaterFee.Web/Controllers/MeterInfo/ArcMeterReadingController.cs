@@ -683,6 +683,7 @@ namespace WHC.WaterFeeWeb.Controllers
             }
             else
             {
+                result.Success = false;
                 result.ErrorMessage = rs;
             }
             return ToJsonContent(result);

@@ -335,6 +335,7 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
     [System.Runtime.Serialization.DataContractAttribute(Name="EasyTreeData", Namespace="http://schemas.datacontract.org/2004/07/DbServer.Model")]
     [System.SerializableAttribute()]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.PricePropertyTree))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.MeterConfigTree))]
     public partial class EasyTreeData : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
@@ -467,6 +468,29 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public WHC.WaterFeeWeb.DbServiceReference.PriceProperty Data {
+            get {
+                return this.DataField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DataField, value) != true)) {
+                    this.DataField = value;
+                    this.RaisePropertyChanged("Data");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="MeterConfigTree", Namespace="http://schemas.datacontract.org/2004/07/DbServer.Model")]
+    [System.SerializableAttribute()]
+    public partial class MeterConfigTree : WHC.WaterFeeWeb.DbServiceReference.EasyTreeData {
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private WHC.WaterFeeWeb.DbServiceReference.MeterConfig DataField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public WHC.WaterFeeWeb.DbServiceReference.MeterConfig Data {
             get {
                 return this.DataField;
             }
@@ -670,6 +694,323 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
                 if ((object.ReferenceEquals(this.VcStatTypeField, value) != true)) {
                     this.VcStatTypeField = value;
                     this.RaisePropertyChanged("VcStatType");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="MeterConfig", Namespace="http://schemas.datacontract.org/2004/07/DbServer.Model")]
+    [System.SerializableAttribute()]
+    public partial class MeterConfig : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime DtCreateField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime DtLstUpdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IntEndCodeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IntIDField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcAlertVoltField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcAllowUsedField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcCloseVoltField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcDescField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcFreezeDayField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcInitReadingField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcPointField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcUpAmountField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcUpTimingField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcUpTimingUnitField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcUserIDField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcUserIDUpdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcValveMaintField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string VcValveRuningField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime DtCreate {
+            get {
+                return this.DtCreateField;
+            }
+            set {
+                if ((this.DtCreateField.Equals(value) != true)) {
+                    this.DtCreateField = value;
+                    this.RaisePropertyChanged("DtCreate");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime DtLstUpd {
+            get {
+                return this.DtLstUpdField;
+            }
+            set {
+                if ((this.DtLstUpdField.Equals(value) != true)) {
+                    this.DtLstUpdField = value;
+                    this.RaisePropertyChanged("DtLstUpd");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IntEndCode {
+            get {
+                return this.IntEndCodeField;
+            }
+            set {
+                if ((this.IntEndCodeField.Equals(value) != true)) {
+                    this.IntEndCodeField = value;
+                    this.RaisePropertyChanged("IntEndCode");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IntID {
+            get {
+                return this.IntIDField;
+            }
+            set {
+                if ((this.IntIDField.Equals(value) != true)) {
+                    this.IntIDField = value;
+                    this.RaisePropertyChanged("IntID");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcAlertVolt {
+            get {
+                return this.VcAlertVoltField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcAlertVoltField, value) != true)) {
+                    this.VcAlertVoltField = value;
+                    this.RaisePropertyChanged("VcAlertVolt");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcAllowUsed {
+            get {
+                return this.VcAllowUsedField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcAllowUsedField, value) != true)) {
+                    this.VcAllowUsedField = value;
+                    this.RaisePropertyChanged("VcAllowUsed");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcCloseVolt {
+            get {
+                return this.VcCloseVoltField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcCloseVoltField, value) != true)) {
+                    this.VcCloseVoltField = value;
+                    this.RaisePropertyChanged("VcCloseVolt");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcDesc {
+            get {
+                return this.VcDescField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcDescField, value) != true)) {
+                    this.VcDescField = value;
+                    this.RaisePropertyChanged("VcDesc");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcFreezeDay {
+            get {
+                return this.VcFreezeDayField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcFreezeDayField, value) != true)) {
+                    this.VcFreezeDayField = value;
+                    this.RaisePropertyChanged("VcFreezeDay");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcInitReading {
+            get {
+                return this.VcInitReadingField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcInitReadingField, value) != true)) {
+                    this.VcInitReadingField = value;
+                    this.RaisePropertyChanged("VcInitReading");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcPoint {
+            get {
+                return this.VcPointField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcPointField, value) != true)) {
+                    this.VcPointField = value;
+                    this.RaisePropertyChanged("VcPoint");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcUpAmount {
+            get {
+                return this.VcUpAmountField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcUpAmountField, value) != true)) {
+                    this.VcUpAmountField = value;
+                    this.RaisePropertyChanged("VcUpAmount");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcUpTiming {
+            get {
+                return this.VcUpTimingField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcUpTimingField, value) != true)) {
+                    this.VcUpTimingField = value;
+                    this.RaisePropertyChanged("VcUpTiming");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcUpTimingUnit {
+            get {
+                return this.VcUpTimingUnitField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcUpTimingUnitField, value) != true)) {
+                    this.VcUpTimingUnitField = value;
+                    this.RaisePropertyChanged("VcUpTimingUnit");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcUserID {
+            get {
+                return this.VcUserIDField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcUserIDField, value) != true)) {
+                    this.VcUserIDField = value;
+                    this.RaisePropertyChanged("VcUserID");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcUserIDUpd {
+            get {
+                return this.VcUserIDUpdField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcUserIDUpdField, value) != true)) {
+                    this.VcUserIDUpdField = value;
+                    this.RaisePropertyChanged("VcUserIDUpd");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcValveMaint {
+            get {
+                return this.VcValveMaintField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcValveMaintField, value) != true)) {
+                    this.VcValveMaintField = value;
+                    this.RaisePropertyChanged("VcValveMaint");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string VcValveRuning {
+            get {
+                return this.VcValveRuningField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.VcValveRuningField, value) != true)) {
+                    this.VcValveRuningField = value;
+                    this.RaisePropertyChanged("VcValveRuning");
                 }
             }
         }
@@ -1645,6 +1986,8 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.Generic.Dictionary<int, double>))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.EasyTreeData[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.EasyTreeData))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.MeterConfigTree[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.MeterConfigTree))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.MeterConfig))]
     public partial class CommonResult : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
@@ -2792,211 +3135,6 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         }
     }
     
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="MeterConfig", Namespace="http://schemas.datacontract.org/2004/07/DbServer.Model")]
-    [System.SerializableAttribute()]
-    public partial class MeterConfig : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string AlertVoltField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string AllowUsedField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string CloseVoltField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string FreezeDayField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string InitReadingField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string PointField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string UpAmountField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string UpTimingField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string UpTimingUnitField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ValveMaintField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ValveRuningField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string AlertVolt {
-            get {
-                return this.AlertVoltField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.AlertVoltField, value) != true)) {
-                    this.AlertVoltField = value;
-                    this.RaisePropertyChanged("AlertVolt");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string AllowUsed {
-            get {
-                return this.AllowUsedField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.AllowUsedField, value) != true)) {
-                    this.AllowUsedField = value;
-                    this.RaisePropertyChanged("AllowUsed");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string CloseVolt {
-            get {
-                return this.CloseVoltField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.CloseVoltField, value) != true)) {
-                    this.CloseVoltField = value;
-                    this.RaisePropertyChanged("CloseVolt");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string FreezeDay {
-            get {
-                return this.FreezeDayField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.FreezeDayField, value) != true)) {
-                    this.FreezeDayField = value;
-                    this.RaisePropertyChanged("FreezeDay");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string InitReading {
-            get {
-                return this.InitReadingField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.InitReadingField, value) != true)) {
-                    this.InitReadingField = value;
-                    this.RaisePropertyChanged("InitReading");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Point {
-            get {
-                return this.PointField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.PointField, value) != true)) {
-                    this.PointField = value;
-                    this.RaisePropertyChanged("Point");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string UpAmount {
-            get {
-                return this.UpAmountField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UpAmountField, value) != true)) {
-                    this.UpAmountField = value;
-                    this.RaisePropertyChanged("UpAmount");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string UpTiming {
-            get {
-                return this.UpTimingField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UpTimingField, value) != true)) {
-                    this.UpTimingField = value;
-                    this.RaisePropertyChanged("UpTiming");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string UpTimingUnit {
-            get {
-                return this.UpTimingUnitField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UpTimingUnitField, value) != true)) {
-                    this.UpTimingUnitField = value;
-                    this.RaisePropertyChanged("UpTimingUnit");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ValveMaint {
-            get {
-                return this.ValveMaintField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ValveMaintField, value) != true)) {
-                    this.ValveMaintField = value;
-                    this.RaisePropertyChanged("ValveMaint");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ValveRuning {
-            get {
-                return this.ValveRuningField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ValveRuningField, value) != true)) {
-                    this.ValveRuningField = value;
-                    this.RaisePropertyChanged("ValveRuning");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="DbServiceReference.IServiceDb")]
     public interface IServiceDb {
@@ -3266,10 +3404,10 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         System.Threading.Tasks.Task<string> CollectData_InsAsync(int iCode, int iCustNo, string sAddr, System.DateTime DteFreeze, double dReading, string sUserID);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Terminal_SetMeterConfig", ReplyAction="http://tempuri.org/IServiceDb/Terminal_SetMeterConfigResponse")]
-        string Terminal_SetMeterConfig(int iCode, string sAddrs, WHC.WaterFeeWeb.DbServiceReference.MeterConfig MeterConf);
+        string Terminal_SetMeterConfig(int iCode, string sAddrs, int iParamID);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Terminal_SetMeterConfig", ReplyAction="http://tempuri.org/IServiceDb/Terminal_SetMeterConfigResponse")]
-        System.Threading.Tasks.Task<string> Terminal_SetMeterConfigAsync(int iCode, string sAddrs, WHC.WaterFeeWeb.DbServiceReference.MeterConfig MeterConf);
+        System.Threading.Tasks.Task<string> Terminal_SetMeterConfigAsync(int iCode, string sAddrs, int iParamID);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Terminal_GetMeterSetting", ReplyAction="http://tempuri.org/IServiceDb/Terminal_GetMeterSettingResponse")]
         System.Data.DataTable Terminal_GetMeterSetting(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, WHC.WaterFeeWeb.DbServiceReference.Meter meter);
@@ -3282,6 +3420,24 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Terminal_GetValveTaskResult", ReplyAction="http://tempuri.org/IServiceDb/Terminal_GetValveTaskResultResponse")]
         System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> Terminal_GetValveTaskResultAsync(int iCode, string sParam, int iCmdType, System.DateTime DtStart, System.DateTime DtEnd);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Param_MeterConfig_GetTree", ReplyAction="http://tempuri.org/IServiceDb/Param_MeterConfig_GetTreeResponse")]
+        WHC.WaterFeeWeb.DbServiceReference.MeterConfigTree[] Param_MeterConfig_GetTree(int iCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Param_MeterConfig_GetTree", ReplyAction="http://tempuri.org/IServiceDb/Param_MeterConfig_GetTreeResponse")]
+        System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.MeterConfigTree[]> Param_MeterConfig_GetTreeAsync(int iCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Param_MeterConfig_Qry", ReplyAction="http://tempuri.org/IServiceDb/Param_MeterConfig_QryResponse")]
+        System.Data.DataTable Param_MeterConfig_Qry(int iCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Param_MeterConfig_Qry", ReplyAction="http://tempuri.org/IServiceDb/Param_MeterConfig_QryResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> Param_MeterConfig_QryAsync(int iCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Param_MeterConfig_Opr", ReplyAction="http://tempuri.org/IServiceDb/Param_MeterConfig_OprResponse")]
+        string Param_MeterConfig_Opr(WHC.WaterFeeWeb.DbServiceReference.MeterConfig MeterConf);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServiceDb/Param_MeterConfig_Opr", ReplyAction="http://tempuri.org/IServiceDb/Param_MeterConfig_OprResponse")]
+        System.Threading.Tasks.Task<string> Param_MeterConfig_OprAsync(WHC.WaterFeeWeb.DbServiceReference.MeterConfig MeterConf);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -3663,12 +3819,12 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
             return base.Channel.CollectData_InsAsync(iCode, iCustNo, sAddr, DteFreeze, dReading, sUserID);
         }
         
-        public string Terminal_SetMeterConfig(int iCode, string sAddrs, WHC.WaterFeeWeb.DbServiceReference.MeterConfig MeterConf) {
-            return base.Channel.Terminal_SetMeterConfig(iCode, sAddrs, MeterConf);
+        public string Terminal_SetMeterConfig(int iCode, string sAddrs, int iParamID) {
+            return base.Channel.Terminal_SetMeterConfig(iCode, sAddrs, iParamID);
         }
         
-        public System.Threading.Tasks.Task<string> Terminal_SetMeterConfigAsync(int iCode, string sAddrs, WHC.WaterFeeWeb.DbServiceReference.MeterConfig MeterConf) {
-            return base.Channel.Terminal_SetMeterConfigAsync(iCode, sAddrs, MeterConf);
+        public System.Threading.Tasks.Task<string> Terminal_SetMeterConfigAsync(int iCode, string sAddrs, int iParamID) {
+            return base.Channel.Terminal_SetMeterConfigAsync(iCode, sAddrs, iParamID);
         }
         
         public System.Data.DataTable Terminal_GetMeterSetting(int iCode, WHC.WaterFeeWeb.DbServiceReference.Customer Cust, WHC.WaterFeeWeb.DbServiceReference.Meter meter) {
@@ -3685,6 +3841,30 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
         
         public System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.CommonResult> Terminal_GetValveTaskResultAsync(int iCode, string sParam, int iCmdType, System.DateTime DtStart, System.DateTime DtEnd) {
             return base.Channel.Terminal_GetValveTaskResultAsync(iCode, sParam, iCmdType, DtStart, DtEnd);
+        }
+        
+        public WHC.WaterFeeWeb.DbServiceReference.MeterConfigTree[] Param_MeterConfig_GetTree(int iCode) {
+            return base.Channel.Param_MeterConfig_GetTree(iCode);
+        }
+        
+        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.DbServiceReference.MeterConfigTree[]> Param_MeterConfig_GetTreeAsync(int iCode) {
+            return base.Channel.Param_MeterConfig_GetTreeAsync(iCode);
+        }
+        
+        public System.Data.DataTable Param_MeterConfig_Qry(int iCode) {
+            return base.Channel.Param_MeterConfig_Qry(iCode);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> Param_MeterConfig_QryAsync(int iCode) {
+            return base.Channel.Param_MeterConfig_QryAsync(iCode);
+        }
+        
+        public string Param_MeterConfig_Opr(WHC.WaterFeeWeb.DbServiceReference.MeterConfig MeterConf) {
+            return base.Channel.Param_MeterConfig_Opr(MeterConf);
+        }
+        
+        public System.Threading.Tasks.Task<string> Param_MeterConfig_OprAsync(WHC.WaterFeeWeb.DbServiceReference.MeterConfig MeterConf) {
+            return base.Channel.Param_MeterConfig_OprAsync(MeterConf);
         }
     }
 }

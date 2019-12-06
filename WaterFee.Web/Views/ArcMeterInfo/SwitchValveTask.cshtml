@@ -14,12 +14,13 @@
     <script src="../../Content/My97DatePicker/WdatePicker.js"></script>
     <script src="~/Scripts/dbjs.js"></script>
     <script type="text/javascript">
-
-        var IDgridOpenClose = '#gridOpenClose';
-
+        $(function () {
+            var queryData = {};
+            submits(queryData);        
+        });
         //信息查询
         function submits(queryData) {
-            $(IDgridOpenClose).datagrid({   //定位到Table标签，Table标签的ID是grid
+            $(gridOpenClose).datagrid({   //定位到Table标签，Table标签的ID是grid
                 url: '/ArcMeterInfo/SwitchValveTaskSubmit',   //指向后台的Action来获取当前用户的信息的Json格式的数据
                 // title: '水表列表',
                 // iconCls: 'icon-view',
@@ -36,7 +37,7 @@
                 //sortName: 'ID',    //根据某个字段给easyUI排序
                 sortOrder: 'asc',
                 remoteSort: false,
-                //singleSelect: true,
+                singleSelect: true,
                 idField: 'IntID', //不设置idField，翻页不会记录选择
                 queryParams: queryData,  //异步查询的参数
                 columns: [[

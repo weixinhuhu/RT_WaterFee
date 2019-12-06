@@ -165,7 +165,7 @@
         function InitGrid(queryData) {
             $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
                 url: '/ArcMeterReading/ListJson_Server',   //指向后台的Action来获取当前用户的信息的Json格式的数据
-                title: '抄表信息',
+                title: '冻结信息',
                 iconCls: 'icon-view',
                 height: document.body.clientHeight *0.35,
                 width: function () { return document.body.clientWidth * 0.9 },//自动宽度
@@ -263,7 +263,7 @@
                 WHC_EndDteFreeze:end
             };
             InitGrid(queryData);
-            var Newtitle = '抄表信息  用户名称 【' + VcName + '】 冻结日期  【' + start + ' 至 ' + end + '】';
+            var Newtitle = '用户名称 【' + VcName + '】 冻结日期  【' + start + ' 至 ' + end + '】';
             $('#grid').datagrid("getPanel").panel("setTitle", Newtitle)
         }
          
@@ -273,26 +273,26 @@
             if (validate == false) {
                 return false;
             }     
-            var DteFreeze =  $("#DteFreezes").datebox('getValue');
-            $.ajax({
-                url: '/ArcMeterReading/WriteNumReading_Server',
-                type: "post",
-                dataType: "json",
-                data: {
-                    "IntCustNo": $("#IntCustNos").textbox("getValue"),
-                    "VcAddr": $("#VcAddrs").textbox("getValue"),
-                    "DteFreeze": DteFreeze,
-                    "NumReading": $("#NumReading").val(),
-                },
-                success: function (data) {
-                    showError(data.ErrorMessage, 3000);
+            var DteFreeze =  $("#DteFreezes").datebox('getValue');         
+            var data = {
+                "IntCustNo": $("#IntCustNos").textbox("getValue"),
+                "VcAddr": $("#VcAddrs").textbox("getValue"),
+                "DteFreeze": DteFreeze,
+                "NumReading": $("#NumReading").val(),
+            };
+            $.post("/ArcMeterReading/WriteNumReading_Server", data, function (json) {
+                var data = $.parseJSON(json);
+                if (data.Success) {
+                    showTips("添加成功");
                     $("#DivAdd").dialog("close");
                     $("#grid").datagrid("reload");
-                    $("#ffAdd").form("clear");             
-                },
-                error: function () {
-                    alert(data.ErrorMessage);
+                    $("#ffAdd").form("clear");
                 }
+                else {                     
+                    showError("添加失败:" + data.ErrorMessage, 3000);
+                }
+            }).error(function () {
+                $.messager.alert("提示", "您未被授权使用该功能，请联系管理员进行处理。", 'warning');
             });
         }
 
@@ -320,8 +320,7 @@
             console.log(info.IntCustNo);
             $("#VcAddrs").textbox("setValue", info.bVcAddr);
             $("#IntCustNos").textbox("setValue", info.IntNo);
-        }
-     
+        }  
     </script>
 
     <style>
@@ -376,7 +375,7 @@
         <div id="tb" data-options="region:'center',title:'',iconCls:'icon-book'" style="padding:5px;height:auto">
             <!-------------------------------搜索框----------------------------------->
             <fieldset>
-                <legend>日冻结数据查询</legend>
+                <legend>用户查询</legend>
                 <form id="ffSearch" method="post">
                     <div id="toolbar">
                         <table cellspacing="0" cellpadding="0">

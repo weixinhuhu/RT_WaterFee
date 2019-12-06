@@ -5113,6 +5113,9 @@
     <Content Include="Connected Services\DbServiceReference\WHC.WaterFeeWeb.DbServiceReference.PriceProperty.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
+    <Content Include="Connected Services\DbServiceReference\WHC.WaterFeeWeb.DbServiceReference.MeterConfigTree.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
     <None Include="Content\zTree_v3-3.5.28.zip" />
     <Content Include="Properties\DataSources\System.Data.DataTable.datasource" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
@@ -5228,6 +5231,7 @@
     <Content Include="Views\ArcMeterReading\ManualMeterReading.cshtml" />
     <Content Include="Views\ArcMeterInfo\SwitchValveTask.cshtml" />
     <Content Include="Views\ArcConcentratorInfo\SettingManger.cshtml" />
+    <Content Include="Views\ArcMeterInfo\MeterSettingInfo.cshtml" />
     <None Include="Views\Shared\Building.cshtml" />
     <Content Include="Content\images\building.png" />
     <None Include="Views\Shared\Error.cshtml" />
