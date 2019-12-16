@@ -482,7 +482,7 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="MeterConfigTree", Namespace="http://schemas.datacontract.org/2004/07/DbServer.Model")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="MeterConfigTree", Namespace="http://schemas.datacontract.org/2004/07/DbServer.DTO")]
     [System.SerializableAttribute()]
     public partial class MeterConfigTree : WHC.WaterFeeWeb.DbServiceReference.EasyTreeData {
         
@@ -710,7 +710,7 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="MeterConfig", Namespace="http://schemas.datacontract.org/2004/07/DbServer.Model")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="MeterConfig", Namespace="http://schemas.datacontract.org/2004/07/DbServer.DTO")]
     [System.SerializableAttribute()]
     public partial class MeterConfig : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
@@ -1965,7 +1965,7 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="CommonResult", Namespace="http://schemas.datacontract.org/2004/07/DbServer.DTO")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CommonResult", Namespace="http://schemas.datacontract.org/2004/07/DbServer.Model")]
     [System.SerializableAttribute()]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.Concentrator))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.Concentrator[]))]
@@ -1982,13 +1982,13 @@ namespace WHC.WaterFeeWeb.DbServiceReference {
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.PriceDetail[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.PriceDetail))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.SmsTemplate))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.MeterConfigTree[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.MeterConfigTree))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.MeterConfig))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(object[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(System.Collections.Generic.Dictionary<int, double>))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.EasyTreeData[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.EasyTreeData))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.MeterConfigTree[]))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.MeterConfigTree))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.DbServiceReference.MeterConfig))]
     public partial class CommonResult : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]

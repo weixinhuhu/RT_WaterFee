@@ -120,6 +120,12 @@ namespace WHC.MVCWebMis.Controllers
             return result;
         }
 
+        public ActionResult GetSys_OU_Menu(string OuID,int iMode) {         
+            var iOuID = OuID.ToInt();
+            var treelist = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_OU_Menu_Qry(iOuID, iMode);
+            return ToJsonContentDate(treelist);
+        }
+
         /// <summary>
         /// 新增和编辑同时需要修改的内容
         /// </summary>

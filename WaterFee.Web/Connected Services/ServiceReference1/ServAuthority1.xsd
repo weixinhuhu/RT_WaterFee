@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/DbServer.DTOAuth" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/DbServer.DTOAuth" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="LogonUser">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="EndCode" type="xs:int" />
+      <xs:element minOccurs="0" name="FullName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ID" type="xs:int" />
+      <xs:element minOccurs="0" name="Identity" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Info" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IsDeleted" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsExpire" type="xs:boolean" />
+      <xs:element minOccurs="0" name="PID" type="xs:int" />
+      <xs:element minOccurs="0" name="Password" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UserID" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LogonUser" nillable="true" type="tns:LogonUser" />
+  <xs:complexType name="Menu">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DtCreate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DtEdit" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IntDeleted" type="xs:int" />
+      <xs:element minOccurs="0" name="IntVisible" type="xs:int" />
+      <xs:element minOccurs="0" name="NvcCreator" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcCreatorID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcEditor" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcEditorID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcFuncId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcIcon" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcPID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcSeq" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcSysTypeID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcUrl" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcWebIcon" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcWinformType" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Menu" nillable="true" type="tns:Menu" />
+  <xs:complexType name="OU">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DtCreate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DtEdit" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IntDeleted" type="xs:int" />
+      <xs:element minOccurs="0" name="IntEnabled" type="xs:int" />
+      <xs:element minOccurs="0" name="IntID" type="xs:int" />
+      <xs:element minOccurs="0" name="IntPID" type="xs:int" />
+      <xs:element minOccurs="0" name="NvcAddress" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcCategory" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcComID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcComName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcCreator" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcCreatorID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcEditor" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcEditorID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcHandNo" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcInnerPhone" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcNote" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcOuterPhone" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcSortCode" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="OU" nillable="true" type="tns:OU" />
+  <xs:complexType name="Role">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DtCreate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DtEdit" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IntDeleted" type="xs:int" />
+      <xs:element minOccurs="0" name="IntEnabled" type="xs:int" />
+      <xs:element minOccurs="0" name="IntID" type="xs:int" />
+      <xs:element minOccurs="0" name="IntPID" type="xs:int" />
+      <xs:element minOccurs="0" name="NvcCategory" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcComID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcComName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcCreator" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcCreatorID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcEditor" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcEditorID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcHandNo" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcNote" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcSortCode" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Role" nillable="true" type="tns:Role" />
+  <xs:complexType name="User">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DtBirthday" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DtCreate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DtEdit" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IntDeleted" type="xs:int" />
+      <xs:element minOccurs="0" name="IntID" type="xs:int" />
+      <xs:element minOccurs="0" name="IntIsExpire" type="xs:int" />
+      <xs:element minOccurs="0" name="NvcAddress" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcComID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcCreator" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcCreatorID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcDeptID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcEditor" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcEditorID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcEmail" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcFullName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcGender" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcHandNo" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcHomePhone" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcIDCard" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcMobile" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcNickname" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcNote" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcOfficePhone" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcPassword" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcQQ" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcSortCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcTitle" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NvcWorkAddr" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="User" nillable="true" type="tns:User" />
+</xs:schema>

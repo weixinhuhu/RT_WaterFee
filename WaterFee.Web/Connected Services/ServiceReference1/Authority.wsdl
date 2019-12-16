@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Authority" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://118.190.199.54:9009/DbServer/ServAuthority.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://118.190.199.54:9009/DbServer/ServAuthority.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://118.190.199.54:9009/DbServer/ServAuthority.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/DbServer.DTOAuth" />
+      <xsd:import schemaLocation="http://118.190.199.54:9009/DbServer/ServAuthority.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/DbServer.Model" />
+      <xsd:import schemaLocation="http://118.190.199.54:9009/DbServer/ServAuthority.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/System.Data" />
+      <xsd:import schemaLocation="http://118.190.199.54:9009/DbServer/ServAuthority.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IAuthority_Sys_Login_CheckUser_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Login_CheckUser" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Login_CheckUser_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Login_CheckUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Menu_GetTree_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Menu_GetTree" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Menu_GetTree_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Menu_GetTreeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Menu_GetSon_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Menu_GetSon" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Menu_GetSon_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Menu_GetSonResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Menu_Qry_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Menu_Qry" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Menu_Qry_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Menu_QryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Menu_Opr_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Menu_Opr" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Menu_Opr_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Menu_OprResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Menu_BatchDel_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Menu_BatchDel" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Menu_BatchDel_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Menu_BatchDelResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_OU_GetTree_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_OU_GetTree" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_OU_GetTree_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_OU_GetTreeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_OU_GetTree_Level2_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_OU_GetTree_Level2" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_OU_GetTree_Level2_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_OU_GetTree_Level2Response" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Ou_GetByID_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Ou_GetByID" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Ou_GetByID_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Ou_GetByIDResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_OU_Opr_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_OU_Opr" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_OU_Opr_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_OU_OprResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_OU_Menu_Qry_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_OU_Menu_Qry" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_OU_Menu_Qry_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_OU_Menu_QryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_OU_Menu_Save_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_OU_Menu_Save" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_OU_Menu_Save_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_OU_Menu_SaveResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Role_Qry_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_Qry" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Role_Qry_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_QryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Role_Opr_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_Opr" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Role_Opr_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_OprResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_User_Qry_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_User_Qry" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_User_Qry_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_User_QryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_User_Opr_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_User_Opr" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_User_Opr_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_User_OprResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_User_Del_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_User_Del" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_User_Del_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_User_DelResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IAuthority">
+    <wsdl:operation name="Sys_Login_CheckUser">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Login_CheckUser" message="tns:IAuthority_Sys_Login_CheckUser_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Login_CheckUserResponse" message="tns:IAuthority_Sys_Login_CheckUser_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Menu_GetTree">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Menu_GetTree" message="tns:IAuthority_Sys_Menu_GetTree_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Menu_GetTreeResponse" message="tns:IAuthority_Sys_Menu_GetTree_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Menu_GetSon">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Menu_GetSon" message="tns:IAuthority_Sys_Menu_GetSon_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Menu_GetSonResponse" message="tns:IAuthority_Sys_Menu_GetSon_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Menu_Qry">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Menu_Qry" message="tns:IAuthority_Sys_Menu_Qry_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Menu_QryResponse" message="tns:IAuthority_Sys_Menu_Qry_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Menu_Opr">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Menu_Opr" message="tns:IAuthority_Sys_Menu_Opr_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Menu_OprResponse" message="tns:IAuthority_Sys_Menu_Opr_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Menu_BatchDel">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Menu_BatchDel" message="tns:IAuthority_Sys_Menu_BatchDel_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Menu_BatchDelResponse" message="tns:IAuthority_Sys_Menu_BatchDel_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_OU_GetTree">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_GetTree" message="tns:IAuthority_Sys_OU_GetTree_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_GetTreeResponse" message="tns:IAuthority_Sys_OU_GetTree_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_OU_GetTree_Level2">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level2" message="tns:IAuthority_Sys_OU_GetTree_Level2_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level2Response" message="tns:IAuthority_Sys_OU_GetTree_Level2_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Ou_GetByID">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Ou_GetByID" message="tns:IAuthority_Sys_Ou_GetByID_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Ou_GetByIDResponse" message="tns:IAuthority_Sys_Ou_GetByID_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_OU_Opr">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_Opr" message="tns:IAuthority_Sys_OU_Opr_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_OprResponse" message="tns:IAuthority_Sys_OU_Opr_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_OU_Menu_Qry">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_Menu_Qry" message="tns:IAuthority_Sys_OU_Menu_Qry_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_Menu_QryResponse" message="tns:IAuthority_Sys_OU_Menu_Qry_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_OU_Menu_Save">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_Menu_Save" message="tns:IAuthority_Sys_OU_Menu_Save_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_Menu_SaveResponse" message="tns:IAuthority_Sys_OU_Menu_Save_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Role_Qry">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_Qry" message="tns:IAuthority_Sys_Role_Qry_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_QryResponse" message="tns:IAuthority_Sys_Role_Qry_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Role_Opr">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_Opr" message="tns:IAuthority_Sys_Role_Opr_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_OprResponse" message="tns:IAuthority_Sys_Role_Opr_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_User_Qry">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_User_Qry" message="tns:IAuthority_Sys_User_Qry_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_User_QryResponse" message="tns:IAuthority_Sys_User_Qry_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_User_Opr">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_User_Opr" message="tns:IAuthority_Sys_User_Opr_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_User_OprResponse" message="tns:IAuthority_Sys_User_Opr_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_User_Del">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_User_Del" message="tns:IAuthority_Sys_User_Del_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_User_DelResponse" message="tns:IAuthority_Sys_User_Del_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IAuthority" type="tns:IAuthority">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Sys_Login_CheckUser">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Login_CheckUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Menu_GetTree">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Menu_GetTree" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Menu_GetSon">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Menu_GetSon" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Menu_Qry">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Menu_Qry" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Menu_Opr">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Menu_Opr" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Menu_BatchDel">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Menu_BatchDel" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_OU_GetTree">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_OU_GetTree" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_OU_GetTree_Level2">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Ou_GetByID">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Ou_GetByID" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_OU_Opr">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_OU_Opr" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_OU_Menu_Qry">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_OU_Menu_Qry" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_OU_Menu_Save">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_OU_Menu_Save" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Role_Qry">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Role_Qry" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Role_Opr">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Role_Opr" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_User_Qry">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_User_Qry" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_User_Opr">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_User_Opr" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_User_Del">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_User_Del" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Authority">
+    <wsdl:port name="BasicHttpBinding_IAuthority" binding="tns:BasicHttpBinding_IAuthority">
+      <soap:address location="http://118.190.199.54:9009/DbServer/ServAuthority.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

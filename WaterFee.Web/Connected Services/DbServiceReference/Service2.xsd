@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/DbServer.DTO" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/DbServer.DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
   <xs:import schemaLocation="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/DbServer.Model" />
+  <xs:import schemaLocation="http://118.190.199.54:9009/DbServer/Service.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
   <xs:complexType name="Concentrator">
     <xs:sequence>
       <xs:element minOccurs="0" name="DtLastUpd" type="xs:dateTime" />
@@ -96,43 +96,6 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="Meter" nillable="true" type="tns:Meter" />
-  <xs:complexType name="CommonResult">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="ErrorMsg" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="IsSuccess" type="xs:boolean" />
-      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LstObj" nillable="true" type="q1:ArrayOfanyType" />
-      <xs:element minOccurs="0" name="StrData1" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="StrData2" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="StrData3" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="Tbl1" nillable="true">
-        <xs:complexType>
-          <xs:annotation>
-            <xs:appinfo>
-              <ActualType Name="DataTable" Namespace="http://schemas.datacontract.org/2004/07/System.Data" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
-            </xs:appinfo>
-          </xs:annotation>
-          <xs:sequence>
-            <xs:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
-            <xs:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element minOccurs="0" name="Tbl2" nillable="true">
-        <xs:complexType>
-          <xs:annotation>
-            <xs:appinfo>
-              <ActualType Name="DataTable" Namespace="http://schemas.datacontract.org/2004/07/System.Data" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
-            </xs:appinfo>
-          </xs:annotation>
-          <xs:sequence>
-            <xs:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
-            <xs:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="CommonResult" nillable="true" type="tns:CommonResult" />
   <xs:complexType name="MeterReplaceQryCondition">
     <xs:sequence>
       <xs:element minOccurs="0" name="IntCustNo" type="xs:int" />
@@ -201,7 +164,7 @@
   <xs:element name="ArrayOfPricePropertyTree" nillable="true" type="tns:ArrayOfPricePropertyTree" />
   <xs:complexType name="PricePropertyTree">
     <xs:complexContent mixed="false">
-      <xs:extension xmlns:q2="http://schemas.datacontract.org/2004/07/DbServer.Model" base="q2:EasyTreeData">
+      <xs:extension xmlns:q1="http://schemas.datacontract.org/2004/07/DbServer.Model" base="q1:EasyTreeData">
         <xs:sequence>
           <xs:element minOccurs="0" name="Data" nillable="true" type="tns:PriceProperty" />
         </xs:sequence>
@@ -242,7 +205,7 @@
       <xs:element minOccurs="0" name="IntStepInc" type="xs:unsignedInt" />
       <xs:element minOccurs="0" name="IntStepOrder" type="xs:unsignedInt" />
       <xs:element minOccurs="0" name="IntStepStart" type="xs:unsignedInt" />
-      <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Price" nillable="true" type="q3:ArrayOfKeyValueOfintdouble" />
+      <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Price" nillable="true" type="q2:ArrayOfKeyValueOfintdouble" />
       <xs:element minOccurs="0" name="TotalPrice" type="xs:double" />
     </xs:sequence>
   </xs:complexType>
@@ -261,4 +224,43 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="SmsTemplate" nillable="true" type="tns:SmsTemplate" />
+  <xs:complexType name="ArrayOfMeterConfigTree">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="MeterConfigTree" nillable="true" type="tns:MeterConfigTree" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfMeterConfigTree" nillable="true" type="tns:ArrayOfMeterConfigTree" />
+  <xs:complexType name="MeterConfigTree">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q3="http://schemas.datacontract.org/2004/07/DbServer.Model" base="q3:EasyTreeData">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Data" nillable="true" type="tns:MeterConfig" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="MeterConfigTree" nillable="true" type="tns:MeterConfigTree" />
+  <xs:complexType name="MeterConfig">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DtCreate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DtLstUpd" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="IntEndCode" type="xs:int" />
+      <xs:element minOccurs="0" name="IntID" type="xs:int" />
+      <xs:element minOccurs="0" name="VcAlertVolt" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcAllowUsed" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcCloseVolt" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcDesc" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcFreezeDay" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcInitReading" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcPoint" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcUpAmount" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcUpTiming" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcUpTimingUnit" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcUserID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcUserIDUpd" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcValveMaint" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="VcValveRuning" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MeterConfig" nillable="true" type="tns:MeterConfig" />
 </xs:schema>

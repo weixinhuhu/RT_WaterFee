@@ -93,6 +93,32 @@ namespace WHC.MVCWebMis.Controllers
             return Content("");
         }
 
+        public ActionResult Sys_OU_Menu_Save(string roleId, string newList)
+        {
+            CommonResult result = new CommonResult();
+            if (!string.IsNullOrEmpty(roleId) && ValidateUtil.IsValidInt(roleId))
+            {
+                if (!string.IsNullOrWhiteSpace(newList))
+                {
+                    List<string> list = new List<string>();
+                    foreach (string id in newList.Split(','))
+                    {
+                        list.Add(id);
+                    }
+                    var flag = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_OU_Menu_Save(roleId.ToInt32(),list.ToArray());
+                    if (flag == "0")                       
+                    {
+                        result.Data1 = roleId;
+                        result.Success = true;
+                    }
+                    else {
+                        result.ErrorMessage = flag;
+                    }        
+                }
+            }
+            return ToJsonContent(result);
+        }
+
         public ActionResult EditUserRelation(string roleId, string addList, string removeList)
         {
             if (!string.IsNullOrEmpty(roleId) && ValidateUtil.IsValidInt(roleId))

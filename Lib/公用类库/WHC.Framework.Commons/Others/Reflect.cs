@@ -70,7 +70,6 @@ namespace WHC.Framework.Commons
             {
                 throw new ArgumentNullException("sFilePath", string.Format("无法加载sFilePath={0} 的程序集", sFilePath));
             }
-
             T obj = (T)assemblyObj.CreateInstance(sName); //反射创建 
             return obj;
         }

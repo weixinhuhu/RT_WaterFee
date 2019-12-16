@@ -94,16 +94,17 @@
             }
         });
 
-        //function showSubMenu(url, title, menuCategory, defaultIcon) {
-        //    if (defaultIcon == null || defaultIcon == "") {
-        //        defaultIcon = "icon-table";
-        //    }
-        //    addTab(title, url, "icon " + defaultIcon);
-        //    Clearnav();
-        //    if (menuCategory != "") {
-        //        addNav(_menus[menuCategory]);
-        //    }
-        //}
+        function showSubMenu(url, title, menuCategory, defaultIcon) {
+            if (defaultIcon == null || defaultIcon == "") {
+                defaultIcon = "icon-table";
+            }
+            addTab(title, url, "icon " + defaultIcon);
+            Clearnav();
+            if (menuCategory != "") {
+                addNav(_menus[menuCategory]);
+            }
+        }
+
 	</script>
 
     <script type="text/javascript">

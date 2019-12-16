@@ -19,6 +19,10 @@ namespace WHC.MVCWebMis.Controllers
         public OUController() : base()
         {
         }
+        public ActionResult UserMenu()
+        {        
+            return View();
+        }
 
         /// <summary>
         /// 获取组织机构的分类：集团、公司、部门、工作组
@@ -99,11 +103,11 @@ namespace WHC.MVCWebMis.Controllers
                     List<int> list = new List<int>();
                     foreach (string id in newList.Split(','))
                     {
-                        list.Add(id.ToInt32());                        
+                        list.Add(id.ToInt32());
                     }
-                    
+
                     result.Success = BLLFactory<OU>.Instance.EditOuUsers(ouid.ToInt32(), list);
-                }                
+                }
             }
             else
             {
@@ -169,12 +173,83 @@ namespace WHC.MVCWebMis.Controllers
                 }
             }
         }
+
+        public ActionResult OU_Opr_Server(WaterFeeWeb.ServiceReference1.OU OrgInfo) {
+            CommonResult result = new CommonResult();
+            OrgInfo.IntEnabled = 1;
+            OrgInfo.IntDeleted = 0;
+            OrgInfo.DtEdit = DateTime.Now;
+            OrgInfo.NvcCreator = Session["FullName"].ToString();
+            OrgInfo.NvcCreatorID = Session["UserId"].ToString();
+            var flag = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_OU_Opr(OrgInfo);
+            if (flag == "0")
+            {
+                result.Success = true;
+            }
+            else {
+                result.Success = false;
+                result.ErrorMessage = flag;
+            }
+            return ToJsonContent(result);
+        }
+
+        public ActionResult OU_Recover_Server(WaterFeeWeb.ServiceReference1.OU OrgInfo,String Pid)
+        {
+            CommonResult result = new CommonResult();
+            OrgInfo.IntEnabled = 1;
+            OrgInfo.IntDeleted = 0;
+            OrgInfo.IntPID = Pid.ToInt();
+            OrgInfo.DtEdit = DateTime.Now;
+            OrgInfo.NvcCreator = Session["FullName"].ToString();
+            OrgInfo.NvcCreatorID = Session["UserId"].ToString();
+            var flag = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_OU_Opr(OrgInfo);
+            if (flag == "0")
+            {
+                result.Success = true;
+            }
+            else
+            {
+                result.Success = false;
+                result.ErrorMessage = flag;
+            }
+            return ToJsonContent(result);
+        }
+        public ActionResult OU_Del_Server(String id)
+        {
+            CommonResult result = new CommonResult();
+            WaterFeeWeb.ServiceReference1.OU OrgInfo = new WaterFeeWeb.ServiceReference1.OU();
+            OrgInfo.IntDeleted = 1;
+            OrgInfo.IntID = id.ToInt();
+            OrgInfo.NvcCreator = Session["FullName"].ToString();
+            OrgInfo.NvcCreatorID = Session["UserId"].ToString();
+            var flag = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_OU_Opr(OrgInfo);
+            if (flag == "0")
+            {
+                result.Success = true;
+            }
+            else
+            {
+                result.Success = false;
+                result.ErrorMessage = flag;
+            }
+            return ToJsonContent(result);
+        }
+   
+        public ActionResult OU_FindById_Server()
+        {
+            CommonResult result = new CommonResult();
+            var id = Request["ID"].ToInt();
+            var dt = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_Ou_GetByID(id);        
+            return ToJsonContent(dt);
+        }
+
         public override ActionResult Insert(OUInfo info)
         {
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.InsertKey);
 
             CommonResult result = new CommonResult();
+            info.Company_ID = Session["Company_ID"].ToString();
             if (info != null)
             {
                 try
@@ -237,15 +312,14 @@ namespace WHC.MVCWebMis.Controllers
         /// <returns></returns>
         protected override bool Update(string id, OUInfo info)
         {
+            info.Company_ID = Session["Company_ID"].ToString();
             string filter = string.Format("Name='{0}' and ID <>{1} and Company_ID={2}", info.Name, info.ID, info.Company_ID);
             bool isExist = BLLFactory<OU>.Instance.IsExistRecord(filter);
             if (isExist)
             {
                 throw new ArgumentException("指定机构名称重复，请重新输入！");
             }
-
             SetCommonInfo(info);
-
             return base.Update(id, info);
         }
 

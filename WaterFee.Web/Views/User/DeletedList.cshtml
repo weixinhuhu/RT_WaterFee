@@ -47,7 +47,7 @@
         //实现对DataGird控件的绑定操作
         function InitGrid(queryData) {
             $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid
-                url: '/User/FindWithPager',   //指向后台的Action来获取当前用户的信息的Json格式的数据
+                url: '/User/Sys_User_Qry_Server',   //指向后台的Action来获取当前用户的信息的Json格式的数据
                 title: '系统用户信息',
                 iconCls: 'icon-view',
                 height: 550,
@@ -67,12 +67,12 @@
                 queryParams: queryData,  //异步查询的参数
                 columns: [[
 	                { field: 'ck', checkbox: true },   //选择
-                     { title: 'ID', field: 'ID', width: 80, sortable: true },
-                     { title: '用户编码', field: 'HandNo', width: 80, sortable: true },
-                     { title: '用户名/登录名', field: 'Name', width: 120, sortable: true },
-                     { title: '真实姓名', field: 'FullName', width: 80, sortable: true },
+                     { title: 'ID', field: 'IntID', width: 80, sortable: true },
+                     { title: '用户编码', field: 'NvcHandNo', width: 80, sortable: true },
+                     { title: '用户名/登录名', field: 'NvcName', width: 120, sortable: true },
+                     { title: '真实姓名', field: 'NvcFullName', width: 80, sortable: true },
                      {
-                         title: '是否过期', field: 'IsExpire', width: 80, formatter: function (val, rowdata, index) {
+                         title: '是否过期', field: 'IntIsExpire', width: 80,hidden: true, formatter: function (val, rowdata, index) {
                              if (val) {
                                  return '<a class="grid_unvisible" href="javascript:void(0)" >' + val + '</a>';
                              } else {
@@ -81,7 +81,7 @@
                          }
                      },
                      {
-                         title: '是否删除', field: 'Deleted', width: 80, formatter: function (val, rowdata, index) {
+                         title: '是否删除', field: 'IntDeleted', width: 80, formatter: function (val, rowdata, index) {
                              if (val) {
                                  return '<a class="grid_deleted" href="javascript:void(0)" >' + val + '</a>';
                              } else {
@@ -89,15 +89,15 @@
                              }
                          }
                      },
-                     { title: '职务头衔', field: 'Title', width: 80, sortable: true },
-                     { title: '移动电话', field: 'MobilePhone', width: 120, sortable: true },
-                     { title: '办公电话', field: 'OfficePhone', width: 120, sortable: true },
-                     { title: '邮件地址', field: 'Email', width: 150, sortable: true },
-                     { title: '性别', field: 'Gender', width: 80, sortable: true },
-                     { title: 'QQ号码', field: 'QQ', width: 80, sortable: true },
-                     { title: '个性签名', field: 'Signature', width: 80, sortable: true },
-                     { title: '审核状态', field: 'AuditStatus', width: 80, sortable: true },
-                     { title: '备注', field: 'Note', width: 150, sortable: true }
+                     { title: '职务头衔', field: 'NvcTitle', width: 80, sortable: true ,hidden:true },
+                     { title: '移动电话', field: 'MobilePhone', width: 120, sortable: true  ,hidden:true },
+                     { title: '办公电话', field: 'OfficePhone', width: 120, sortable: true  ,hidden:true },
+                     { title: '邮件地址', field: 'Email', width: 150, sortable: true  ,hidden:true },
+                     { title: '性别', field: 'Gender', width: 80, sortable: true  ,hidden:true },
+                     { title: 'QQ号码', field: 'QQ', width: 80, sortable: true  ,hidden:true },
+                     { title: '个性签名', field: 'Signature', width: 80, sortable: true  ,hidden:true },
+                     { title: '审核状态', field: 'AuditStatus', width: 80, sortable: true ,hidden:true},
+                     { title: '备注', field: 'NvcNote', width: 150, sortable: true }
                 ]],
                 onLoadSuccess: function () {
                     $(".grid_visible").linkbutton({ text: '可用', plain: true, iconCls: 'icon-ok' });
@@ -146,18 +146,18 @@
                 //遍历出用户选择的数据的信息，这就是用户用户选择删除的用户ID的信息
                 var ids = "";   //1,2,3,4,5
                 for (var i = 0; i < rows.length; i++) {
-                    ids += rows[i].ID + ",";
+                    ids += rows[i].IntID + ",";
                 }
                 //最后去掉最后的那一个,
                 ids = ids.substring(0, ids.length - 1);
-                var postData = { Ids: ids };
+                 var postData = { Ids: ids ,Mode:1};
 
                 //然后确认发送异步请求的信息到后台删除数据
                 $.messager.confirm("删除确认", "您确认彻底删除选定的记录吗（从数据库永久删除）？", function (action) {
                     if (action) {
                         $.ajax({
                             type: 'POST',
-                            url: '/User/ConfirmDeleteByIds',
+                            url: '/User/Sys_User_Del_Server',
                             dataType: 'json',
                             data: postData,
                             success: function (data) {

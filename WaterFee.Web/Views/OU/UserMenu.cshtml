@@ -1,0 +1,161 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    @using System.Web.Optimization;
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquerytools")
+    @Styles.Render("~/Content/jquerytools")
+
+    <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
+    <script src="~/Scripts/ComponentUtil.js"></script>
+
+    <script type="text/javascript">
+
+        //初始化组织机构列表
+        function initDeptTreeview() {
+            $("#loading").show();
+            $('#treeDept').tree({
+                url: '/User/GetMyDeptTreeLevel2Json_Server',
+                ////数据过滤
+                //loadFilter: function (data) {
+                //    return FormatTreeData(data);
+                //},
+                onClick: function (node) {                 
+                    initTreeFunction();                   
+                },          
+            });
+            $("#loading").fadeOut(500);
+        }
+
+        //过滤数据
+        function FormatTreeData(data) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].children.length > 0) {
+                    // 定义一个数组
+                    var newData = new Array();
+                    newData.push(data[i]);
+                    return newData;
+                }
+            }
+            return data;
+        }
+
+        //根据用户角色初始化功能树
+        function initTreeFunction() {
+            var node = $('#treeDept').tree('getSelected');
+            if (node) {
+                var id = node.id;
+                $('#treeFunctionView').tree({
+                    checkbox: true,
+                    cascadeCheck: false,
+                    // onlyLeafCheck: true,只显示叶子菜单
+                    url: "/Function/GetSys_OU_Menu?r=" + Math.random() + "&OuID=" + id + "&iMode=" + 0,
+                    onClick: function (node) {
+
+                    },
+                    onCheck: function (node, checked) {
+                        if (checked) { //得到父节点
+                            var node1 = $('#treeFunctionView').tree('getParent', node.target);
+                            //选中父节点
+                            $('#treeFunctionView').tree('check', node1.target);
+                        }
+                    }
+                })
+            };
+        }
+
+        //保存角色操作功能
+        function saveRoleFunction() {
+            var functionList = new Array();
+            var nodes = $('#treeFunctionView').tree('getChecked');
+            for (var i = 1; i < nodes.length; i++) {
+                if (nodes[i].iconCls != "icon-organ") {
+                    functionList.push(nodes[i].id);
+                }
+            }
+            var roleId = $('#treeDept').tree('getSelected').id;
+            if (roleId == null || roleId == "") {
+                showError("组织机构不能为空！");
+                return;
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/Role/Sys_OU_Menu_Save',
+                dataType: 'json',
+                async: false,
+                data: { roleId: roleId, newList: functionList.join(',') },
+                success: function (result) {
+                    if (result.Success) {
+                        showTips("操作成功！ ");
+                        //initRoleFunction(result.Data1)
+                        //$("#tabViewRole").tabs("select",0);
+                    } else {
+                        showError("操作失败！ " + result.ErrorMessage);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    showError("操作失败！网络异常！"); //xhr.responseText
+                }
+            });
+        }
+        //初始化对象
+        $(document).ready(function () {
+            //初始化组织机构
+            initDeptTreeview();         
+            //初始化菜单
+            initTreeFunction();
+            $("#functionExpand").bind("click", function () {
+                expandAll("treeFunctionView");
+            });
+            $("#functionCollapse").bind("click", function () {
+                collapseAll("treeFunctionView");
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="loading" style="display: none;">
+        <img alt="数据正在加载中..." src="~/Content/images/loading02.gif" />
+    </div>
+    <div class="easyui-layout" style="width:700px;height:auto;" fit="true">
+        <div data-options="region:'west',split:true,title:'组织机构列表',iconCls:'icon-book'" style="width: 250px; padding: 1px;">
+            <div title="组织机构列表" style="padding:5px;height:auto" data-options="iconCls:'icon-organ'">
+                <div style="padding: 1px; border: 1px solid #ddd;">
+                    @*<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-reload'" id="deptRefresh" onclick="initDeptTreeview()">刷新</a>
+                    <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-expand'" id="deptExpand" onclick="return false;">展开</a>
+                    <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-collapse'" id="deptCollapse" onclick="return false;">折叠</a>*@
+                </div>
+                <div>
+                    <ul id="treeDept"></ul>
+                </div>
+            </div>
+        </div>
+        <div id="tbEdit" data-options="region:'center',split:true,title:'菜单信息',iconCls:'icon-book'" style="padding:5px;height:auto">
+            <div fit="false">
+                <div id="tabViewRole" class="easyui-tabs">
+                    @*<div title="可操页面" id="FunctionUserView" style="padding:5px;height:auto" data-options="iconCls:'icon-key'">
+                        <ul id="treeFunctionUserView"></ul>
+                    </div>*@
+                    <div title="组织机构菜单设置" style="padding:5px;height:auto" data-options="iconCls:'icon-key'">
+                        <div style="padding: 1px; border: 1px solid #ddd;">
+                            @*<a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-reload'" id="functionRefresh" onclick="initTreeFunction()">刷新</a>*@
+                            <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-expand'" id="functionExpand" onclick="return false;">展开</a>
+                            <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-collapse'" id="functionCollapse" onclick="return false;">折叠</a>
+                        </div>
+                        <div style="padding: 1px; border: 1px solid #ddd;">
+                            <input id="chkCheckAllFunction" type="checkbox" onclick="checkAllTree('treeFunctionView', $(this).prop('checked'))">全选&nbsp;&nbsp;
+                            <a href="#" class="easyui-linkbutton" iconcls="icon-ok" id="btnSaveRoleFunction" onclick="saveRoleFunction()">保存</a>
+                        </div>
+                        <ul id="treeFunctionView"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
