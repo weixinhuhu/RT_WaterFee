@@ -52,11 +52,11 @@
   <wsdl:message name="IAuthority_Sys_OU_GetTree_OutputMessage">
     <wsdl:part name="parameters" element="tns:Sys_OU_GetTreeResponse" />
   </wsdl:message>
-  <wsdl:message name="IAuthority_Sys_OU_GetTree_Level2_InputMessage">
-    <wsdl:part name="parameters" element="tns:Sys_OU_GetTree_Level2" />
+  <wsdl:message name="IAuthority_Sys_OU_GetTree_Level_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_OU_GetTree_Level" />
   </wsdl:message>
-  <wsdl:message name="IAuthority_Sys_OU_GetTree_Level2_OutputMessage">
-    <wsdl:part name="parameters" element="tns:Sys_OU_GetTree_Level2Response" />
+  <wsdl:message name="IAuthority_Sys_OU_GetTree_Level_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_OU_GetTree_LevelResponse" />
   </wsdl:message>
   <wsdl:message name="IAuthority_Sys_Ou_GetByID_InputMessage">
     <wsdl:part name="parameters" element="tns:Sys_Ou_GetByID" />
@@ -82,17 +82,41 @@
   <wsdl:message name="IAuthority_Sys_OU_Menu_Save_OutputMessage">
     <wsdl:part name="parameters" element="tns:Sys_OU_Menu_SaveResponse" />
   </wsdl:message>
-  <wsdl:message name="IAuthority_Sys_Role_Qry_InputMessage">
-    <wsdl:part name="parameters" element="tns:Sys_Role_Qry" />
+  <wsdl:message name="IAuthority_Sys_Role_GetTree_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_GetTree" />
   </wsdl:message>
-  <wsdl:message name="IAuthority_Sys_Role_Qry_OutputMessage">
-    <wsdl:part name="parameters" element="tns:Sys_Role_QryResponse" />
+  <wsdl:message name="IAuthority_Sys_Role_GetTree_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_GetTreeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Role_GetRoleMenuUserByID_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_GetRoleMenuUserByID" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Role_GetRoleMenuUserByID_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_GetRoleMenuUserByIDResponse" />
   </wsdl:message>
   <wsdl:message name="IAuthority_Sys_Role_Opr_InputMessage">
     <wsdl:part name="parameters" element="tns:Sys_Role_Opr" />
   </wsdl:message>
   <wsdl:message name="IAuthority_Sys_Role_Opr_OutputMessage">
     <wsdl:part name="parameters" element="tns:Sys_Role_OprResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Role_UserSave_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_UserSave" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Role_UserSave_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_UserSaveResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Role_MenuSave_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_MenuSave" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Role_MenuSave_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_MenuSaveResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Role_GetUserByID_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_GetUserByID" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Role_GetUserByID_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Role_GetUserByIDResponse" />
   </wsdl:message>
   <wsdl:message name="IAuthority_Sys_User_Qry_InputMessage">
     <wsdl:part name="parameters" element="tns:Sys_User_Qry" />
@@ -141,9 +165,9 @@
       <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_GetTree" message="tns:IAuthority_Sys_OU_GetTree_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_GetTreeResponse" message="tns:IAuthority_Sys_OU_GetTree_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="Sys_OU_GetTree_Level2">
-      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level2" message="tns:IAuthority_Sys_OU_GetTree_Level2_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level2Response" message="tns:IAuthority_Sys_OU_GetTree_Level2_OutputMessage" />
+    <wsdl:operation name="Sys_OU_GetTree_Level">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level" message="tns:IAuthority_Sys_OU_GetTree_Level_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_GetTree_LevelResponse" message="tns:IAuthority_Sys_OU_GetTree_Level_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="Sys_Ou_GetByID">
       <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Ou_GetByID" message="tns:IAuthority_Sys_Ou_GetByID_InputMessage" />
@@ -161,13 +185,29 @@
       <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_Menu_Save" message="tns:IAuthority_Sys_OU_Menu_Save_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_OU_Menu_SaveResponse" message="tns:IAuthority_Sys_OU_Menu_Save_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="Sys_Role_Qry">
-      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_Qry" message="tns:IAuthority_Sys_Role_Qry_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_QryResponse" message="tns:IAuthority_Sys_Role_Qry_OutputMessage" />
+    <wsdl:operation name="Sys_Role_GetTree">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_GetTree" message="tns:IAuthority_Sys_Role_GetTree_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_GetTreeResponse" message="tns:IAuthority_Sys_Role_GetTree_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Role_GetRoleMenuUserByID">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_GetRoleMenuUserByID" message="tns:IAuthority_Sys_Role_GetRoleMenuUserByID_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_GetRoleMenuUserByIDResponse" message="tns:IAuthority_Sys_Role_GetRoleMenuUserByID_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="Sys_Role_Opr">
       <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_Opr" message="tns:IAuthority_Sys_Role_Opr_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_OprResponse" message="tns:IAuthority_Sys_Role_Opr_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Role_UserSave">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_UserSave" message="tns:IAuthority_Sys_Role_UserSave_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_UserSaveResponse" message="tns:IAuthority_Sys_Role_UserSave_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Role_MenuSave">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_MenuSave" message="tns:IAuthority_Sys_Role_MenuSave_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_MenuSaveResponse" message="tns:IAuthority_Sys_Role_MenuSave_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Role_GetUserByID">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_GetUserByID" message="tns:IAuthority_Sys_Role_GetUserByID_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Role_GetUserByIDResponse" message="tns:IAuthority_Sys_Role_GetUserByID_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="Sys_User_Qry">
       <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_User_Qry" message="tns:IAuthority_Sys_User_Qry_InputMessage" />
@@ -247,8 +287,8 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="Sys_OU_GetTree_Level2">
-      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level2" style="document" />
+    <wsdl:operation name="Sys_OU_GetTree_Level">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -292,8 +332,17 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="Sys_Role_Qry">
-      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Role_Qry" style="document" />
+    <wsdl:operation name="Sys_Role_GetTree">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Role_GetTree" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Role_GetRoleMenuUserByID">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Role_GetRoleMenuUserByID" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -303,6 +352,33 @@
     </wsdl:operation>
     <wsdl:operation name="Sys_Role_Opr">
       <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Role_Opr" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Role_UserSave">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Role_UserSave" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Role_MenuSave">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Role_MenuSave" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Role_GetUserByID">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Role_GetUserByID" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

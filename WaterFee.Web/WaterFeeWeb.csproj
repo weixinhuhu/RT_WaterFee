@@ -5153,6 +5153,9 @@
     <Content Include="Connected Services\ServiceReference1\WHC.WaterFeeWeb.ServiceReference1.LogonUser.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
+    <Content Include="Connected Services\ServiceReference1\WHC.WaterFeeWeb.ServiceReference1.CommonResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
     <None Include="Content\zTree_v3-3.5.28.zip" />
     <Content Include="Properties\DataSources\System.Data.DataTable.datasource" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />

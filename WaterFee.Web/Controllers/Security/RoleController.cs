@@ -215,7 +215,6 @@ namespace WHC.MVCWebMis.Controllers
                 List<RoleInfo> roleList = BLLFactory<Role>.Instance.GetRolesByUser(Convert.ToInt32(userid));
                 return Json(roleList, JsonRequestBehavior.AllowGet);
             }
-
             return Content("");
         }
 
@@ -255,66 +254,7 @@ namespace WHC.MVCWebMis.Controllers
                 info.CompanyName = companyInfo.Name;
             }
         }
-        public override ActionResult Insert(RoleInfo info)
-        {
-            //检查用户是否有权限，否则抛出MyDenyAccessException异常
-            base.CheckAuthorized(AuthorizeKey.InsertKey);
-                       
-            CommonResult result = new CommonResult();
-            if (info != null)
-            {
-                string filter = string.Format("Name='{0}'  and Company_ID={1}", info.Name, info.Company_ID);
-                bool isExist = BLLFactory<Role>.Instance.IsExistRecord(filter);
-                if (isExist)
-                {
-                    result.ErrorMessage = "指定角色名称重复，请重新输入！";
-                }
-                else
-                {
-                    try
-                    {
-                        info.CreateTime = DateTime.Now;
-                        info.Creator = CurrentUser.FullName;
-                        info.Creator_ID = CurrentUser.ID.ToString();
-                        SetCommonInfo(info);
-
-                        result.Success = baseBLL.Insert(info);
-                    }
-                    catch (Exception ex)
-                    {
-                        LogTextHelper.Error(ex);//错误记录
-                        result.ErrorMessage = ex.Message;
-                    }
-                }
-            }
-
-            return ToJsonContent(result);
-        }
-
-        public override ActionResult Insert2(RoleInfo info)
-        {
-            //检查用户是否有权限，否则抛出MyDenyAccessException异常
-            base.CheckAuthorized(AuthorizeKey.InsertKey);
-
-            int result = -1;
-            if (info != null)
-            {
-                string filter = string.Format("Name='{0}' and Company_ID={1}", info.Name, info.Company_ID);
-                bool isExist = BLLFactory<Role>.Instance.IsExistRecord(filter);
-                if (isExist)
-                {
-                    throw new ArgumentException("指定角色名称重复，请重新输入！");
-                }
-
-                info.CreateTime = DateTime.Now;
-                info.Creator = CurrentUser.FullName;
-                info.Creator_ID = CurrentUser.ID.ToString();
-                SetCommonInfo(info);
-                result = baseBLL.Insert2(info);
-            }
-            return Content(result);
-        }
-
+       
         /// <summary>
         /// 重写方便写入公司、部门、编辑时间的名称等信息
         /// </summary>
@@ -376,6 +316,145 @@ namespace WHC.MVCWebMis.Controllers
 
             string json = string.Format("[{0}]", content.ToString().Trim(','));
             return Content(json);
+        }
+        /// <summary>
+        /// 系统-角色-查询树
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult GetMyRoleTreeJson_Server() {
+            var iUserId = Session["UserID"].ToString().ToInt();
+            var listtree = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_Role_GetTree(iUserId, 0);
+            return ToJsonContent(listtree);
+        }
+
+        /// <summary>
+        /// 系统-角色-通过ID查角色、角色菜单及角色用户
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Sys_Role_GetRoleUserByID_Server(int id)
+        {
+            CommonResult result = new CommonResult();
+            if (id > 9000)
+            {
+                id -= 9000;
+            }
+           
+            var rs = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_Role_GetRoleMenuUserByID(id);
+            if (rs.IsSuccess)
+            {
+                result.Success = true;
+                result.Data1 = rs.StrData1;
+                result.Data2 = rs.StrData2;
+                result.Data3 = rs.StrData3;
+            }      
+            else {
+                result.ErrorMessage = rs.ErrorMsg;
+            }
+            return ToJsonContent(result);
+        }
+
+        /// <summary>
+        /// 系统-角色-操作
+        /// </summary>
+        /// <param name="RoleInfo"></param>
+        /// <param name="type">0 添加 1 修改</param>
+        /// <returns></returns>
+        public ActionResult Sys_Role_Opr_Server(WaterFeeWeb.ServiceReference1.Role RoleInfo,String type,int id) {
+            CommonResult result = new CommonResult();
+            RoleInfo.NvcEditor = Session["FullName"].ToString();
+            RoleInfo.NvcEditorID = Session["UserID"].ToString();
+            RoleInfo.DtEdit = DateTime.Now;
+            RoleInfo.IntID = id;
+            if (type == "0") {
+                RoleInfo.NvcCreator = Session["FullName"].ToString();
+                RoleInfo.NvcCreatorID = Session["UserID"].ToString();
+                RoleInfo.DtCreate = DateTime.Now;
+            }
+            var flag = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_Role_Opr(RoleInfo);
+            if (flag=="0") {
+                result.Success = true;
+            }
+            return ToJsonContent(result);
+        }
+        /// <summary>
+        /// 删除角色
+        /// </summary>
+        /// <param name="RoleInfo"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Sys_Role_Del_Server(WaterFeeWeb.ServiceReference1.Role RoleInfo,int id)
+        {
+            CommonResult result = new CommonResult();
+            RoleInfo.NvcEditor = Session["FullName"].ToString();
+            RoleInfo.NvcEditorID = Session["UserID"].ToString();
+            RoleInfo.DtEdit = DateTime.Now;
+            RoleInfo.IntID = id;
+            RoleInfo.IntDeleted = 1;
+
+            var flag = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_Role_Opr(RoleInfo);
+            if (flag == "0")
+            {
+                result.Success = true;
+            }
+            return ToJsonContent(result);
+        }
+        /// <summary>
+        /// 系统-角色-包含菜单保存
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <param name="newList"></param>
+        /// <returns></returns>
+        public ActionResult Sys_Role_MenuSave_Server(string roleId, string newList)
+        {
+            CommonResult result = new CommonResult();
+            if (!string.IsNullOrEmpty(roleId) && ValidateUtil.IsValidInt(roleId))
+            {
+                if (!string.IsNullOrWhiteSpace(newList))
+                {
+                    List<string> list = new List<string>();
+                    foreach (string id in newList.Split(','))
+                    {
+                        list.Add(id);
+                    }
+                    var flag = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_Role_MenuSave(roleId.ToInt32(), list.ToArray());
+                    if (flag == "0")
+                    {
+                        result.Data1 = roleId;
+                        result.Success = true;
+                    }
+                    else
+                    {
+                        result.ErrorMessage = flag;
+                    }
+                }
+            }
+            return ToJsonContent(result);
+        }
+        public ActionResult Sys_Role_UserSave_Server(string roleId, string newList)
+        {
+            CommonResult result = new CommonResult();
+            List<int> list = new List<int>();
+            if (!string.IsNullOrEmpty(roleId) && ValidateUtil.IsValidInt(roleId))
+            {
+                if (!string.IsNullOrWhiteSpace(newList))
+                {
+                    foreach (string id in newList.Split(','))
+                    {
+                        list.Add(id.ToInt());
+                    }
+                }
+                var flag = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_Role_UserSave(roleId.ToInt32(), list.ToArray());
+                if (flag == "0")
+                {
+                    result.Success = true;
+                }
+                else
+                {
+                    result.ErrorMessage = flag;
+                }
+            }
+            return ToJsonContent(result);
         }
 
         private void AddRole(OUInfo ouInfo, EasyTreeData treeNode)

@@ -218,7 +218,6 @@ namespace WHC.MVCWebMis.Controllers
             {
                 userinfo.NvcComID = Session["Company_ID"].ToString();
             }
-
             var dts = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_User_Qry(userid, userinfo);
             int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
             int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
@@ -346,8 +345,12 @@ namespace WHC.MVCWebMis.Controllers
         }
 
         public ActionResult GetMyDeptTreeLevel2Json_Server()
-        {           
-            var treelist = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_OU_GetTree_Level2();
+        {
+            var iType = 2;
+            if ((bool)Session["IsSuperAdmin"]) {
+                iType = 1;
+            }
+            var treelist = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_OU_GetTree_Level(iType);
             return ToJsonContentDate(treelist);
         }
         /// <summary>

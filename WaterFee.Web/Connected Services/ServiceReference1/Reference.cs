@@ -995,6 +995,173 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CommonResult", Namespace="http://schemas.datacontract.org/2004/07/DbServer.Model")]
+    [System.SerializableAttribute()]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.ServiceReference1.LogonUser))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.ServiceReference1.Menu))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.ServiceReference1.OU))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.ServiceReference1.Role))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.ServiceReference1.User))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(WHC.WaterFeeWeb.ServiceReference1.EasyTreeData))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(string[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(object[]))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(int[]))]
+    public partial class CommonResult : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ErrorMsgField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool IsSuccessField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private object[] LstObjField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string StrData1Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string StrData2Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string StrData3Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Data.DataTable Tbl1Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Data.DataTable Tbl2Field;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ErrorMsg {
+            get {
+                return this.ErrorMsgField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ErrorMsgField, value) != true)) {
+                    this.ErrorMsgField = value;
+                    this.RaisePropertyChanged("ErrorMsg");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool IsSuccess {
+            get {
+                return this.IsSuccessField;
+            }
+            set {
+                if ((this.IsSuccessField.Equals(value) != true)) {
+                    this.IsSuccessField = value;
+                    this.RaisePropertyChanged("IsSuccess");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public object[] LstObj {
+            get {
+                return this.LstObjField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.LstObjField, value) != true)) {
+                    this.LstObjField = value;
+                    this.RaisePropertyChanged("LstObj");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string StrData1 {
+            get {
+                return this.StrData1Field;
+            }
+            set {
+                if ((object.ReferenceEquals(this.StrData1Field, value) != true)) {
+                    this.StrData1Field = value;
+                    this.RaisePropertyChanged("StrData1");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string StrData2 {
+            get {
+                return this.StrData2Field;
+            }
+            set {
+                if ((object.ReferenceEquals(this.StrData2Field, value) != true)) {
+                    this.StrData2Field = value;
+                    this.RaisePropertyChanged("StrData2");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string StrData3 {
+            get {
+                return this.StrData3Field;
+            }
+            set {
+                if ((object.ReferenceEquals(this.StrData3Field, value) != true)) {
+                    this.StrData3Field = value;
+                    this.RaisePropertyChanged("StrData3");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Data.DataTable Tbl1 {
+            get {
+                return this.Tbl1Field;
+            }
+            set {
+                if ((object.ReferenceEquals(this.Tbl1Field, value) != true)) {
+                    this.Tbl1Field = value;
+                    this.RaisePropertyChanged("Tbl1");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Data.DataTable Tbl2 {
+            get {
+                return this.Tbl2Field;
+            }
+            set {
+                if ((object.ReferenceEquals(this.Tbl2Field, value) != true)) {
+                    this.Tbl2Field = value;
+                    this.RaisePropertyChanged("Tbl2");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="Role", Namespace="http://schemas.datacontract.org/2004/07/DbServer.DTOAuth")]
     [System.SerializableAttribute()]
     public partial class Role : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
@@ -1833,11 +2000,11 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_OU_GetTree", ReplyAction="http://tempuri.org/IAuthority/Sys_OU_GetTreeResponse")]
         System.Threading.Tasks.Task<WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[]> Sys_OU_GetTreeAsync(int iUserID, int iDeleted, int iEnabled);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level2", ReplyAction="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level2Response")]
-        WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[] Sys_OU_GetTree_Level2();
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level", ReplyAction="http://tempuri.org/IAuthority/Sys_OU_GetTree_LevelResponse")]
+        WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[] Sys_OU_GetTree_Level(int iType);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level2", ReplyAction="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level2Response")]
-        System.Threading.Tasks.Task<WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[]> Sys_OU_GetTree_Level2Async();
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_OU_GetTree_Level", ReplyAction="http://tempuri.org/IAuthority/Sys_OU_GetTree_LevelResponse")]
+        System.Threading.Tasks.Task<WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[]> Sys_OU_GetTree_LevelAsync(int iType);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Ou_GetByID", ReplyAction="http://tempuri.org/IAuthority/Sys_Ou_GetByIDResponse")]
         System.Data.DataTable Sys_Ou_GetByID(int iOuID);
@@ -1863,17 +2030,41 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_OU_Menu_Save", ReplyAction="http://tempuri.org/IAuthority/Sys_OU_Menu_SaveResponse")]
         System.Threading.Tasks.Task<string> Sys_OU_Menu_SaveAsync(int iOuID, string[] LstStr);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_Qry", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_QryResponse")]
-        System.Data.DataTable Sys_Role_Qry(int iCode, WHC.WaterFeeWeb.ServiceReference1.Role RoleInfo);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_GetTree", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_GetTreeResponse")]
+        WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[] Sys_Role_GetTree(int iUserID, int iDeleted);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_Qry", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_QryResponse")]
-        System.Threading.Tasks.Task<System.Data.DataTable> Sys_Role_QryAsync(int iCode, WHC.WaterFeeWeb.ServiceReference1.Role RoleInfo);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_GetTree", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_GetTreeResponse")]
+        System.Threading.Tasks.Task<WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[]> Sys_Role_GetTreeAsync(int iUserID, int iDeleted);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_GetRoleMenuUserByID", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_GetRoleMenuUserByIDResponse")]
+        WHC.WaterFeeWeb.ServiceReference1.CommonResult Sys_Role_GetRoleMenuUserByID(int iRoleID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_GetRoleMenuUserByID", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_GetRoleMenuUserByIDResponse")]
+        System.Threading.Tasks.Task<WHC.WaterFeeWeb.ServiceReference1.CommonResult> Sys_Role_GetRoleMenuUserByIDAsync(int iRoleID);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_Opr", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_OprResponse")]
         string Sys_Role_Opr(WHC.WaterFeeWeb.ServiceReference1.Role RoleInfo);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_Opr", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_OprResponse")]
         System.Threading.Tasks.Task<string> Sys_Role_OprAsync(WHC.WaterFeeWeb.ServiceReference1.Role RoleInfo);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_UserSave", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_UserSaveResponse")]
+        string Sys_Role_UserSave(int iRoleID, int[] LstUserID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_UserSave", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_UserSaveResponse")]
+        System.Threading.Tasks.Task<string> Sys_Role_UserSaveAsync(int iRoleID, int[] LstUserID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_MenuSave", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_MenuSaveResponse")]
+        string Sys_Role_MenuSave(int iRoleID, string[] LstMenuID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_MenuSave", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_MenuSaveResponse")]
+        System.Threading.Tasks.Task<string> Sys_Role_MenuSaveAsync(int iRoleID, string[] LstMenuID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_GetUserByID", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_GetUserByIDResponse")]
+        System.Data.DataTable Sys_Role_GetUserByID(int iRoleID, int iOuID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Role_GetUserByID", ReplyAction="http://tempuri.org/IAuthority/Sys_Role_GetUserByIDResponse")]
+        System.Threading.Tasks.Task<System.Data.DataTable> Sys_Role_GetUserByIDAsync(int iRoleID, int iOuID);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_User_Qry", ReplyAction="http://tempuri.org/IAuthority/Sys_User_QryResponse")]
         System.Data.DataTable Sys_User_Qry(int iCode, WHC.WaterFeeWeb.ServiceReference1.User Usr);
@@ -1977,12 +2168,12 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
             return base.Channel.Sys_OU_GetTreeAsync(iUserID, iDeleted, iEnabled);
         }
         
-        public WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[] Sys_OU_GetTree_Level2() {
-            return base.Channel.Sys_OU_GetTree_Level2();
+        public WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[] Sys_OU_GetTree_Level(int iType) {
+            return base.Channel.Sys_OU_GetTree_Level(iType);
         }
         
-        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[]> Sys_OU_GetTree_Level2Async() {
-            return base.Channel.Sys_OU_GetTree_Level2Async();
+        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[]> Sys_OU_GetTree_LevelAsync(int iType) {
+            return base.Channel.Sys_OU_GetTree_LevelAsync(iType);
         }
         
         public System.Data.DataTable Sys_Ou_GetByID(int iOuID) {
@@ -2017,12 +2208,20 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
             return base.Channel.Sys_OU_Menu_SaveAsync(iOuID, LstStr);
         }
         
-        public System.Data.DataTable Sys_Role_Qry(int iCode, WHC.WaterFeeWeb.ServiceReference1.Role RoleInfo) {
-            return base.Channel.Sys_Role_Qry(iCode, RoleInfo);
+        public WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[] Sys_Role_GetTree(int iUserID, int iDeleted) {
+            return base.Channel.Sys_Role_GetTree(iUserID, iDeleted);
         }
         
-        public System.Threading.Tasks.Task<System.Data.DataTable> Sys_Role_QryAsync(int iCode, WHC.WaterFeeWeb.ServiceReference1.Role RoleInfo) {
-            return base.Channel.Sys_Role_QryAsync(iCode, RoleInfo);
+        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[]> Sys_Role_GetTreeAsync(int iUserID, int iDeleted) {
+            return base.Channel.Sys_Role_GetTreeAsync(iUserID, iDeleted);
+        }
+        
+        public WHC.WaterFeeWeb.ServiceReference1.CommonResult Sys_Role_GetRoleMenuUserByID(int iRoleID) {
+            return base.Channel.Sys_Role_GetRoleMenuUserByID(iRoleID);
+        }
+        
+        public System.Threading.Tasks.Task<WHC.WaterFeeWeb.ServiceReference1.CommonResult> Sys_Role_GetRoleMenuUserByIDAsync(int iRoleID) {
+            return base.Channel.Sys_Role_GetRoleMenuUserByIDAsync(iRoleID);
         }
         
         public string Sys_Role_Opr(WHC.WaterFeeWeb.ServiceReference1.Role RoleInfo) {
@@ -2031,6 +2230,30 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
         
         public System.Threading.Tasks.Task<string> Sys_Role_OprAsync(WHC.WaterFeeWeb.ServiceReference1.Role RoleInfo) {
             return base.Channel.Sys_Role_OprAsync(RoleInfo);
+        }
+        
+        public string Sys_Role_UserSave(int iRoleID, int[] LstUserID) {
+            return base.Channel.Sys_Role_UserSave(iRoleID, LstUserID);
+        }
+        
+        public System.Threading.Tasks.Task<string> Sys_Role_UserSaveAsync(int iRoleID, int[] LstUserID) {
+            return base.Channel.Sys_Role_UserSaveAsync(iRoleID, LstUserID);
+        }
+        
+        public string Sys_Role_MenuSave(int iRoleID, string[] LstMenuID) {
+            return base.Channel.Sys_Role_MenuSave(iRoleID, LstMenuID);
+        }
+        
+        public System.Threading.Tasks.Task<string> Sys_Role_MenuSaveAsync(int iRoleID, string[] LstMenuID) {
+            return base.Channel.Sys_Role_MenuSaveAsync(iRoleID, LstMenuID);
+        }
+        
+        public System.Data.DataTable Sys_Role_GetUserByID(int iRoleID, int iOuID) {
+            return base.Channel.Sys_Role_GetUserByID(iRoleID, iOuID);
+        }
+        
+        public System.Threading.Tasks.Task<System.Data.DataTable> Sys_Role_GetUserByIDAsync(int iRoleID, int iOuID) {
+            return base.Channel.Sys_Role_GetUserByIDAsync(iRoleID, iOuID);
         }
         
         public System.Data.DataTable Sys_User_Qry(int iCode, WHC.WaterFeeWeb.ServiceReference1.User Usr) {

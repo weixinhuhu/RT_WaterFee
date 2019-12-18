@@ -133,15 +133,17 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="Sys_OU_GetTree_Level2">
-    <xs:complexType>
-      <xs:sequence />
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="Sys_OU_GetTree_Level2Response">
+  <xs:element name="Sys_OU_GetTree_Level">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/DbServer.Model" minOccurs="0" name="Sys_OU_GetTree_Level2Result" nillable="true" type="q7:ArrayOfEasyTreeData" />
+        <xs:element minOccurs="0" name="iType" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_OU_GetTree_LevelResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/DbServer.Model" minOccurs="0" name="Sys_OU_GetTree_LevelResult" nillable="true" type="q7:ArrayOfEasyTreeData" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -215,18 +217,91 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="Sys_Role_Qry">
+  <xs:element name="Sys_Role_GetTree">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="iCode" type="xs:int" />
-        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/DbServer.DTOAuth" minOccurs="0" name="RoleInfo" nillable="true" type="q11:Role" />
+        <xs:element minOccurs="0" name="iUserID" type="xs:int" />
+        <xs:element minOccurs="0" name="iDeleted" type="xs:int" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="Sys_Role_QryResponse">
+  <xs:element name="Sys_Role_GetTreeResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="Sys_Role_QryResult" nillable="true">
+        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/DbServer.Model" minOccurs="0" name="Sys_Role_GetTreeResult" nillable="true" type="q11:ArrayOfEasyTreeData" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_Role_GetRoleMenuUserByID">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iRoleID" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_Role_GetRoleMenuUserByIDResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/DbServer.Model" minOccurs="0" name="Sys_Role_GetRoleMenuUserByIDResult" nillable="true" type="q12:CommonResult" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_Role_Opr">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q13="http://schemas.datacontract.org/2004/07/DbServer.DTOAuth" minOccurs="0" name="RoleInfo" nillable="true" type="q13:Role" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_Role_OprResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Sys_Role_OprResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_Role_UserSave">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iRoleID" type="xs:int" />
+        <xs:element xmlns:q14="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LstUserID" nillable="true" type="q14:ArrayOfint" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_Role_UserSaveResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Sys_Role_UserSaveResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_Role_MenuSave">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iRoleID" type="xs:int" />
+        <xs:element xmlns:q15="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LstMenuID" nillable="true" type="q15:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_Role_MenuSaveResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Sys_Role_MenuSaveResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_Role_GetUserByID">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iRoleID" type="xs:int" />
+        <xs:element minOccurs="0" name="iOuID" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_Role_GetUserByIDResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Sys_Role_GetUserByIDResult" nillable="true">
           <xs:complexType>
             <xs:annotation>
               <xs:appinfo>
@@ -242,25 +317,11 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="Sys_Role_Opr">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/DbServer.DTOAuth" minOccurs="0" name="RoleInfo" nillable="true" type="q12:Role" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="Sys_Role_OprResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="Sys_Role_OprResult" nillable="true" type="xs:string" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
   <xs:element name="Sys_User_Qry">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="iCode" type="xs:int" />
-        <xs:element xmlns:q13="http://schemas.datacontract.org/2004/07/DbServer.DTOAuth" minOccurs="0" name="Usr" nillable="true" type="q13:User" />
+        <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/DbServer.DTOAuth" minOccurs="0" name="Usr" nillable="true" type="q16:User" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -286,7 +347,7 @@
   <xs:element name="Sys_User_Opr">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q14="http://schemas.datacontract.org/2004/07/DbServer.DTOAuth" minOccurs="0" name="Usr" nillable="true" type="q14:User" />
+        <xs:element xmlns:q17="http://schemas.datacontract.org/2004/07/DbServer.DTOAuth" minOccurs="0" name="Usr" nillable="true" type="q17:User" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -301,7 +362,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="iMode" type="xs:int" />
-        <xs:element xmlns:q15="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LstID" nillable="true" type="q15:ArrayOfint" />
+        <xs:element xmlns:q18="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="LstID" nillable="true" type="q18:ArrayOfint" />
         <xs:element minOccurs="0" name="sUserID" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="sUserName" nillable="true" type="xs:string" />
       </xs:sequence>

@@ -55,25 +55,23 @@
                     cascadeCheck: false,
                     // onlyLeafCheck: true,只显示叶子菜单
                     url: "/Function/GetSys_OU_Menu?r=" + Math.random() + "&OuID=" + id + "&iMode=" + 0,
-                    onClick: function (node) {
-
-                    },
-                    onCheck: function (node, checked) {
+                    onCheck: function (node) {
                         if (checked) { //得到父节点
-                            var node1 = $('#treeFunctionView').tree('getParent', node.target);
-                            //选中父节点
-                            $('#treeFunctionView').tree('check', node1.target);
-                        }
+                        var node1 = $('#treeFunctionView').tree('getParent', node.target);
+                        //选中父节点
+                        $('#treeFunctionView').tree('check', node1.target);
+                    }
                     }
                 })
             };
         }
 
+  
         //保存角色操作功能
         function saveRoleFunction() {
             var functionList = new Array();
             var nodes = $('#treeFunctionView').tree('getChecked');
-            for (var i = 1; i < nodes.length; i++) {
+            for (var i = 0; i < nodes.length; i++) {
                 if (nodes[i].iconCls != "icon-organ") {
                     functionList.push(nodes[i].id);
                 }
