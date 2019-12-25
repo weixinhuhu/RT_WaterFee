@@ -9,12 +9,9 @@
     @Scripts.Render("~/bundles/jquerytools")
     @Styles.Render("~/Content/jquerytools")
 
-    <script src="/Content/JQueryTools/Highcharts/js/highcharts.js"></script>
-    <script src="/Content/JQueryTools/Highcharts/js/modules/exporting.js"></script>
-    <!--<script src="/Content/JQueryTools/Highcharts/js/themes/grid.js"></script>
-    <script src="/Content/JQueryTools/Highcharts/js/highcharts-more.js"></script>
-    <script src="/Content/JQueryTools/Highcharts/js/highcharts-3d.js"></script>-->
-
+    <script src="https://code.highcharts.com.cn/highcharts/highcharts.js"></script>
+    <script src="https://code.highcharts.com.cn/highcharts/modules/exporting.js"></script>
+    <script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
 
     <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
     <script src="~/Scripts/ComponentUtil.js"></script>
@@ -22,78 +19,302 @@
     <script type="text/javascript">
 
         $(function () {
-            BindSearchEvent();
-
-            $("#divChart").height($(window).height() - 77);
+            //BindSearchEvent();
+            //$("#divChart").height($(window).height() - 77);
         });
 
-        //绑定搜索按钮的的点击事件
-        function BindSearchEvent() {
-            //按条件进行查询数据，首先我们得到数据的值
-            $("#btnSearch").click(function () {
-                //得到用户输入的参数
-                //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
-                //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
-                var start = $("#DteFreezeStart").datebox("getValue");
-                var end = $("#DteFreezeEnd").datebox("getValue");
-
-                if (!start || !end) {
-                    showError("请把日期选择完整!");
-                    return;
-                }
-
-                var queryData = {
-                    dtStart: start,
-                    dtEnd: end
-                }
-
-                loading.show();
-                $.ajax({
-                    type: 'post',
-                    url: '/ArcMeterReading/CollectChartJson',
-                    data: queryData,
-                    dataType: 'json',
-                    success: function (json) {
-                        loading.hide();
-                        initChart(json);
+        //带缩放功能数据显示
+        function HighChart1() {
+            $.getJSON('https://data.jianshukeji.com/jsonp?filename=json/usdeur.json&callback=?', function (data) {
+                console.log(data);
+                $('#divChart').highcharts({
+                    chart: {
+                        zoomType: 'x'
                     },
-                    error: function () {
-                        loading.hide();
-                        showError("网络错误!");
-                    }
+                    credits: {
+                        enabled: false
+                    },
+                    //exporting: {
+                    //    enabled: false
+                    //},
+                    title: {
+                        text: '用水量走势图'
+                    },
+                    subtitle: {
+                        text: document.ontouchstart === undefined ?
+                            '鼠标拖动、滚轮可以进行缩放' : '手势操作进行缩放'
+                    },
+                    mapNavigation: {
+                        enabled: true,
+                        enableButtons: false
+                    },
+
+                    xAxis: {
+                        type: 'datetime',
+                        dateTimeLabelFormats: {
+                            millisecond: '%H:%M:%S.%L',
+                            second: '%H:%M:%S',
+                            minute: '%H:%M',
+                            hour: '%H:%M',
+                            day: '%m-%d',
+                            week: '%m-%d',
+                            month: '%Y-%m',
+                            year: '%Y'
+                        }
+                    },
+                    tooltip: {
+                        dateTimeLabelFormats: {
+                            millisecond: '%H:%M:%S.%L',
+                            second: '%H:%M:%S',
+                            minute: '%H:%M',
+                            hour: '%H:%M',
+                            day: '%Y-%m-%d',
+                            week: '%m-%d',
+                            month: '%Y-%m',
+                            year: '%Y'
+                        }
+                    },
+                    yAxis: {
+                        title: {
+                            text: '用水量'
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        area: {
+                            fillColor: {
+                                linearGradient: {
+                                    x1: 0,
+                                    y1: 0,
+                                    x2: 0,
+                                    y2: 1
+                                },
+                                stops: [
+                                    [0, Highcharts.getOptions().colors[0]],
+                                    [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                ]
+                            },
+                            marker: {
+                                radius: 2
+                            },
+                            lineWidth: 1,
+                            states: {
+                                hover: {
+                                    lineWidth: 1
+                                }
+                            },
+                            threshold: null
+                        }
+                    },
+                    series: [{
+                        type: 'area',
+                        name: '用水量',
+                        data: data
+                    }]
                 });
             });
-        }
-        function initChart(json) {
-            $("#divChart").highcharts({
+        };
+
+        //折线对比图
+        function lineChart() {
+            $('#divChart').highcharts({
+                colors: ["#7cb5ec", "#f7a35c","#D1EEEE","#98FB98"],
+                chart: {
+                    type: 'line'
+                },
                 title: {
-                    text: null
+                    text: '月平均用水量'
+                },
+                credits: {
+                    enabled: false
+                },
+                //exporting: {
+                //    enabled: false
+                //},
+                subtitle: {
+                    text: ''
                 },
                 xAxis: {
-                    categories: json.categories
+                    categories: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
                 },
                 yAxis: {
                     title: {
-                        text: '用量'
+                        text: '用数量 (吨)'
                     }
                 },
-                tooltip: {
-                    //valueSuffix: '°C'
+                plotOptions: {
+                    line: {
+                        dataLabels: {
+                            // 开启数据标签
+                            enabled: true
+                        },
+                        // 关闭鼠标跟踪，对应的提示框、点击事件会失效
+                        enableMouseTracking: false
+                    }
                 },
-                legend: {
-                    //layout: 'vertical',
-                    //align: 'right',
-                    // verticalAlign: 'middle',
-                    borderWidth: 0
-                },
-                series: json.series
+                series: [{
+                    name: '2018',
+                    data: [700.0, 600.9, 900.5, 1400.5, 1800.4, 2100.5, 2500.2, 2600.5, 2300.3, 1800.3, 1300.9, 900.6]
+                }, {
+                    name: '2019',
+                    data: [300.9, 400.2, 500.7, 800.5, 1100.9, 1500.2, 1700.0, 1600.6, 1400.2, 1000.3, 600.6, 400.8]
+                }]
             });
         }
 
+        //柱形对比图
+        function HighChart3D() {
+            chart = new Highcharts.Chart({
+                colors: ["#7cb5ec", "#f7a35c","#D1EEEE","#98FB98"],
+                chart: {
+                    type: 'column',
+                    renderTo: 'divChart'
+                },
+                title: {
+                    text: '月用水量对比'
+                },
+                subtitle: {
 
+                },
+                //credits: {
+                //    enabled: false
+                //},
+                exporting: {
+                    enabled: false
+                },
+                xAxis: {
+                    categories: [
+                        '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'
+                    ],
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '用水量 (千吨)'
+                    }
+                },
+                tooltip: {
+                    // head + 每个 point + footer 拼接成完整的 table
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y:.1f} 千吨</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: '2017',
+                    data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+                    
+                }, {
+                    name: '2018',
+                    data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
+                }, {
+                    name: '2019',
+                    data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
+                }, {
+                    name: '2020',
+                    data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
+                }]
+            });
+        }
+
+        $(function () {
+            //HighChart1();
+            //lineChart();
+            //HighChart3D();
+        });
+
+        function ShowHighChart() {
+            console.log($("#ChartType").combobox("getValue"));
+            switch ($("#ChartType").combobox("getValue")) {
+                //console.log($("#ChartType").combobox("getValue"));
+                case "1":
+                    lineChart();
+                    break;
+                case "2":
+                    HighChart3D();
+                    break;
+                case "3":
+                    HighChart1();
+                    break;
+                default:
+                    HighChart3D();
+
+            }
+        }
+
+        //绑定搜索按钮的的点击事件
+        //function BindSearchEvent() {
+        //    //按条件进行查询数据，首先我们得到数据的值
+        //    $("#btnSearch").click(function () {
+        //        //得到用户输入的参数
+        //        //取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
+        //        //字段增加WHC_前缀字符，避免传递如URL这样的Request关键字冲突
+        //        var start = $("#DteFreezeStart").datebox("getValue");
+        //        var end = $("#DteFreezeEnd").datebox("getValue");
+
+        //        if (!start || !end) {
+        //            showError("请把日期选择完整!");
+        //            return;
+        //        }
+
+        //        var queryData = {
+        //            dtStart: start,
+        //            dtEnd: end
+        //        }
+
+        //        loading.show();
+        //        $.ajax({
+        //            type: 'post',
+        //            url: '/ArcMeterReading/CollectChartJson',
+        //            data: queryData,
+        //            dataType: 'json',
+        //            success: function (json) {
+        //                loading.hide();
+        //                initChart(json);
+        //            },
+        //            error: function () {
+        //                loading.hide();
+        //                showError("网络错误!");
+        //            }
+        //        });
+        //    });
+        //}
+        //function initChart(json) {
+        //    $("#divChart").highcharts({
+        //        title: {
+        //            text: null
+        //        },
+        //        xAxis: {
+        //            categories: json.categories
+        //        },
+        //        yAxis: {
+        //            title: {
+        //                text: '用量'
+        //            }
+        //        },
+        //        tooltip: {
+        //            //valueSuffix: '°C'
+        //        },
+        //        legend: {
+        //            //layout: 'vertical',
+        //            //align: 'right',
+        //            // verticalAlign: 'middle',
+        //            borderWidth: 0
+        //        },
+        //        series: json.series
+        //    });
+        //}
     </script>
-
-
 </head>
 <body>
 
@@ -111,15 +332,29 @@
                         <table cellspacing="0" cellpadding="0">
                             <tr>
                                 <th style='padding: 3px;'>
-                                    <label for="VcAddr">冻结日期：</label></th>
+                                    <label for="VcAddr">冻结日期：</label>
+                                </th>
                                 <td style='padding: 3px;'>
-                                    <input type="text" class="easyui-datebox" id="DteFreezeStart" style="width: 100px" /></td>
+                                    <input type="text" class="easyui-datebox" id="DteFreezeStart" style="width: 100px" />
+                                </td>
                                 <th style='padding: 3px;'>
-                                    <label for="IntCustNo">至</label></th>
+                                    <label for="IntCustNo">至</label>
+                                </th>
                                 <td style='padding: 3px;'>
-                                    <input type="text" class="easyui-datebox" id="DteFreezeEnd" style="width: 100px" /></td>
+                                    <input type="text" class="easyui-datebox" id="DteFreezeEnd" style="width: 100px" />
+                                </td>
+                                <th style='padding: 3px;'>
+                                    <label for="ChartType">是否欠费：</label>
+                                </th>
+                                <td style='padding: 3px;'>
+                                    <select id="ChartType" class="easyui-combobox" style="width: 100px;">
+                                        <option value="1">折线图</option>
+                                        <option value="2">柱形图</option>
+                                        <option value="3">缩放图</option>
+                                    </select>
+                                </td>
                                 <td style='padding: 3px; text-align: right'>
-                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" id="btnSearch">查询</a>
+                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="ShowHighChart()">查询</a>
                                 </td>
                             </tr>
                         </table>
@@ -138,19 +373,19 @@
     <div style="display: none;">
         <!--------------------------添加信息的弹出层---------------------------->
         <div id="DivAdd" class="easyui-dialog" style="width: 750px; height: 99%; padding: 5px 5px"
-            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-add'">
+             closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-add'">
         </div>
 
         <!--------------------------编辑信息的弹出层---------------------------->
         <div id="DivEdit" class="easyui-dialog" style="width: 850px; height: 630px; padding: 5px 5px"
-            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-edit'">
+             closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-edit'">
             <div id="tabEditUser" class="easyui-tabs">
             </div>
         </div>
 
         <!--------------------------查看详细信息的弹出层---------------------------->
         <div id="DivView" class="easyui-dialog" style="width: 840px; height: 650px; padding: 5px 5px"
-            closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-view'">
+             closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-view'">
             <div id="tabViewUser" class="easyui-tabs">
             </div>
         </div>

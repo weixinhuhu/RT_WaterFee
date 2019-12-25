@@ -1,23 +1,17 @@
+using Aspose.Cells;
+using Newtonsoft.Json;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Text;
-using System.Linq;
-using System.Web;
+using System.IO;
 using System.Web.Mvc;
-using System.Collections;
-using System.Collections.Generic;
-
-using Newtonsoft.Json;
-using Aspose.Cells;
-using WHC.Pager.Entity;
-using WHC.Framework.Commons;
-using WHC.Framework.ControlUtil;
-using WHC.MVCWebMis.BLL;
-using WHC.MVCWebMis.Entity;
 using WHC.CRM.BLL;
 using WHC.CRM.Entity;
+using WHC.Framework.Commons;
+using WHC.Framework.ControlUtil;
+using WHC.MVCWebMis.Entity;
+using WHC.Pager.Entity;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -128,7 +122,7 @@ namespace WHC.MVCWebMis.Controllers
         }
 
         #region 导入Excel数据操作
-        
+
         //导入或导出的字段列表    
         string columnString = "客户名称,编号,姓名,身份证号码,出生日期,性别,办公电话,家庭电话,传真,联系人手机,联系人地址,邮政编码,电子邮件,QQ号码,备注,排序序号,所在省份,城市,所在行政区,籍贯,家庭住址,民族,教育程度,毕业学校,政治面貌,职业类型,职称,职务,所在部门,爱好,属相,星座,婚姻状态,健康状况,重要级别,认可程度,关系,负责需求,关心重点,利益诉求,体型,吸烟,喝酒,身高,体重,视力,个人简述";
 
@@ -426,7 +420,7 @@ namespace WHC.MVCWebMis.Controllers
                 dr["个人简述"] = list[i].Introduce;
 
                 datatable.Rows.Add(dr);
-            } 
+            }
             #endregion
 
             #region 把DataTable转换为Excel并输出
@@ -471,7 +465,7 @@ namespace WHC.MVCWebMis.Controllers
             string parentPath = Directory.GetParent(realPath).FullName;
             DirectoryUtil.AssertDirExist(parentPath);
 
-            workbook.Save(realPath, Aspose.Cells.SaveFormat.Excel97To2003); 
+            workbook.Save(realPath, Aspose.Cells.SaveFormat.Excel97To2003);
 
             #endregion
 

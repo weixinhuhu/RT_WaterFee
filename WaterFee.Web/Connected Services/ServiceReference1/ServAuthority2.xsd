@@ -20,6 +20,37 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="Sys_Login_GetMenuByUserID">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iUserID" type="xs:int" />
+        <xs:element minOccurs="0" name="sSysTypeID" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_Login_GetMenuByUserIDResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Sys_Login_GetMenuByUserIDResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_Login_ChangePass">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="iUserID" type="xs:int" />
+        <xs:element minOccurs="0" name="sOldPass" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="sNewPass" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Sys_Login_ChangePassResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Sys_Login_ChangePassResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="Sys_Menu_GetTree">
     <xs:complexType>
       <xs:sequence>

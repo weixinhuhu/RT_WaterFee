@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 
 namespace PROJECT
 {
@@ -33,7 +30,7 @@ namespace PROJECT
         /// <param name="cmdText">存储过程的名字或者 T-SQL 语句</param>
         /// <param name="commandParameters">以数组形式提供SqlCommand命令中用到的参数列表</param>
         /// <returns>返回一个数值表示此SqlCommand命令执行后影响的行数</returns>
-        public static int ExecteNonQuery(string connectionString, string cmdText )
+        public static int ExecteNonQuery(string connectionString, string cmdText)
         {
             SqlCommand cmd = new SqlCommand();
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -55,7 +52,7 @@ namespace PROJECT
         /// <param name="cmdText">存储过程的名字或者 T-SQL 语句</param>
         /// <param name="commandParameters">以数组形式提供SqlCommand命令中用到的参数列表</param>
         /// <returns>返回一个数值表示此SqlCommand命令执行后影响的行数</returns>
-        public static int ExecteNonQuery( string cmdText)
+        public static int ExecteNonQuery(string cmdText)
         {
             return ExecteNonQuery(connectionString, cmdText);
         }
@@ -77,9 +74,9 @@ namespace PROJECT
         /// <param name="cmdText">T_Sql语句</param>
         /// <param name="commandParameters">以数组形式提供SqlCommand命令中用到的参数列表</param>
         /// <returns>返回一个数值表示此SqlCommand命令执行后影响的行数</returns>
-        public static int ExecteNonQueryText(string cmdText )
+        public static int ExecteNonQueryText(string cmdText)
         {
-            return ExecteNonQuery( cmdText);
+            return ExecteNonQuery(cmdText);
         }
 
         #endregion
@@ -100,7 +97,7 @@ namespace PROJECT
             DataSet ds = new DataSet();
             using (SqlConnection conn = new SqlConnection(connecttionString))
             {
-                PrepareCommand(cmd, conn,cmdText);
+                PrepareCommand(cmd, conn, cmdText);
                 SqlDataAdapter adapter = new SqlDataAdapter();
                 adapter.SelectCommand = cmd;
                 adapter.Fill(ds);
@@ -156,7 +153,7 @@ namespace PROJECT
         /// <param name="cmdType">SqlCommand命令类型 (存储过程， T-SQL语句， 等等。)</param>
         /// <param name="cmdText">Command text，T-SQL语句 例如 Select * from Products</param>
         /// <param name="cmdParms">返回带参数的命令</param>
-        private static void PrepareCommand(SqlCommand cmd, SqlConnection conn,string cmdText)
+        private static void PrepareCommand(SqlCommand cmd, SqlConnection conn, string cmdText)
         {
             //判断数据库连接状态
             if (conn.State != ConnectionState.Open)
@@ -192,7 +189,7 @@ namespace PROJECT
             // commandBehaviour.CloseConnection will not work
             try
             {
-                PrepareCommand(cmd, conn,cmdText);
+                PrepareCommand(cmd, conn, cmdText);
                 SqlDataReader rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
                 cmd.Parameters.Clear();
                 return rdr;
@@ -219,7 +216,7 @@ namespace PROJECT
             SqlCommand cmd = new SqlCommand();
             try
             {
-                PrepareCommand(cmd, conn,cmdText);
+                PrepareCommand(cmd, conn, cmdText);
                 SqlDataAdapter da = new SqlDataAdapter();
                 DataSet ds = new DataSet();
                 da.SelectCommand = cmd;
@@ -276,7 +273,7 @@ namespace PROJECT
             SqlCommand cmd = new SqlCommand();
             try
             {
-                PrepareCommand(cmd, conn,cmdText);
+                PrepareCommand(cmd, conn, cmdText);
                 SqlDataAdapter da = new SqlDataAdapter();
                 DataSet ds = new DataSet();
                 da.SelectCommand = cmd;
@@ -350,7 +347,7 @@ namespace PROJECT
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                PrepareCommand(cmd, connection,cmdText);
+                PrepareCommand(cmd, connection, cmdText);
                 object val = cmd.ExecuteScalar();
                 cmd.Parameters.Clear();
                 return val;
@@ -373,7 +370,7 @@ namespace PROJECT
         public static object ExecuteScalar(SqlConnection connection, CommandType cmdType, string cmdText, params SqlParameter[] commandParameters)
         {
             SqlCommand cmd = new SqlCommand();
-            PrepareCommand(cmd, connection,cmdText);
+            PrepareCommand(cmd, connection, cmdText);
             object val = cmd.ExecuteScalar();
             cmd.Parameters.Clear();
             return val;

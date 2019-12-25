@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
-
-using Newtonsoft.Json;
 using WHC.Framework.Commons;
-using WHC.Security.BLL;
-using WHC.Security.Common;
-using WHC.Security.Entity;
 using WHC.Framework.ControlUtil;
 using WHC.MVCWebMis.Entity;
+using WHC.Security.BLL;
+using WHC.Security.Entity;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -46,7 +40,7 @@ namespace WHC.MVCWebMis.Controllers
             }
             return Json(itemList, JsonRequestBehavior.AllowGet);
         }
-              
+
         /// <summary>
         /// 根据系统OID获取系统标识信息
         /// </summary>

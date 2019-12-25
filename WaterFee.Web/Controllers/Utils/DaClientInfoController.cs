@@ -1,21 +1,15 @@
-﻿using System;
+﻿using Aspose.Cells;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Text;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using Aspose.Cells;
-
-using Newtonsoft.Json;
-using WHC.Pager.Entity;
+using System.Web.Mvc;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
 using WHC.MVCWebMis.BLL;
 using WHC.MVCWebMis.Entity;
+using WHC.Pager.Entity;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -26,8 +20,8 @@ namespace WHC.MVCWebMis.Controllers
         }
 
         #region 导入Excel数据操作
- 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 		 
-	    //导入或导出的字段列表   
+
+        //导入或导出的字段列表   
         string columnString = "Zhh,Qy,Sh,Cbbh,Bxh,Hmcm,Dzcm,Dhhm,Mobile,Lxr,Hth,Hm,Dw,Dwdh,Dz,Yhxz,Sffs,Sfzh,Ysxz,Jhrq,Xhrq,Yjsl,Yhzt,Gh,Rks,Fphm,Fpdz,Fkdwqc,Fkdwzh,Fkkhyh,Yhlx,Cby";
 
         /// <summary>
@@ -80,50 +74,50 @@ namespace WHC.MVCWebMis.Controllers
                 {
                     bool converted = false;
                     DateTime dtDefault = Convert.ToDateTime("1900-01-01");
-                    DateTime dt;                    
+                    DateTime dt;
                     DaClientInfoInfo info = new DaClientInfoInfo();
-                    
-                     info.Zhh = dr["Zhh"].ToString().ToInt32();
-                      info.Qy = dr["Qy"].ToString();
-                      info.Sh = dr["Sh"].ToString();
-                      info.Cbbh = dr["Cbbh"].ToString();
-                      info.Bxh = dr["Bxh"].ToString().ToInt32();
-                      info.Hmcm = dr["Hmcm"].ToString();
-                      info.Dzcm = dr["Dzcm"].ToString();
-                      info.Dhhm = dr["Dhhm"].ToString();
-                      info.Mobile = dr["Mobile"].ToString();
-                      info.Lxr = dr["Lxr"].ToString();
-                      info.Hth = dr["Hth"].ToString();
-                      info.Hm = dr["Hm"].ToString();
-                      info.Dw = dr["Dw"].ToString();
-                      info.Dwdh = dr["Dwdh"].ToString();
-                      info.Dz = dr["Dz"].ToString();
-                      info.Yhxz = dr["Yhxz"].ToString();
-                      info.Sffs = dr["Sffs"].ToString();
-                      info.Sfzh = dr["Sfzh"].ToString();
-                      info.Ysxz = dr["Ysxz"].ToString();
-                      converted = DateTime.TryParse(dr["Jhrq"].ToString(), out dt);
+
+                    info.Zhh = dr["Zhh"].ToString().ToInt32();
+                    info.Qy = dr["Qy"].ToString();
+                    info.Sh = dr["Sh"].ToString();
+                    info.Cbbh = dr["Cbbh"].ToString();
+                    info.Bxh = dr["Bxh"].ToString().ToInt32();
+                    info.Hmcm = dr["Hmcm"].ToString();
+                    info.Dzcm = dr["Dzcm"].ToString();
+                    info.Dhhm = dr["Dhhm"].ToString();
+                    info.Mobile = dr["Mobile"].ToString();
+                    info.Lxr = dr["Lxr"].ToString();
+                    info.Hth = dr["Hth"].ToString();
+                    info.Hm = dr["Hm"].ToString();
+                    info.Dw = dr["Dw"].ToString();
+                    info.Dwdh = dr["Dwdh"].ToString();
+                    info.Dz = dr["Dz"].ToString();
+                    info.Yhxz = dr["Yhxz"].ToString();
+                    info.Sffs = dr["Sffs"].ToString();
+                    info.Sfzh = dr["Sfzh"].ToString();
+                    info.Ysxz = dr["Ysxz"].ToString();
+                    converted = DateTime.TryParse(dr["Jhrq"].ToString(), out dt);
                     if (converted && dt > dtDefault)
                     {
-                         info.Jhrq = dt;
+                        info.Jhrq = dt;
                     }
-                      converted = DateTime.TryParse(dr["Xhrq"].ToString(), out dt);
+                    converted = DateTime.TryParse(dr["Xhrq"].ToString(), out dt);
                     if (converted && dt > dtDefault)
                     {
-                         info.Xhrq = dt;
+                        info.Xhrq = dt;
                     }
-                      info.Yjsl = dr["Yjsl"].ToString().ToInt32();
-                      info.Yhzt = dr["Yhzt"].ToString();
-                      info.Gh = dr["Gh"].ToString();
-                      info.Rks = dr["Rks"].ToString().ToInt32();
-                      info.Fphm = dr["Fphm"].ToString();
-                      info.Fpdz = dr["Fpdz"].ToString();
-                      info.Fkdwqc = dr["Fkdwqc"].ToString();
-                      info.Fkdwzh = dr["Fkdwzh"].ToString();
-                      info.Fkkhyh = dr["Fkkhyh"].ToString();
-                      info.Yhlx = dr["Yhlx"].ToString();
-                      info.Cby = dr["Cby"].ToString();
-  
+                    info.Yjsl = dr["Yjsl"].ToString().ToInt32();
+                    info.Yhzt = dr["Yhzt"].ToString();
+                    info.Gh = dr["Gh"].ToString();
+                    info.Rks = dr["Rks"].ToString().ToInt32();
+                    info.Fphm = dr["Fphm"].ToString();
+                    info.Fpdz = dr["Fpdz"].ToString();
+                    info.Fkdwqc = dr["Fkdwqc"].ToString();
+                    info.Fkdwzh = dr["Fkdwzh"].ToString();
+                    info.Fkkhyh = dr["Fkkhyh"].ToString();
+                    info.Yhlx = dr["Yhlx"].ToString();
+                    info.Cby = dr["Cby"].ToString();
+
                     //info.Creator = CurrentUser.ID.ToString();
                     //info.CreateTime = DateTime.Now;
                     //info.Editor = CurrentUser.ID.ToString();
@@ -184,8 +178,8 @@ namespace WHC.MVCWebMis.Controllers
             }
 
             return ToJsonContent(result);
-        } 
-        
+        }
+
         /// <summary>
         /// 根据查询条件导出列表数据
         /// </summary>
@@ -199,9 +193,9 @@ namespace WHC.MVCWebMis.Controllers
 
             if (!string.IsNullOrWhiteSpace(CustomedCondition))
             {
-            	//如果为自定义的json参数列表，那么可以使用字典反序列化获取参数，然后处理
+                //如果为自定义的json参数列表，那么可以使用字典反序列化获取参数，然后处理
                 //Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(CustomedCondition);
-                
+
                 //如果是条件的自定义，可以使用Find查找
                 list = baseBLL.Find(CustomedCondition);
             }
@@ -209,7 +203,7 @@ namespace WHC.MVCWebMis.Controllers
             {
                 list = baseBLL.Find(where);
             }
-            
+
             #endregion
 
             #region 把列表转换为DataTable
@@ -219,44 +213,44 @@ namespace WHC.MVCWebMis.Controllers
             for (int i = 0; i < list.Count; i++)
             {
                 dr = datatable.NewRow();
-                dr["序号"] = j++;                
-                 dr["Zhh"] = list[i].Zhh;
-                 dr["Qy"] = list[i].Qy;
-                 dr["Sh"] = list[i].Sh;
-                 dr["Cbbh"] = list[i].Cbbh;
-                 dr["Bxh"] = list[i].Bxh;
-                 dr["Hmcm"] = list[i].Hmcm;
-                 dr["Dzcm"] = list[i].Dzcm;
-                 dr["Dhhm"] = list[i].Dhhm;
-                 dr["Mobile"] = list[i].Mobile;
-                 dr["Lxr"] = list[i].Lxr;
-                 dr["Hth"] = list[i].Hth;
-                 dr["Hm"] = list[i].Hm;
-                 dr["Dw"] = list[i].Dw;
-                 dr["Dwdh"] = list[i].Dwdh;
-                 dr["Dz"] = list[i].Dz;
-                 dr["Yhxz"] = list[i].Yhxz;
-                 dr["Sffs"] = list[i].Sffs;
-                 dr["Sfzh"] = list[i].Sfzh;
-                 dr["Ysxz"] = list[i].Ysxz;
-                 dr["Jhrq"] = list[i].Jhrq;
-                 dr["Xhrq"] = list[i].Xhrq;
-                 dr["Yjsl"] = list[i].Yjsl;
-                 dr["Yhzt"] = list[i].Yhzt;
-                 dr["Gh"] = list[i].Gh;
-                 dr["Rks"] = list[i].Rks;
-                 dr["Fphm"] = list[i].Fphm;
-                 dr["Fpdz"] = list[i].Fpdz;
-                 dr["Fkdwqc"] = list[i].Fkdwqc;
-                 dr["Fkdwzh"] = list[i].Fkdwzh;
-                 dr["Fkkhyh"] = list[i].Fkkhyh;
-                 dr["Yhlx"] = list[i].Yhlx;
-                 dr["Cby"] = list[i].Cby;
-                 //如果为外键，可以在这里进行转义，如下例子
+                dr["序号"] = j++;
+                dr["Zhh"] = list[i].Zhh;
+                dr["Qy"] = list[i].Qy;
+                dr["Sh"] = list[i].Sh;
+                dr["Cbbh"] = list[i].Cbbh;
+                dr["Bxh"] = list[i].Bxh;
+                dr["Hmcm"] = list[i].Hmcm;
+                dr["Dzcm"] = list[i].Dzcm;
+                dr["Dhhm"] = list[i].Dhhm;
+                dr["Mobile"] = list[i].Mobile;
+                dr["Lxr"] = list[i].Lxr;
+                dr["Hth"] = list[i].Hth;
+                dr["Hm"] = list[i].Hm;
+                dr["Dw"] = list[i].Dw;
+                dr["Dwdh"] = list[i].Dwdh;
+                dr["Dz"] = list[i].Dz;
+                dr["Yhxz"] = list[i].Yhxz;
+                dr["Sffs"] = list[i].Sffs;
+                dr["Sfzh"] = list[i].Sfzh;
+                dr["Ysxz"] = list[i].Ysxz;
+                dr["Jhrq"] = list[i].Jhrq;
+                dr["Xhrq"] = list[i].Xhrq;
+                dr["Yjsl"] = list[i].Yjsl;
+                dr["Yhzt"] = list[i].Yhzt;
+                dr["Gh"] = list[i].Gh;
+                dr["Rks"] = list[i].Rks;
+                dr["Fphm"] = list[i].Fphm;
+                dr["Fpdz"] = list[i].Fpdz;
+                dr["Fkdwqc"] = list[i].Fkdwqc;
+                dr["Fkdwzh"] = list[i].Fkdwzh;
+                dr["Fkkhyh"] = list[i].Fkkhyh;
+                dr["Yhlx"] = list[i].Yhlx;
+                dr["Cby"] = list[i].Cby;
+                //如果为外键，可以在这里进行转义，如下例子
                 //dr["客户名称"] = BLLFactory<Customer>.Instance.GetCustomerName(list[i].Customer_ID);//转义为客户名称
 
                 datatable.Rows.Add(dr);
-            } 
+            }
             #endregion
 
             #region 把DataTable转换为Excel并输出
@@ -301,16 +295,16 @@ namespace WHC.MVCWebMis.Controllers
             string parentPath = Directory.GetParent(realPath).FullName;
             DirectoryUtil.AssertDirExist(parentPath);
 
-            workbook.Save(realPath, Aspose.Cells.SaveFormat.Excel97To2003); 
+            workbook.Save(realPath, Aspose.Cells.SaveFormat.Excel97To2003);
 
             #endregion
 
             //返回生成后的文件路径，让客户端根据地址下载
             return Content(filePath);
         }
-        
+
         #endregion
-		
+
         #region 写入数据前修改部分属性
         protected override void OnBeforeInsert(DaClientInfoInfo info)
         {
@@ -326,7 +320,7 @@ namespace WHC.MVCWebMis.Controllers
             //子类对参数对象进行修改
             //info.Editor = CurrentUser.ID.ToString();
             //info.EditTime = DateTime.Now;
-        } 
+        }
         #endregion
 
         public override ActionResult FindWithPager()
@@ -338,7 +332,7 @@ namespace WHC.MVCWebMis.Controllers
             PagerInfo pagerInfo = GetPagerInfo();
             List<DaClientInfoInfo> list = baseBLL.FindWithPager(where, pagerInfo);
 
-			//如果需要修改字段显示，则参考下面代码处理
+            //如果需要修改字段显示，则参考下面代码处理
             //foreach(DaClientInfoInfo info in list)
             //{
             //    info.PID = BLLFactory<DaClientInfo>.Instance.GetFieldValue(info.PID, "Name");

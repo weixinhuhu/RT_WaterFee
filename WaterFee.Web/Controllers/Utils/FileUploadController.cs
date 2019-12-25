@@ -1,10 +1,8 @@
 ﻿using Aspose.Cells;
-using Aspose.Slides;
 using Aspose.Slides.Pptx;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
@@ -12,8 +10,6 @@ using WHC.Attachment.BLL;
 using WHC.Attachment.Entity;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
-using WHC.MVCWebMis.BLL;
-using WHC.MVCWebMis.Entity;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -94,7 +90,7 @@ namespace WHC.MVCWebMis.Controllers
                 {
                     result.Success = BLLFactory<FileUpload>.Instance.Delete(id);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     LogTextHelper.Error(ex);
                     result.ErrorMessage = ex.Message;
@@ -102,7 +98,7 @@ namespace WHC.MVCWebMis.Controllers
             }
             return ToJsonContent(result);
         }
-        
+
         /// <summary>
         /// 根据路径下载文件，主要用于生成的文件的下载
         /// </summary>
@@ -161,7 +157,7 @@ namespace WHC.MVCWebMis.Controllers
                     onclick=""DownloadAttach('{0}')""><img border='0' width='16px' height='16px' src='/Content/images/attachtb.gif'/>全部打包加载</a></td>", guid);
                 sb.Append("</tr>");
 
-                string result = string.Format("<table style='border:0px solid #A8CFEB;'>{0}</table>", sb.ToString()); 
+                string result = string.Format("<table style='border:0px solid #A8CFEB;'>{0}</table>", sb.ToString());
                 #endregion
 
                 return Content(result);
@@ -186,7 +182,7 @@ namespace WHC.MVCWebMis.Controllers
 
             StringBuilder sb = new StringBuilder();
             int seq = 1;
-                        
+
             List<FileUploadInfo> fileList = BLLFactory<FileUpload>.Instance.GetByAttachGUID(guid);
             if (fileList != null && fileList.Count > 0)
             {
@@ -292,7 +288,7 @@ namespace WHC.MVCWebMis.Controllers
         {
             List<FileUploadInfo> list = BLLFactory<FileUpload>.Instance.GetByAttachGUID(guid);
             List<string> fileList = new List<string>();
-            foreach(FileUploadInfo info in list)
+            foreach (FileUploadInfo info in list)
             {
                 string realFolderPath = "";
                 string filePath = BLLFactory<FileUpload>.Instance.GetFilePath(info);
@@ -380,7 +376,7 @@ namespace WHC.MVCWebMis.Controllers
             }
 
             return result;
-        } 
+        }
         #endregion
 
         public ActionResult ViewAttach()

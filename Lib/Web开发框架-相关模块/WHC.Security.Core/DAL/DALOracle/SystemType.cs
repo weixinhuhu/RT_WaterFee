@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Data;
+using System;
 using System.Collections;
 using System.Data;
 using System.Data.Common;
-
+using WHC.Framework.Commons;
 using WHC.Security.Entity;
 using WHC.Security.IDAL;
-using WHC.Framework.Commons;
-using Microsoft.Practices.EnterpriseLibrary.Data;
 
 namespace WHC.Security.DALOracle
 {

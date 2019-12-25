@@ -20,31 +20,9 @@
                 WHC_Deleted: "0"
             };//可添加一些预设条件
             InitGrid(queryData);//初始化Datagrid表格数据
-            //InitDictItem();   //初始化字典信息
-
             BindSearchEvent();//绑定查询按钮事件
-            //BindSearchDeletedEvent();//查看已删除记录
-            //BindAddEvent();   //绑定添加按钮的事件
-            //BindEditEvent();  //绑定修改按钮的事件
- 
         });
          
-        //初始化字典信息
-        function InitDictItem() {
-
-            //初始化新增状态公司信息，默认公司为当前用户公司
-            //InitAddCompany();
-            //$('#Company_ID').combotree('setValue', '@Session["Company_ID"]');
-
-            //InitAddDeptTree();
-            //$('#Dept_ID').combotree('setValue', '@Session["Dept_ID"]');
-            //InitAddUserManager();
-
-            //编辑状态下仅仅初始化公司
-            //InitEditCompany();
-        }
-
-
         //实现对DataGird控件的绑定操作
         function InitGrid(queryData) {
             $('#grid').datagrid({   //定位到Table标签，Table标签的ID是grid

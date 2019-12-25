@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WHC.Framework.Commons;
 
@@ -16,11 +13,6 @@ namespace WHC.WaterFeeWeb.Controllers
             return View();
         }
 
-        public ActionResult TemplateList()
-        {
-            return base.FindWithPager();
-        }
-
         public ActionResult TemplateList_Server()
         {
             var endcode = Session["EndCode"] ?? "0";
@@ -28,8 +20,8 @@ namespace WHC.WaterFeeWeb.Controllers
             var id = Request["WHC_IntID"] ?? "0";
             var SmsTemplate_info = new DbServiceReference.SmsTemplate
             {
-                NvcName = Request["WHC_TempName"] ?? "",              
-                IntID= id == "" ? 0 : id.ToInt32(),
+                NvcName = Request["WHC_TempName"] ?? "",
+                IntID = id == "" ? 0 : id.ToInt32(),
                 IntStatus = Status == "" ? 0 : Status.ToInt32()
             };
             DbServiceReference.ServiceDbClient DbServer = new DbServiceReference.ServiceDbClient();
@@ -51,14 +43,13 @@ namespace WHC.WaterFeeWeb.Controllers
             var result = new { total, rows = dat };
             return ToJsonContentDate(result);
         }
-        public  ActionResult InsOrUpd_Server(DbServiceReference.SmsTemplate info) {
-            
+        public ActionResult InsOrUpd_Server(DbServiceReference.SmsTemplate info)
+        {
             CommonResult result = new CommonResult();
-           
             try
             {
                 DbServiceReference.ServiceDbClient DbServer = new DbServiceReference.ServiceDbClient();
-                var flag = DbServer.SMS_Template_InsOrUpd(info);                            
+                var flag = DbServer.SMS_Template_InsOrUpd(info);
                 info.DtLstUpd = DateTime.Now;
                 if (flag == "0")
                 {
@@ -69,45 +60,6 @@ namespace WHC.WaterFeeWeb.Controllers
                     result.ErrorMessage = flag;
                 }
 
-            }
-            catch (Exception ex)
-            {
-                LogTextHelper.Error(ex);//错误记录
-                result.ErrorMessage = ex.Message;
-            }
-            return ToJsonContent(result);
-        }
-
-        public override ActionResult Insert(Core.Entity.MessageTemplate info)
-        {
-            //检查用户是否有权限，否则抛出MyDenyAccessException异常
-            base.CheckAuthorized(AuthorizeKey.InsertKey);
-
-            CommonResult result = new CommonResult();
-            //DbTransaction dbTransaction = BLLFactory<Core.BLL.ArcConcentratorInfo>.Instance.CreateTransaction();
-            try
-            {
-                info.DtCreate = DateTime.Now;
-                result.Success = baseBLL.Insert(info);
-            }
-            catch (Exception ex)
-            {
-                LogTextHelper.Error(ex);//错误记录
-                result.ErrorMessage = ex.Message;
-            }
-            return ToJsonContent(result);
-        }
-
-
-        public ActionResult Update(Core.Entity.MessageTemplate info)
-        {
-            //检查用户是否有权限，否则抛出MyDenyAccessException异常
-            base.CheckAuthorized(AuthorizeKey.UpdateKey);
-
-            CommonResult result = new CommonResult();
-            try
-            {
-                result.Success = baseBLL.Update(info, info.ID);
             }
             catch (Exception ex)
             {

@@ -1,0 +1,272 @@
+{
+  "default": [
+    {
+      "menuid": "b2cb7329-01eb-4a63-8937-a34c44f0de6d",
+      "menuname": "收费",
+      "icon": "icon-computer",
+      "menus": [
+        {
+          "menuid": "9806f77b-7c67-4ec8-b2a5-676205eaae97",
+          "menuname": "存取预存款",
+          "icon": "icon-organ",
+          "url": "/Fee/PayGetMoney",
+          "menus": []
+        },
+        {
+          "menuid": "03964b9f-36d0-4886-aca3-c8778aa3cdf3",
+          "menuname": "当日收费终结对账",
+          "icon": "icon-organ",
+          "url": "/Fee/TodayBalance",
+          "menus": []
+        },
+        {
+          "menuid": "ab983220-ba7b-43c5-89a7-18e422678720",
+          "menuname": "结清欠款销户",
+          "icon": "icon-organ",
+          "url": "/Fee/CloseAccount",
+          "menus": []
+        },
+        {
+          "menuid": "8295093a-818e-483f-8807-762bbbd7ae53",
+          "menuname": "催缴通知单",
+          "icon": "icon-organ",
+          "url": "/Fee/PaymentNotice",
+          "menus": []
+        },
+        {
+          "menuid": "77736e02-1691-4dc6-b174-79703cf5b5de",
+          "menuname": "扣费打印",
+          "icon": "icon-organ",
+          "url": "/Fee/PrintTicket",
+          "menus": []
+        }
+      ]
+    },
+    {
+      "menuid": "e9e92f10-36d5-45f2-9770-fc7253853928",
+      "menuname": "查询统计",
+      "icon": "icon-computer",
+      "menus": [
+        {
+          "menuid": "fa6f14e5-a007-4e68-93c4-94e55c3a459c",
+          "menuname": "预存流水账统计",
+          "icon": "icon-organ",
+          "url": "/Stat/StatDeposit",
+          "menus": []
+        },
+        {
+          "menuid": "9eb9cabf-eb6c-4158-aa84-ab65cf783bcf",
+          "menuname": "用水量查询",
+          "icon": "icon-organ",
+          "url": "/Stat/StatUsedWater",
+          "menus": []
+        },
+        {
+          "menuid": "a71b4ac6-1aa6-45b9-9833-578a92312823",
+          "menuname": "用户档案统计",
+          "icon": "icon-organ",
+          "url": "/Stat/StatClientArc",
+          "menus": []
+        }
+      ]
+    },
+    {
+      "menuid": "81832a6e-8191-4591-9ec0-6a0b3cbf2df4",
+      "menuname": "档案信息",
+      "icon": "icon-computer",
+      "menus": [
+        {
+          "menuid": "c263ffeb-aaf1-4ebc-a7c6-870f17b0e241",
+          "menuname": "采集器档案",
+          "icon": "icon-organ",
+          "url": "/ArcConcentratorInfo/List",
+          "menus": []
+        },
+        {
+          "menuid": "c6da3957-8a6d-4151-97d4-8b07c1da1721",
+          "menuname": "客户档案",
+          "icon": "icon-organ",
+          "url": "/ArcCustomerInfo/List",
+          "menus": []
+        },
+        {
+          "menuid": "2a4d2584-9adf-4f2b-97ad-ff49718a8a15",
+          "menuname": "批量导入",
+          "icon": "icon-organ",
+          "url": "/ArcCustomerInfo/Import",
+          "menus": []
+        },
+        {
+          "menuid": "08e7170f-cdab-4547-8018-b9fd1aeb8389",
+          "menuname": "换表操作",
+          "icon": "icon-organ",
+          "url": "/ArcMeterReading/ChangeTable",
+          "menus": []
+        },
+        {
+          "menuid": "a6778157-5c71-4742-b171-d0372a943582",
+          "menuname": "表端参数档案",
+          "icon": "icon-organ",
+          "url": "/ArcMeterInfo/MeterSettingInfo",
+          "menus": []
+        }
+      ]
+    },
+    {
+      "menuid": "80c6b8fd-0d34-4741-8ec9-869c5b60e26c",
+      "menuname": "价格档案",
+      "icon": "icon-computer",
+      "menus": [
+        {
+          "menuid": "a1912d77-eba8-495d-bd14-0468421074f4",
+          "menuname": "价格类别",
+          "icon": "icon-organ",
+          "url": "/PriceType/List",
+          "menus": []
+        },
+        {
+          "menuid": "242d42e3-d752-47fb-b8e2-07b90209ce0d",
+          "menuname": "价格设置",
+          "icon": "icon-organ",
+          "url": "/PriceProperty/Setting",
+          "menus": []
+        }
+      ]
+    },
+    {
+      "menuid": "7c20f1e5-723f-4f26-ad3f-2362ad277c38",
+      "menuname": "采集数据",
+      "icon": "icon-computer",
+      "menus": [
+        {
+          "menuid": "211bbc57-5b85-4fc2-843f-2687373ddaf3",
+          "menuname": "抄表数据查询",
+          "icon": "icon-organ",
+          "url": "/ArcMeterReading/List",
+          "menus": []
+        },
+        {
+          "menuid": "80989172-2340-4483-956b-acf00a8b3636",
+          "menuname": "采集状况查询",
+          "icon": "icon-organ",
+          "url": "/ArcMeterReading/CollectStat",
+          "menus": []
+        },
+        {
+          "menuid": "76b2ee2e-5191-42c6-80a7-de414630c1e9",
+          "menuname": "手工抄表",
+          "icon": "icon-organ",
+          "url": "/ArcMeterReading/ManualMeterReading",
+          "menus": []
+        }
+      ]
+    },
+    {
+      "menuid": "7bd65b6f-daba-48a5-a040-aebe62ac807c",
+      "menuname": "终端管理",
+      "icon": "icon-computer",
+      "menus": [
+        {
+          "menuid": "28dd376c-9053-42b5-8745-26cf10dfc5fa",
+          "menuname": "参数管理",
+          "icon": "icon-organ",
+          "url": "/ArcConcentratorInfo/ManagerList",
+          "menus": []
+        },
+        {
+          "menuid": "bb00f1d5-864d-4dd4-80e8-0b2868897f80",
+          "menuname": "远程控制",
+          "icon": "icon-organ",
+          "url": "/ArcConcentratorInfo/RemoteFunction",
+          "menus": []
+        },
+        {
+          "menuid": "d6fd8f3e-85cd-4a3a-933a-0db88afbfa8d",
+          "menuname": "任务结果查询",
+          "icon": "icon-organ",
+          "url": "/ArcMeterInfo/SwitchValveTask",
+          "menus": []
+        }
+      ]
+    },
+    {
+      "menuid": "e29c5e8e-6753-46c8-8c47-c93514d76ee9",
+      "menuname": "短信功能",
+      "icon": "icon-computer",
+      "menus": [
+        {
+          "menuid": "b59e6e45-1eb1-48c5-b11a-a6a4c58e492f",
+          "menuname": "短信模板设置",
+          "icon": "icon-organ",
+          "url": "/Message/TemplateSetting",
+          "menus": []
+        }
+      ]
+    },
+    {
+      "menuid": "445ce133-fe34-47da-bef9-f796d50fe81d",
+      "menuname": "系统设置",
+      "icon": "icon-computer",
+      "menus": [
+        {
+          "menuid": "e891beb4-cf16-46e5-a2f3-68df19cffa93",
+          "menuname": "参数设置",
+          "icon": "icon-organ",
+          "url": "/SysManage/Setting",
+          "menus": []
+        },
+        {
+          "menuid": "b3b05af6-b304-4a14-acb0-93a9f03d2fd7",
+          "menuname": "自动开关阀设置",
+          "icon": "icon-organ",
+          "url": "/SysManage/AutoSwitch",
+          "menus": []
+        }
+      ]
+    },
+    {
+      "menuid": "077eb1e6-969e-4817-8511-c0654ef76d66",
+      "menuname": "权限管理",
+      "icon": "icon-computer",
+      "menus": [
+        {
+          "menuid": "c90c298c-fb8a-4c2b-acb6-a3472d28662a",
+          "menuname": "组织机构管理",
+          "icon": "icon-organ",
+          "url": "/OU/Index",
+          "menus": []
+        },
+        {
+          "menuid": "cf475508-36c7-4e8c-acf2-7f121cec5bd0",
+          "menuname": "用户管理",
+          "icon": "icon-organ",
+          "url": "/Access/User",
+          "menus": []
+        },
+        {
+          "menuid": "3add4f6d-4e4d-42bd-88c6-fd411a4d1284",
+          "menuname": "角色管理",
+          "icon": "icon-organ",
+          "url": "/Role/Index",
+          "menus": []
+        },
+        {
+          "menuid": "173ada10-a07a-42a9-9f8e-2e159854efa3",
+          "menuname": "菜单管理",
+          "icon": "icon-organ",
+          "url": "/Menu/Index",
+          "menus": []
+        },
+        {
+          "menuid": "ab66990c-becb-4c05-9b88-f1042dce8254",
+          "menuname": "组织机构菜单管理",
+          "icon": "icon-organ",
+          "url": "/OU/UserMenu",
+          "menus": []
+        }
+      ]
+    }
+  ]
+    }
+  ]
+}

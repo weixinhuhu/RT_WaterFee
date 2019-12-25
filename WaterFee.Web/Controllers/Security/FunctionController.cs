@@ -1,25 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
-using System.Web.Mvc;
-
-using Newtonsoft.Json;
-using WHC.Framework.Commons;
-using WHC.Security.BLL;
-using WHC.Security.Common;
-using WHC.Security.Entity;
-using WHC.Framework.ControlUtil;
-using WHC.Framework.Commons.Collections;
-using WHC.MVCWebMis.Entity;
 using System.Data.Common;
+using System.Web.Mvc;
+using WHC.Framework.Commons;
+using WHC.Framework.Commons.Collections;
+using WHC.Framework.ControlUtil;
+using WHC.MVCWebMis.Entity;
+using WHC.Security.BLL;
+using WHC.Security.Entity;
 
 namespace WHC.MVCWebMis.Controllers
 {
     public class FunctionController : BusinessController<Function, FunctionInfo>
     {
-        public FunctionController() :base()
+        public FunctionController() : base()
         {
         }
 
@@ -120,7 +114,8 @@ namespace WHC.MVCWebMis.Controllers
             return result;
         }
 
-        public ActionResult GetSys_OU_Menu(string OuID,int iMode) {         
+        public ActionResult GetSys_OU_Menu(string OuID, int iMode)
+        {
             var iOuID = OuID.ToInt();
             var treelist = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_OU_Menu_Qry(iOuID, iMode);
             return ToJsonContentDate(treelist);
@@ -218,9 +213,9 @@ namespace WHC.MVCWebMis.Controllers
         public ActionResult BatchAddFunction(FunctionInfo mainInfo, string controlString)
         {
             List<string> controlList = new List<string>();
-            if(!string.IsNullOrWhiteSpace(controlString))
+            if (!string.IsNullOrWhiteSpace(controlString))
             {
-                foreach(string item in controlString.ToLower().Split(','))
+                foreach (string item in controlString.ToLower().Split(','))
                 {
                     if (!string.IsNullOrWhiteSpace(item))
                     {
@@ -327,7 +322,7 @@ namespace WHC.MVCWebMis.Controllers
         /// <returns></returns>
         public ActionResult GetFunctionTreeJsonByUser(int userId)
         {
-            List<EasyTreeData> treeList = new List<EasyTreeData>();           
+            List<EasyTreeData> treeList = new List<EasyTreeData>();
 
             List<SystemTypeInfo> typeList = BLLFactory<SystemType>.Instance.GetAll();
             foreach (SystemTypeInfo typeInfo in typeList)
@@ -339,7 +334,7 @@ namespace WHC.MVCWebMis.Controllers
                 treeList.Add(parentNode);
             }
 
-            if(treeList.Count == 0)
+            if (treeList.Count == 0)
             {
                 treeList.Insert(0, new EasyTreeData(-1, "无"));
             }

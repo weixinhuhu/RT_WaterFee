@@ -1,31 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Data;
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using WHC.Pager.Entity;
-using WHC.Framework.ControlUtil;
-using WHC.Framework.Commons;
-using WHC.Security.Entity;
-using WHC.Security.BLL;
-using WHC.MVCWebMis.Entity;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Net;
-using System.Net.Mime;
-using System.Web.Script.Serialization;
-using System.Reflection;
 using System.Runtime.Caching;
+using System.Web.Mvc;
+using WHC.Framework.Commons;
 using WHC.MVCWebMis;
+using WHC.MVCWebMis.Entity;
+using WHC.Security.Entity;
 
 namespace WHC.WaterFeeWeb.Controllers
 {
     /// <summary>
     /// 所有需要进行登录控制的控制器基类
     /// </summary>
-    public class BaseControllerNew : Controller 
+    public class BaseControllerNew : Controller
     {
         #region 属性变量
 
@@ -37,7 +28,7 @@ namespace WHC.WaterFeeWeb.Controllers
         /// <summary>
         /// 定义常用功能的控制ID，方便基类控制器对用户权限的控制
         /// </summary>
-        protected AuthorizeKey AuthorizeKey = new AuthorizeKey(); 
+        protected AuthorizeKey AuthorizeKey = new AuthorizeKey();
 
         #endregion
 
@@ -84,7 +75,7 @@ namespace WHC.WaterFeeWeb.Controllers
         /// <param name="functionId"></param>
         protected virtual void CheckAuthorized(string functionId)
         {
-            if(!HasFunction(functionId))
+            if (!HasFunction(functionId))
             {
                 string errorMessage = "您未被授权使用该功能，请重新登录测试或联系管理员进行处理。";
                 throw new MyDenyAccessException(errorMessage);
@@ -115,17 +106,10 @@ namespace WHC.WaterFeeWeb.Controllers
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             base.OnActionExecuting(filterContext);
-
-            //得到用户登录的信息
-            CurrentUser = Session["UserInfo"] as UserInfo;            
-            if (CurrentUser == null)
+            if (Session["FullName"] == null)
             {
                 Response.Redirect("/Login/Index");//如果用户为空跳转到登录界面
             }
-
-            //设置授权属性，然后赋值给ViewBag保存
-            ConvertAuthorizedInfo();
-            ViewBag.AuthorizeKey = AuthorizeKey;
         }
 
         /// <summary>
@@ -161,7 +145,7 @@ namespace WHC.WaterFeeWeb.Controllers
                     //Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 }
             }
-        } 
+        }
         #endregion
 
         #region 辅助函数

@@ -1,23 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Data;
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using WHC.Pager.Entity;
-using WHC.Framework.ControlUtil;
-using WHC.Framework.Commons;
-using WHC.Security.Entity;
-using WHC.Security.BLL;
-using WHC.MVCWebMis.Entity;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Net;
-using System.Net.Mime;
-using System.Web.Script.Serialization;
-using System.Reflection;
 using System.Runtime.Caching;
+using System.Web.Mvc;
+using WHC.Framework.Commons;
+using WHC.MVCWebMis.Entity;
+using WHC.Security.Entity;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -113,18 +104,22 @@ namespace WHC.MVCWebMis.Controllers
         /// <param name="filterContext">重写方法的参数</param>
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            base.OnActionExecuting(filterContext);
+            //base.OnActionExecuting(filterContext);
+            ////得到用户登录的信息
+            //CurrentUser = Session["UserInfo"] as UserInfo;
+            //if (CurrentUser == null)
+            //{
+            //    Response.Redirect("/Login/Index");//如果用户为空跳转到登录界面
+            //}
+            ////设置授权属性，然后赋值给ViewBag保存
+            //ConvertAuthorizedInfo();
+            //ViewBag.AuthorizeKey = AuthorizeKey;
 
-            //得到用户登录的信息
-            CurrentUser = Session["UserInfo"] as UserInfo;
-            if (CurrentUser == null)
+            base.OnActionExecuting(filterContext);
+            if (Session["FullName"] == null)
             {
                 Response.Redirect("/Login/Index");//如果用户为空跳转到登录界面
             }
-
-            //设置授权属性，然后赋值给ViewBag保存
-            ConvertAuthorizedInfo();
-            ViewBag.AuthorizeKey = AuthorizeKey;
         }
 
         /// <summary>

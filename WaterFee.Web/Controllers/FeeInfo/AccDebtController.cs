@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using WHC.Attachment.BLL;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
 using WHC.MVCWebMis.Controllers;
@@ -208,17 +204,10 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContent(result);
         }
 
-        //柜台冲正数据
-        public ActionResult CounterReverseData()
-        {
-            return new AccPaymentController().CounterReverseData();
-        }
-
         //存取预存款
-
         public ActionResult PayGetMoney()
         {
-           
+
             return View();
         }
 

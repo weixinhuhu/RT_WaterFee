@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.Mvc;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
-using Newtonsoft.Json;
 
 namespace WHC.WaterFeeWeb.Controllers
 {
@@ -70,16 +70,17 @@ namespace WHC.WaterFeeWeb.Controllers
         /// 用水量查询
         /// </summary>
         /// <returns></returns>
-        public ActionResult StatUsedWaterData_Server() {
+        public ActionResult StatUsedWaterData_Server()
+        {
             CommonResult result = new CommonResult();
             var endcode = Session["IntEndCode"] ?? "0";
             var DteBegin = Request["WHC_dtStart"].ToDateTime();
-            var DteEnd = Request["WHC_dtEnd"].ToDateTime();          
+            var DteEnd = Request["WHC_dtEnd"].ToDateTime();
             var paramMode = Request["WHC_paramMode"] ?? "0";
             var paramValue = Request["WHC_paramValue"] ?? "";
             try
             {
-                var rs = new DbServiceReference.ServiceDbClient().StatUsedWaterData(endcode.ToString().ToInt(), paramMode.ToInt(), paramValue,  DteBegin, DteEnd);
+                var rs = new DbServiceReference.ServiceDbClient().StatUsedWaterData(endcode.ToString().ToInt(), paramMode.ToInt(), paramValue, DteBegin, DteEnd);
                 if (rs.IsSuccess)
                 {
                     DataTable dts = JsonConvert.DeserializeObject<DataTable>(rs.StrData3);
@@ -156,14 +157,15 @@ namespace WHC.WaterFeeWeb.Controllers
         }
 
         //客户档案统计
-        public ActionResult StatClientArcData_Server() {
+        public ActionResult StatClientArcData_Server()
+        {
             CommonResult result = new CommonResult();
             var endcode = Session["IntEndCode"] ?? "0";
             var DteBegin = Request["WHC_dtStart"].ToDateTime();
-            var DteEnd = Request["WHC_dtEnd"].ToDateTime();         
+            var DteEnd = Request["WHC_dtEnd"].ToDateTime();
             try
             {
-                var rs = new DbServiceReference.ServiceDbClient().StatClientArcData(endcode.ToString().ToInt() ,DteBegin, DteEnd);
+                var rs = new DbServiceReference.ServiceDbClient().StatClientArcData(endcode.ToString().ToInt(), DteBegin, DteEnd);
                 if (rs.IsSuccess)
                 {
                     DataTable dts = JsonConvert.DeserializeObject<DataTable>(rs.StrData1);
@@ -366,7 +368,7 @@ namespace WHC.WaterFeeWeb.Controllers
                         //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
                         int total = dts.Rows.Count;
                         var dt = new { total, rows = dat };
-                        result.Success=true;
+                        result.Success = true;
                         return ToJsonContentDate(dt);
                     }
                 }

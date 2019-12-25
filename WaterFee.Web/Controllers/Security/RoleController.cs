@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
-using WHC.MVCWebMis.Entity;
 using WHC.Security.BLL;
 using WHC.Security.Entity;
 
@@ -16,7 +13,7 @@ namespace WHC.MVCWebMis.Controllers
     /// 角色业务操作控制器
     /// </summary>
     public class RoleController : BusinessController<Role, RoleInfo>
-    {       
+    {
         public RoleController() : base()
         {
         }
@@ -105,15 +102,16 @@ namespace WHC.MVCWebMis.Controllers
                     {
                         list.Add(id);
                     }
-                    var flag = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_OU_Menu_Save(roleId.ToInt32(),list.ToArray());
-                    if (flag == "0")                       
+                    var flag = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_OU_Menu_Save(roleId.ToInt32(), list.ToArray());
+                    if (flag == "0")
                     {
                         result.Data1 = roleId;
                         result.Success = true;
                     }
-                    else {
+                    else
+                    {
                         result.ErrorMessage = flag;
-                    }        
+                    }
                 }
             }
             return ToJsonContent(result);
@@ -239,43 +237,6 @@ namespace WHC.MVCWebMis.Controllers
         }
 
         /// <summary>
-        /// 新增和编辑同时需要修改的内容
-        /// </summary>
-        /// <param name="info"></param>
-        private void SetCommonInfo(RoleInfo info)
-        {
-            info.Editor = CurrentUser.FullName;
-            info.Editor_ID = CurrentUser.ID.ToString();
-            info.EditTime = DateTime.Now;
-
-            OUInfo companyInfo = BLLFactory<OU>.Instance.FindByID(info.Company_ID);
-            if (companyInfo != null)
-            {
-                info.CompanyName = companyInfo.Name;
-            }
-        }
-       
-        /// <summary>
-        /// 重写方便写入公司、部门、编辑时间的名称等信息
-        /// </summary>
-        /// <param name="id">对象ID</param>
-        /// <param name="info">对象信息</param>
-        /// <returns></returns>
-        protected override bool Update(string id, RoleInfo info)
-        {
-            string filter = string.Format("Name='{0}' and ID <>'{1}' and Company_ID={2}", info.Name, info.ID, info.Company_ID);
-            bool isExist = BLLFactory<Role>.Instance.IsExistRecord(filter);
-            if (isExist)
-            {
-                throw new ArgumentException("指定角色名称重复，请重新输入！");
-            }
-
-            SetCommonInfo(info);
-
-            return base.Update(id, info);
-        }
-
-        /// <summary>
         /// 获取用户的部门角色树结构(分级需要）
         /// </summary>
         /// <param name="userId">用户ID</param>
@@ -321,7 +282,8 @@ namespace WHC.MVCWebMis.Controllers
         /// 系统-角色-查询树
         /// </summary>
         /// <returns></returns>
-        public ActionResult GetMyRoleTreeJson_Server() {
+        public ActionResult GetMyRoleTreeJson_Server()
+        {
             var iUserId = Session["UserID"].ToString().ToInt();
             var listtree = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_Role_GetTree(iUserId, 0);
             return ToJsonContent(listtree);
@@ -339,7 +301,7 @@ namespace WHC.MVCWebMis.Controllers
             {
                 id -= 9000;
             }
-           
+
             var rs = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_Role_GetRoleMenuUserByID(id);
             if (rs.IsSuccess)
             {
@@ -347,8 +309,9 @@ namespace WHC.MVCWebMis.Controllers
                 result.Data1 = rs.StrData1;
                 result.Data2 = rs.StrData2;
                 result.Data3 = rs.StrData3;
-            }      
-            else {
+            }
+            else
+            {
                 result.ErrorMessage = rs.ErrorMsg;
             }
             return ToJsonContent(result);
@@ -360,19 +323,24 @@ namespace WHC.MVCWebMis.Controllers
         /// <param name="RoleInfo"></param>
         /// <param name="type">0 添加 1 修改</param>
         /// <returns></returns>
-        public ActionResult Sys_Role_Opr_Server(WaterFeeWeb.ServiceReference1.Role RoleInfo,String type,int id) {
+        public ActionResult Sys_Role_Opr_Server(WaterFeeWeb.ServiceReference1.Role RoleInfo, String type, int id)
+        {
             CommonResult result = new CommonResult();
             RoleInfo.NvcEditor = Session["FullName"].ToString();
             RoleInfo.NvcEditorID = Session["UserID"].ToString();
             RoleInfo.DtEdit = DateTime.Now;
             RoleInfo.IntID = id;
-            if (type == "0") {
+            RoleInfo.IntEnabled = 1;
+           
+            if (type == "0")
+            {
                 RoleInfo.NvcCreator = Session["FullName"].ToString();
                 RoleInfo.NvcCreatorID = Session["UserID"].ToString();
                 RoleInfo.DtCreate = DateTime.Now;
             }
             var flag = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_Role_Opr(RoleInfo);
-            if (flag=="0") {
+            if (flag == "0")
+            {
                 result.Success = true;
             }
             return ToJsonContent(result);
@@ -383,7 +351,7 @@ namespace WHC.MVCWebMis.Controllers
         /// <param name="RoleInfo"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ActionResult Sys_Role_Del_Server(WaterFeeWeb.ServiceReference1.Role RoleInfo,int id)
+        public ActionResult Sys_Role_Del_Server(WaterFeeWeb.ServiceReference1.Role RoleInfo, int id)
         {
             CommonResult result = new CommonResult();
             RoleInfo.NvcEditor = Session["FullName"].ToString();
@@ -410,24 +378,25 @@ namespace WHC.MVCWebMis.Controllers
             CommonResult result = new CommonResult();
             if (!string.IsNullOrEmpty(roleId) && ValidateUtil.IsValidInt(roleId))
             {
+                List<string> list = new List<string>();
                 if (!string.IsNullOrWhiteSpace(newList))
                 {
-                    List<string> list = new List<string>();
                     foreach (string id in newList.Split(','))
                     {
                         list.Add(id);
                     }
-                    var flag = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_Role_MenuSave(roleId.ToInt32(), list.ToArray());
-                    if (flag == "0")
-                    {
-                        result.Data1 = roleId;
-                        result.Success = true;
-                    }
-                    else
-                    {
-                        result.ErrorMessage = flag;
-                    }
                 }
+                var flag = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_Role_MenuSave(roleId.ToInt32(), list.ToArray());
+                if (flag == "0")
+                {
+                    result.Data1 = roleId;
+                    result.Success = true;
+                }
+                else
+                {
+                    result.ErrorMessage = flag;
+                }
+
             }
             return ToJsonContent(result);
         }

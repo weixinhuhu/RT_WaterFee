@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 
 using WHC.Framework.ControlUtil;
@@ -15,49 +12,15 @@ namespace WHC.MVCWebMis.Controllers
     {
         public ActionResult Index()
         {
-            if (CurrentUser != null)
+            if (Session["FullName"] != null)
             {
-                ViewBag.FullName = CurrentUser.FullName;
-                ViewBag.Name = CurrentUser.Name;
-
-                StringBuilder sb = new StringBuilder();
-                List<MenuInfo> menuList = BLLFactory<Menu>.Instance.GetTopMenu(MyConstants.SystemType);
-                int i = 0;
-                foreach (MenuInfo menuInfo in menuList)
-                {
-                    sb.Append(GetMenuItemString(menuInfo, i));
-                    i++;
-                }
-                ViewBag.HeaderScript = sb.ToString();//一级菜单代码
+                ViewBag.FullName = Session["FullName"].ToString();
+                ViewBag.Name = Session["UserID"].ToString();
+                ViewBag.HeaderScript = "收费系统";//一级菜单代码
                 //公司名称
                 ViewBag.AppCompanyName = DBLib.Common.ConfigHelper.GetConfigString("AppCompanyName");
             }
-            return View();            
-        }
-
-        private string GetMenuItemString(MenuInfo info, int i)
-        {
-            string result = "";
-            if (HasFunction(info.FunctionId))
-            {
-                string url = info.Url;
-                if (url != null)
-                {
-                    // url = url.Replace("#", "");
-                }
-
-                string menuId = (i == 0) ? "default" : info.ID.ToString();
-
-                if (!string.IsNullOrEmpty(url))
-                {
-                    result = string.Format("<li><a href=\"#\" onclick=\"showSubMenu('{0}', '{1}', '{2}')\">{3}</a></li>", info.Url, info.Name, menuId, info.Name);
-                }
-                else
-                {
-                    result = string.Format("<li><a href=\"#\" onclick=\"showSubMenu('{2}', '用户管理', '{0}')\">{1}</a></li>", menuId, info.Name, info.Url);
-                }
-            }
-            return result;
+            return View();
         }
 
         public ActionResult Another()

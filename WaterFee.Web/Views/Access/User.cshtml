@@ -450,7 +450,7 @@
                         var postData = $("#ffEdit").serializeArray();
                         $.ajax({
                             type: 'POST',
-                            url: '/User/Sys_User_UpdPwd_Server',
+                            url: '/User/Sys_User_UpdPwd_Server?ID=' + id,
                             async: false,
                             data: postData,
                             dataType: 'json',
@@ -759,7 +759,7 @@
                         <input type="hidden" id="hDeleted1" name="IntDeleted" />
                         <input type="hidden" id="hIsExpire1" name="IntIsExpire" />
 
-                        <a href="#" class="easyui-linkbutton" iconcls="icon-ok" id="btnResetPassword" onclick="resetPassword($('#ID1').val()">重置密码</a>
+                        <a href="#" class="easyui-linkbutton" iconcls="icon-ok" id="btnResetPassword" onclick="resetPassword($('#ID1').val())">重置密码</a>
                     </td>
                 </tr>
                 <tr>

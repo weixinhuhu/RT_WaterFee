@@ -1,13 +1,10 @@
-﻿using System;
+﻿using Microsoft.Practices.EnterpriseLibrary.Data;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Collections.Generic;
-
-using WHC.Pager.Entity;
 using WHC.Framework.Commons;
-using WHC.Framework.ControlUtil;
-using Microsoft.Practices.EnterpriseLibrary.Data;
 using WHC.Security.Entity;
 using WHC.Security.IDAL;
 

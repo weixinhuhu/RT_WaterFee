@@ -1,23 +1,18 @@
-﻿using System;
+﻿using Aspose.Words;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using System.IO;
 using System.Web.UI;
-
-using Newtonsoft.Json;
-using Aspose.Words;
-
+using WHC.Attachment.BLL;
+using WHC.Attachment.Entity;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
-using WHC.Security.Entity;
 using WHC.MVCWebMis.BLL;
 using WHC.MVCWebMis.Entity;
 using WHC.Pager.Entity;
-using WHC.Attachment.Entity;
-using WHC.Attachment.BLL;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -262,7 +257,7 @@ namespace WHC.MVCWebMis.Controllers
                 SetBookmark(ref doc, "Editor", info.Editor);
                 SetBookmark(ref doc, "EditTime", info.EditTime.ToString());
                 SetBookmark(ref doc, "SubType", info.SubType);
-                
+
                 //SetBookmark(ref doc, "Content", info.Content);
                 //对于HTML内容，需要通过InsertHtml方式进行写入
                 DocumentBuilder builder = new DocumentBuilder(doc);
@@ -271,8 +266,8 @@ namespace WHC.MVCWebMis.Controllers
                 {
                     builder.MoveToBookmark(bookmark.Name);
                     builder.InsertHtml(info.Content);
-                }                
-                
+                }
+
                 doc.Save(System.Web.HttpContext.Current.Response, info.Title, Aspose.Words.ContentDisposition.Attachment,
                     Aspose.Words.Saving.SaveOptions.CreateSaveOptions(Aspose.Words.SaveFormat.Doc));
 

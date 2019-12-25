@@ -23,8 +23,7 @@
             //读取动态变化的时间
             ReadDateTimeShow();
             //这里实现对时间动态的变化
-            var setTimeInterval = setInterval(ReadDateTimeShow, 1000);
-
+            var setTimeInterval = setInterval(ReadDateTimeShow, 1000);   
             setInterval(keep, 180000);
         });
 
@@ -44,67 +43,32 @@
     </script>
 
     <script type="text/javascript">        
-        //var _menus = {
-        //    "default": [
-        //        {
-        //            "menuid": "1", "icon": "icon-computer", "menuname": "权限管理",
-        //            "menus": [
-        //                      { "menuid": "13", "menuname": "用户管理", "icon": "icon-user", "url": "/User/Index" },
-        //                      { "menuid": "14", "menuname": "组织机构管理", "icon": "icon-organ", "url": "/OU/Index" },
-        //                      { "menuid": "15", "menuname": "角色管理", "icon": "icon-group-key", "url": "/Role/Index" },
-        //                      { "menuid": "16", "menuname": "功能管理", "icon": "icon-key", "url": "/Function/Index" },
-        //                      { "menuid": "17", "menuname": "登陆日志", "icon": "icon-view", "url": "/LoginLog/Index" }
-        //            ]
-        //        },
-        //       {
-        //           "menuid": "2", "icon": "icon-user", "menuname": "其他管理",
-        //           "menus": [{ "menuid": "21", "menuname": "修改密码", "icon": "icon-lock", "url": "javascript:ShowPasswordDialog()" }
-        //           ]
-        //       }
-        //    ],
-        //    "point": [
-        //        {
-        //            "menuid": "3", "icon": "icon-computer", "menuname": "事务中心",
-        //            "menus": [
-        //                      { "menuid": "33", "menuname": "测试菜单1", "icon": "icon-user", "url": "../Commonpage/building.htm" },
-        //                      { "menuid": "34", "menuname": "测试菜单2", "icon": "icon-organ", "url": "../Commonpage/building.htm" },
-        //                      { "menuid": "35", "menuname": "测试菜单3", "icon": "icon-group-key", "url": "../Commonpage/building.htm" },
-        //                      { "menuid": "36", "menuname": "测试菜单4", "icon": "icon-key", "url": "../Commonpage/building.htm" }
-        //            ]
-        //        },
-        //        {
-        //            "menuid": "4", "icon": "icon-user", "menuname": "其他菜单",
-        //            "menus": [{ "menuid": "41", "menuname": "测试菜单5", "icon": "icon-lock", "url": "../Commonpage/building.htm" }]
-        //        }
-        //    ]
-        //};
-
         var _menus = {};
         //同步获取
         $.ajax({
             type: 'GET',
-            url: '/Menu/GetMenuData?r=' + Math.random(),
+            url: '/Menu/GetMenuData_Server?r=' + Math.random(),
             async: false,//同步
             dataType: 'json',
-            success: function (json) {
-                _menus = json;
+            success: function (json) {              
+                _menus = json;         
+                showSubMenu('default', _menus);
             },
             error: function (xhr, status, error) {
-                alert("操作失败"); //xhr.responseText
+                alert("获取菜单失败！"); //xhr.responseText
             }
         });
 
-        function showSubMenu(url, title, menuCategory, defaultIcon) {
+        function showSubMenu( defaultIcon, _menus) {
             if (defaultIcon == null || defaultIcon == "") {
                 defaultIcon = "icon-table";
             }
-            addTab(title, url, "icon " + defaultIcon);
-            Clearnav();
-            if (menuCategory != "") {
-                addNav(_menus[menuCategory]);
+           // addTab(title, url, "icon " + defaultIcon);
+           // Clearnav();
+            if (_menus != "") {           
+                addNav(_menus);  
             }
         }
-
 	</script>
 
     <script type="text/javascript">
@@ -112,14 +76,12 @@
         function ShowPasswordDialog() {
             $("#divModPass").dialog('open').dialog('setTitle', '修改用户密码');
         }
-
         function ModifyPass() {
             //首先表单进行检测
             var validate = $("#ffModPass").form("validate");
             if (validate == false) {
                 return false;
             }
-
             if ($("#txtNewPass").val() == "") {
                 $("#txtNewPass").focus();
                 $.messager.alert("提示", '新密码不能为空');
@@ -128,8 +90,7 @@
             if ($("#txtNewPass").val() != $("#txtCheckPass").val()) {
                 $("#txtNewPass").focus();
                 $.messager.alert("提示", "两次输入的密码不一致"); return;
-            }
-            
+            }         
             var postData = { Name: $("#txtName").val(), OldPass: $("#txtOldPass").val(), NewPass: $("#txtNewPass").val() };
             $.ajax({
                 type: 'POST',
@@ -159,7 +120,6 @@
             </div>
         </noscript>
         <form id="form1">
-
             <!--顶部Banner-->
             <div region="north" id="header">
                 <div class="userinfo" style="display:block">

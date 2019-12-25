@@ -2,14 +2,16 @@
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/DbServer.DTOAuth" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/DbServer.DTOAuth" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:complexType name="LogonUser">
     <xs:sequence>
-      <xs:element minOccurs="0" name="EndCode" type="xs:int" />
+      <xs:element minOccurs="0" name="CompanyName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DeptName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="FullName" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="ID" type="xs:int" />
       <xs:element minOccurs="0" name="Identity" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Info" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IntComID" type="xs:int" />
+      <xs:element minOccurs="0" name="IntDeptID" type="xs:int" />
+      <xs:element minOccurs="0" name="IntID" type="xs:int" />
       <xs:element minOccurs="0" name="IsDeleted" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsExpire" type="xs:boolean" />
-      <xs:element minOccurs="0" name="PID" type="xs:int" />
       <xs:element minOccurs="0" name="Password" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="UserID" nillable="true" type="xs:string" />
     </xs:sequence>

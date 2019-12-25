@@ -41,27 +41,27 @@ namespace WHC.Security.DALSQL
         /// </summary>
         /// <param name="dr">有效的DataReader对象</param>
         /// <returns>实体类对象</returns>
-        protected override OperationLogSettingInfo DataReaderToEntity(IDataReader dataReader)
-        {
-            OperationLogSettingInfo info = new OperationLogSettingInfo();
-            SmartDataReader reader = new SmartDataReader(dataReader);
+        //protected override OperationLogSettingInfo DataReaderToEntity(IDataReader dataReader)
+        //{
+        //    OperationLogSettingInfo info = new OperationLogSettingInfo();
+        //    SmartDataReader reader = new SmartDataReader(dataReader);
 
-            info.ID = reader.GetString("ID");
-            info.Forbid = reader.GetInt32("Forbid") > 0;
-            info.TableName = reader.GetString("TableName");
-            info.InsertLog = reader.GetInt32("InsertLog") > 0;
-            info.DeleteLog = reader.GetInt32("DeleteLog") > 0;
-            info.UpdateLog = reader.GetInt32("UpdateLog") > 0;
-            info.Note = reader.GetString("Note");
-            info.Creator = reader.GetString("Creator");
-            info.Creator_ID = reader.GetString("Creator_ID");
-            info.CreateTime = reader.GetDateTime("CreateTime");
-            info.Editor = reader.GetString("Editor");
-            info.Editor_ID = reader.GetString("Editor_ID");
-            info.EditTime = reader.GetDateTime("EditTime");
+        //    info.ID = reader.GetString("ID");
+        //    info.Forbid = reader.GetInt32("Forbid") > 0;
+        //    info.TableName = reader.GetString("TableName");
+        //    info.InsertLog = reader.GetInt32("InsertLog") > 0;
+        //    info.DeleteLog = reader.GetInt32("DeleteLog") > 0;
+        //    info.UpdateLog = reader.GetInt32("UpdateLog") > 0;
+        //    info.Note = reader.GetString("Note");
+        //    info.Creator = reader.GetString("Creator");
+        //    info.Creator_ID = reader.GetString("Creator_ID");
+        //    info.CreateTime = reader.GetDateTime("CreateTime");
+        //    info.Editor = reader.GetString("Editor");
+        //    info.Editor_ID = reader.GetString("Editor_ID");
+        //    info.EditTime = reader.GetDateTime("EditTime");
 
-            return info;
-        }
+        //    return info;
+        //}
 
         /// <summary>
         /// 将实体对象的属性值转化为Hashtable对应的键值

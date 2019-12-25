@@ -60,15 +60,17 @@
                     Code: $("#Code").val()
                 };
                 loading.show();
+
                 //发送异步请求实现登录 ajax
                 $.ajax({
                     type: 'POST',
-                    url: '/Login/CheckUser',
+                    url: '/Login/CheckUser_Server',
                     dataType: 'json',
                     cache: false,
-                    data: postData,
-                    success: function (data) {
+                    data: postData,                  
+                    success: function (data) {                    
                         if (data.Success) {
+                            console.log(data);
                             window.location.href = "/Home/Index";
                         }
                         else {
@@ -80,8 +82,9 @@
                         loading.hide();
                         showError("登陆失败：网络超时!", 3000);
                     }
-                });
+                });            
             });
+          
         }
 
         //单击重新改变验证码

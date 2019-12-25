@@ -20,10 +20,10 @@ namespace WHC.WaterFeeWeb.Controllers
         {
             var endcode = Session["EndCode"] ?? "0";
             var custno = Request["WHC_IntCustNo"] ?? "0";
-            
+
             ServiceDbClient DbServer = new ServiceDbClient();
             var dts = DbServer.Account_GetDepositDetailByCustNo(endcode.ToString().ToInt32(), custno.ToInt32());
-            
+
             //分页参数
             int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
             int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
@@ -40,27 +40,15 @@ namespace WHC.WaterFeeWeb.Controllers
             }
             //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
             int total = dts.Rows.Count;
-            var result = new {total, rows = dat };
+            var result = new { total, rows = dat };
 
             return ToJsonContentDate(result);
         }
-        public ActionResult CurrentDateList()
-        {
-            string where = "1=1";
-            var date = RRequest("WHC_DteAccount");
-            where += " and convert(DteAccount,char(10))='{0}'".FormatWith(date);
-            where += " and VcUserID='{0}'".FormatWith(CurrentUser.ID);
-            PagerInfo pagerInfo = GetPagerInfo();
-            var list = baseBLL.FindWithPager(where, pagerInfo);
- 
-            var result = new { total = pagerInfo.RecordCount, rows = list };
-
-            return ToJsonContentDate(result);
-        }
+        
         public ActionResult CurrentDateList_Server()
-        {           
+        {
             var date = RRequest("WHC_DteAccount");
-            var UserId = CurrentUser.ID;
+            var UserId = Session["UserID"].ToString().ToInt();
             ServiceDbClient DbServer = new ServiceDbClient();
             var dts = DbServer.Account_GetDepositDetail(UserId, date.ToDateTime(), date.ToDateTime());
             //分页参数

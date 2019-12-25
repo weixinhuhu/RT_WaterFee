@@ -1,18 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
-
-using WHC.Pager.Entity;
-using WHC.Framework.Commons;
-using WHC.Framework.ControlUtil;
-using WHC.MVCWebMis.BLL;
-using WHC.MVCWebMis.Entity;
 using WHC.CRM.BLL;
 using WHC.CRM.Entity;
-using Newtonsoft.Json;
+using WHC.Framework.ControlUtil;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -72,7 +63,7 @@ namespace WHC.MVCWebMis.Controllers
 
             List<ContactGroupNodeInfo> groupList = BLLFactory<ContactGroup>.Instance.GetTree(userId);
 
-            List<EasyTreeData> treeList = new List<EasyTreeData>();            
+            List<EasyTreeData> treeList = new List<EasyTreeData>();
             foreach (ContactGroupNodeInfo nodeInfo in groupList)
             {
                 bool check = groupIdList.Contains(nodeInfo.ID);

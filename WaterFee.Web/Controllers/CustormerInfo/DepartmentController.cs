@@ -1,19 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using WHC.Attachment.BLL;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
 using WHC.MVCWebMis.Controllers;
 using WHC.Pager.Entity;
-using WHC.Security.BLL;
-using WHC.Security.Entity;
 
 namespace WHC.WaterFeeWeb.Controllers
 {
@@ -47,7 +37,7 @@ namespace WHC.WaterFeeWeb.Controllers
 
             CommonResult result = new CommonResult();
             try
-            { 
+            {
                 //info.Remark  = null ;
                 result.Success = baseBLL.Insert(info);
             }
@@ -67,7 +57,7 @@ namespace WHC.WaterFeeWeb.Controllers
 
             CommonResult result = new CommonResult();
             try
-            { 
+            {
                 result.Success = baseBLL.Update(info, info.DepartmentID);
             }
             catch (Exception ex)

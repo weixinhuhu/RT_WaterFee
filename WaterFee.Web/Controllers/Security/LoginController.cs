@@ -1,15 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using WHC.MVCWebMis.Common;
-using MySql.Data.MySqlClient;
-using WHC.Security.Entity;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
+using WHC.MVCWebMis.Common;
 using WHC.Security.BLL;
-using Newtonsoft.Json;
+using WHC.Security.Entity;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -24,17 +21,7 @@ namespace WHC.MVCWebMis.Controllers
 
             return View();
         }
-
-        /// <summary>
-        /// 第二种登陆界面
-        /// </summary>
-        public ActionResult SecondIndex()
-        {
-            Session.Clear();
-
-            return View();
-        }
-
+     
         /// <summary>
         /// 对用户登录的操作进行验证
         /// </summary>
@@ -42,7 +29,7 @@ namespace WHC.MVCWebMis.Controllers
         /// <param name="password">用户密码</param>
         /// <param name="code">验证码</param>
         /// <returns></returns>
-        public ActionResult CheckUser(string username, string password, string code)
+        public ActionResult CheckUser_Server(string username, string password, string code)
         {
             CommonResult result = new CommonResult();
 
@@ -66,44 +53,19 @@ namespace WHC.MVCWebMis.Controllers
                 {
                     string ip = GetClientIp();
                     string macAddr = "";
-                    string identity = BLLFactory<WHC.Security.BLL.User>.Instance.VerifyUser(username, password, MyConstants.SystemType, ip, macAddr);
-                    if (!string.IsNullOrEmpty(identity))
+                    var info = new WaterFeeWeb.ServiceReference1.AuthorityClient().Sys_Login_CheckUser(username, password, ip, macAddr);
+                    if (!String.IsNullOrEmpty(info.Identity))
                     {
-                        UserInfo info = BLLFactory<WHC.Security.BLL.User>.Instance.GetUserByName(username);
-                        if (info != null)
-                        {
-                            result.Success = true;
-
-                            //方便方法使用
-                            Session["FullName"] = info.FullName;
-                            Session["UserID"] = info.ID;
-                            Session["Company_ID"] = info.Company_ID;
-                            Session["Dept_ID"] = info.Dept_ID;
-                            bool isSuperAdmin = BLLFactory<User>.Instance.UserInRole(info.Name, RoleInfo.SuperAdminName);//判断是否超级管理员
-                            Session["IsSuperAdmin"] = isSuperAdmin;
-
-                            Session["UserInfo"] = info;
-                            Session["Identity"] = info.Name.Trim();
-
-                            //Session["EndCode"] = info.Endcode;
-                            Session["EndCode"] = 0;
-
-                            #region 取得用户的授权信息，并存储在Session中
-
-                            List<FunctionInfo> functionList = BLLFactory<Function>.Instance.GetFunctionsByUser(info.ID, MyConstants.SystemType);
-                            Dictionary<string, string> functionDict = new Dictionary<string, string>();
-                            foreach (FunctionInfo functionInfo in functionList)
-                            {
-                                if (!string.IsNullOrEmpty(functionInfo.ControlID) &&
-                                    !functionDict.ContainsKey(functionInfo.ControlID))
-                                {
-                                    functionDict.Add(functionInfo.ControlID, functionInfo.ControlID);
-                                }
-                            }
-                            Session["Functions"] = functionDict;
-
-                            #endregion
-                        }
+                        result.Success = true;
+                        #region 取得用户的授权信息，并存储在Session中             
+                        Session["FullName"] = info.FullName;
+                        Session["UserID"] = info.IntID;
+                        Session["Company_ID"] = info.IntComID;
+                        Session["Dept_ID "] = info.IntDeptID;
+                        Session["UserInfo"] = info;
+                        Session["IsSuperAdmin"] = info.IntComID == 1 ? true : false;
+                        Session["EndCode"] = info.IntComID;
+                        #endregion                      
                     }
                     else
                     {
@@ -111,14 +73,13 @@ namespace WHC.MVCWebMis.Controllers
                     }
                 }
                 catch (Exception ex)
-                    {
+                {
                     if (ex.Message.Contains("登录失败"))
                         result.ErrorMessage = "数据库账号或密码错误,请检查数据库是否正常";
                     else
                         result.ErrorMessage = ex.Message;
                 }
             }
-
             return ToJsonContent(result);
         }
 

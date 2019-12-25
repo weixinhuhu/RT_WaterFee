@@ -23,7 +23,8 @@ namespace WHC.WaterFeeWeb.Controllers
             return View();
         }
 
-        public ActionResult ListJson_Server() {
+        public ActionResult ListJson_Server()
+        {
 
             var Strlevel = Request["WHC_Treelevel"];
             var fuji = Request["WHC_Fuji"];
@@ -51,15 +52,15 @@ namespace WHC.WaterFeeWeb.Controllers
 
             if (Strlevel == "3")
             {
-                custormerinfo.NvcVillage =  fuji ;
-                custormerinfo.VcBuilding =  Text ;
+                custormerinfo.NvcVillage = fuji;
+                custormerinfo.VcBuilding = Text;
             }
 
             if (Strlevel == "4")
             {
-                custormerinfo.NvcVillage =  ParentText ;
-                custormerinfo.VcBuilding=  fuji ;
-                custormerinfo.VcUnitNum =  Text ;
+                custormerinfo.NvcVillage = ParentText;
+                custormerinfo.VcBuilding = fuji;
+                custormerinfo.VcUnitNum = Text;
             }
 
             var endcode = Session["EndCode"] ?? "0";
@@ -82,33 +83,12 @@ namespace WHC.WaterFeeWeb.Controllers
             }
             //最重要的是在后台取数据放在json中要添加个参数total来存放数据的总行数，如果没有这个参数则不能分页
             int total = dts.Rows.Count;
-            var result = new {total, rows = dat };
+            var result = new { total, rows = dat };
 
             return ToJsonContentDate(result);
         }
 
-        public ActionResult ShowListByConcentratorID(string id)
-        {
-            //base.CheckAuthorized(AuthorizeKey.ListKey);
-
-            //string where = GetPagerCondition();
-            //PagerInfo pagerInfo = GetPagerInfo();
-            //List<Core.Entity.ArcCustomerInfo> list = baseBLL.FindWithPager(where, pagerInfo);
-
-            ////Json格式的要求{total:22,rows:{}}
-            ////构造成Json的格式传递
-            //var result = new { total = pagerInfo.RecordCount, rows = list };
-            //return ToJsonContentDate(result);
-            return View();
-        }
-
-        public ActionResult ShowListByConcentratorIdJson(string id)
-        {
-
-            return base.FindWithPager();
-        }
-
-        public ActionResult Insert_Server(Customer CustomerInfo,Meter MeterInfo)
+        public ActionResult Insert_Server(Customer CustomerInfo, Meter MeterInfo)
         {
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.InsertKey);
@@ -136,7 +116,7 @@ namespace WHC.WaterFeeWeb.Controllers
                 var endcode = Session["EndCode"] ?? "0";
                 CustomerInfo.IntEndCode = endcode.ToString().ToInt32();
                 MeterInfo.IntEndCode = endcode.ToString().ToInt32();
-              
+
                 ServiceDbClient DbServer = new ServiceDbClient();
                 var flg = DbServer.ArcCustMeter_Ins(CustomerInfo, MeterInfo);
                 if (flg == "0")
@@ -156,7 +136,8 @@ namespace WHC.WaterFeeWeb.Controllers
             }
             return ToJsonContent(result);
         }
-        public ActionResult Update_Server(Customer CustomerInfo, Meter MeterInfo) {
+        public ActionResult Update_Server(Customer CustomerInfo, Meter MeterInfo)
+        {
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.InsertKey);
             CommonResult result = new CommonResult();
@@ -369,7 +350,7 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContent(result);
         }
 
-  
+
         // GET: CustomerInfo/Create
         public ActionResult Create()
         {
@@ -435,19 +416,19 @@ namespace WHC.WaterFeeWeb.Controllers
                 return View();
             }
         }
-       
+
         public ActionResult DictAccountWay_Server()
         {
             ServiceDbClient DbServer = new ServiceDbClient();
             var dt = DbServer.GetDictAccountWay();
             return ToJsonContentDate(dt);
         }
-      
+
         public ActionResult IntAutoSwitch_Server()
         {
             ServiceDbClient DbServer = new ServiceDbClient();
             var list = DbServer.GetDictValveAuto();
-            return ToJsonContentDate(list); 
+            return ToJsonContentDate(list);
         }
         public ActionResult IntReplaceType_Server()
         {
@@ -498,13 +479,13 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContentDate(treeList);
         }
 
-        public ActionResult TreeCommunity_Server()            
+        public ActionResult TreeCommunity_Server()
         {
             var endcode = Session["EndCode"] ?? "0";
 
             var treelist = new ServiceDbClient().ArcCustomer_TreeCommunity(endcode.ToString().ToInt32());
-            
-          return ToJsonContentDate(treelist);
+
+            return ToJsonContentDate(treelist);
         }
 
         public bool bolNum(string temp)

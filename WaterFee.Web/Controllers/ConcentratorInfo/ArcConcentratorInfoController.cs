@@ -41,12 +41,12 @@ namespace WHC.WaterFeeWeb.Controllers
         {
             var dt = BLLFactory<Core.BLL.AccPayment>.Instance.SqlTable("select top(1) * from Settings  ");
             if (dt.Rows.Count > 0)
-            { 
+            {
                 ViewBag.FactoryCode = dt.Rows[0]["FactoryCode"].ToString();
                 ViewBag.AreaCode = dt.Rows[0]["AreaCode"].ToString();
             }
             else
-            { 
+            {
                 ViewBag.FactoryCode = string.Empty;
                 ViewBag.AreaCode = string.Empty;
             }
@@ -65,7 +65,7 @@ namespace WHC.WaterFeeWeb.Controllers
 
             return ToJsonContentDate(result);
         }
-        public ActionResult ListJson_Server()           
+        public ActionResult ListJson_Server()
         {
 
             var info = new Concentrator()
@@ -73,19 +73,19 @@ namespace WHC.WaterFeeWeb.Controllers
                 NvcName = Request["WHC_NvcName"] ?? "",
                 NvcAddr = Request["WHC_NvcAddr"] ?? "",
                 VcSimNo = Request["WHC_VcSimNo"] ?? "",
-                VcAddr = Request["WHC_VcAddr"] ?? ""          
-        };
+                VcAddr = Request["WHC_VcAddr"] ?? ""
+            };
             var endcode = Session["EndCode"] ?? "0";
 
             //调用后台服务获取集中器信息
             ServiceDbClient DbServer = new ServiceDbClient();
-             
-            var dts = DbServer.ArcConcentrator_Qry(endcode.ToString().ToInt32(), info);       
+
+            var dts = DbServer.ArcConcentrator_Qry(endcode.ToString().ToInt32(), info);
 
             int rows = Request["rows"] == null ? 10 : int.Parse(Request["rows"]);
 
             int page = Request["page"] == null ? 1 : int.Parse(Request["page"]);
-         
+
             //复制源的架构和约束
             var dat = dts.Clone();
             // 清除目标的所有数据
@@ -390,7 +390,7 @@ namespace WHC.WaterFeeWeb.Controllers
             }
             return ToJsonContent(result);
         }
-    
+
         private List<SqlParameter> GetParams(string fn, int order)
         {
             var listPara = new List<SqlParameter>();
@@ -650,7 +650,7 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContent(result);
         }
 
-        public  ActionResult Insert_server(Concentrator info)
+        public ActionResult Insert_server(Concentrator info)
         {
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.InsertKey);
@@ -667,19 +667,19 @@ namespace WHC.WaterFeeWeb.Controllers
                 ServiceDbClient DbServer = new ServiceDbClient();
 
                 var flg = DbServer.ArcConcentrator_Ins(info);
-              
-                if (flg=="0")
-                {                                  
-                    result.Success = true;                    
+
+                if (flg == "0")
+                {
+                    result.Success = true;
                 }
                 else
                 {
-                   result.ErrorMessage = flg;
-                   result.Success = false;
+                    result.ErrorMessage = flg;
+                    result.Success = false;
                 }
             }
             catch (Exception ex)
-            {              
+            {
                 result.ErrorMessage = ex.Message;
             }
             return ToJsonContent(result);
@@ -705,7 +705,7 @@ namespace WHC.WaterFeeWeb.Controllers
                 result.ErrorMessage = "父级设备不能是当前设备下的子级设备!请重新选择!";
                 return ToJsonContent(result);
             }
-             
+
             DbTransaction dbTransaction = BLLFactory<Core.BLL.ArcConcentratorInfo>.Instance.CreateTransaction();
             try
             {
@@ -737,14 +737,14 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContent(result);
         }
 
-        public  ActionResult Update_Server(string id, Concentrator info)
+        public ActionResult Update_Server(string id, Concentrator info)
         {
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.UpdateKey);
 
             //赋值
             info.IntID = Convert.ToInt32(id);
-           
+
             CommonResult result = new CommonResult();
             if (info.IntUpID == info.IntID)
             {
@@ -763,7 +763,7 @@ namespace WHC.WaterFeeWeb.Controllers
             //厂家编码
             var endcode = Session["EndCode"] ?? "0";
             info.IntEndCode = endcode.ToString().ToInt32();
-        
+
             try
             {
                 //调用后台服务获取集中器信息

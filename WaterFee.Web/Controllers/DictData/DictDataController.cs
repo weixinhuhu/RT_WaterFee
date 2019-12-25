@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WHC.Dictionary.BLL;
 using WHC.Dictionary.Entity;

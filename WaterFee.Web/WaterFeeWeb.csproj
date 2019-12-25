@@ -264,17 +264,14 @@
     <Compile Include="Controllers\CRM\ContactGroupController.cs" />
     <Compile Include="Controllers\CRM\CustomerController.cs" />
     <Compile Include="Controllers\CustormerInfo\ArcCustomerInfoController.cs" />
-    <Compile Include="Controllers\Utils\DaClientInfoController.cs" />
     <Compile Include="Controllers\DictData\CityController.cs" />
     <Compile Include="Controllers\DictData\DictDataController.cs" />
     <Compile Include="Controllers\DictData\DictTypeController.cs" />
     <Compile Include="Controllers\Base\ErrorController.cs" />
     <Compile Include="Controllers\DictData\DistrictController.cs" />
     <Compile Include="Controllers\DictData\ProvinceController.cs" />
-    <Compile Include="Controllers\Utils\FileUploadController.cs" />
     <Compile Include="Controllers\Security\FunctionController.cs" />
     <Compile Include="Controllers\Base\HomeController.cs" />
-    <Compile Include="Controllers\Utils\InformationController.cs" />
     <Compile Include="Controllers\Security\LoginController.cs" />
     <Compile Include="Controllers\Security\LoginLogController.cs" />
     <Compile Include="Controllers\Security\MenuController.cs" />
@@ -290,7 +287,6 @@
     <Compile Include="Models\MenuData.cs" />
     <Compile Include="Models\TreeData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Controllers\Utils\Sqlhelp.cs" />
     <Compile Include="UserDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

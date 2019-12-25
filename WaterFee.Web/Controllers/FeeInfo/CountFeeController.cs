@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using WHC.Attachment.BLL;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
 using WHC.MVCWebMis.Controllers;
-using WHC.Pager.Entity;
 
 namespace WHC.WaterFeeWeb.Controllers
 {
@@ -128,7 +122,7 @@ namespace WHC.WaterFeeWeb.Controllers
                 //@iYearMonth INTEGER = 0,  --< !--欲销账费用的费用年月，如果为0，则尝试销账所有欠费-- >
                 //@sUserID    VARCHAR(8),--< !--操作员编号-- >
                 //@sReturn    VARCHAR(MAX)OUTPUT
-                 
+
                 lock (objLock)
                 {
                     //System.Threading.Thread.Sleep(3000); 

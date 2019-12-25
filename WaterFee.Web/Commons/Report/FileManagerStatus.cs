@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace WHC.MVCWebMis.Common
+﻿namespace WHC.MVCWebMis.Common
 {
     /// <summary>
     /// 文件管理状态

@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using WHC.Attachment.BLL;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
-using WHC.Pager.Entity;
 
 
 namespace WHC.WaterFeeWeb.Controllers
@@ -72,7 +63,8 @@ namespace WHC.WaterFeeWeb.Controllers
                 {
                     result.Success = true;
                 }
-                else {
+                else
+                {
                     result.ErrorMessage = flag;
                 }
             }

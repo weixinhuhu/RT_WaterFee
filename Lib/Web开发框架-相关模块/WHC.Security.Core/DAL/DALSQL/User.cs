@@ -41,53 +41,53 @@ namespace WHC.Security.DALSQL
         /// </summary>
         /// <param name="dr">有效的DataReader对象</param>
         /// <returns>实体类对象</returns>
-        protected override UserInfo DataReaderToEntity(IDataReader dataReader)
-        {
-            UserInfo info = new UserInfo();
-            SmartDataReader reader = new SmartDataReader(dataReader);
+        //protected override UserInfo DataReaderToEntity(IDataReader dataReader)
+        //{
+        //    UserInfo info = new UserInfo();
+        //    SmartDataReader reader = new SmartDataReader(dataReader);
 
-            info.ID = reader.GetInt32("ID");
-            info.PID = reader.GetInt32("PID");
-            info.HandNo = reader.GetString("HandNo");
-            info.Name = reader.GetString("Name");
-            info.Password = reader.GetString("Password");
-            info.FullName = reader.GetString("FullName");
-            info.Nickname = reader.GetString("Nickname");
-            info.IsExpire = reader.GetBoolean("IsExpire");
-            info.Title = reader.GetString("Title");
-            info.IdentityCard = reader.GetString("IdentityCard");
-            info.MobilePhone = reader.GetString("MobilePhone");
-            info.OfficePhone = reader.GetString("OfficePhone");
-            info.HomePhone = reader.GetString("HomePhone");
-            info.Email = reader.GetString("Email");
-            info.Address = reader.GetString("Address");
-            info.WorkAddr = reader.GetString("WorkAddr");
-            info.Gender = reader.GetString("Gender");
-            info.Birthday = reader.GetDateTime("Birthday");
-            info.QQ = reader.GetString("QQ");
-            info.Signature = reader.GetString("Signature");
-            info.AuditStatus = reader.GetString("AuditStatus");
-            //info.Portrait = reader.GetBytes("Portrait");
-            info.Note = reader.GetString("Note");
-            info.CustomField = reader.GetString("CustomField");
-            info.Dept_ID = reader.GetString("Dept_ID");
-            info.DeptName = reader.GetString("DeptName");
-            info.Company_ID = reader.GetString("Company_ID");
-            info.CompanyName = reader.GetString("CompanyName");
-            info.SortCode = reader.GetString("SortCode");
-            info.Creator = reader.GetString("Creator");
-            info.Creator_ID = reader.GetString("Creator_ID");
-            info.CreateTime = reader.GetDateTime("CreateTime");
-            info.Editor = reader.GetString("Editor");
-            info.Editor_ID = reader.GetString("Editor_ID");
-            info.EditTime = reader.GetDateTime("EditTime");
-            info.Deleted = reader.GetInt32("Deleted") > 0;
-            info.CurrentLoginIP = reader.GetString("CurrentLoginIP");
-            info.CurrentLoginTime = reader.GetDateTime("CurrentLoginTime");
-            info.CurrentMacAddress = reader.GetString("CurrentMacAddress");
+        //    info.ID = reader.GetInt32("ID");
+        //    info.PID = reader.GetInt32("PID");
+        //    info.HandNo = reader.GetString("HandNo");
+        //    info.Name = reader.GetString("Name");
+        //    info.Password = reader.GetString("Password");
+        //    info.FullName = reader.GetString("FullName");
+        //    info.Nickname = reader.GetString("Nickname");
+        //    info.IsExpire = reader.GetBoolean("IsExpire");
+        //    info.Title = reader.GetString("Title");
+        //    info.IdentityCard = reader.GetString("IdentityCard");
+        //    info.MobilePhone = reader.GetString("MobilePhone");
+        //    info.OfficePhone = reader.GetString("OfficePhone");
+        //    info.HomePhone = reader.GetString("HomePhone");
+        //    info.Email = reader.GetString("Email");
+        //    info.Address = reader.GetString("Address");
+        //    info.WorkAddr = reader.GetString("WorkAddr");
+        //    info.Gender = reader.GetString("Gender");
+        //    info.Birthday = reader.GetDateTime("Birthday");
+        //    info.QQ = reader.GetString("QQ");
+        //    info.Signature = reader.GetString("Signature");
+        //    info.AuditStatus = reader.GetString("AuditStatus");
+        //    //info.Portrait = reader.GetBytes("Portrait");
+        //    info.Note = reader.GetString("Note");
+        //    info.CustomField = reader.GetString("CustomField");
+        //    info.Dept_ID = reader.GetString("Dept_ID");
+        //    info.DeptName = reader.GetString("DeptName");
+        //    info.Company_ID = reader.GetString("Company_ID");
+        //    info.CompanyName = reader.GetString("CompanyName");
+        //    info.SortCode = reader.GetString("SortCode");
+        //    info.Creator = reader.GetString("Creator");
+        //    info.Creator_ID = reader.GetString("Creator_ID");
+        //    info.CreateTime = reader.GetDateTime("CreateTime");
+        //    info.Editor = reader.GetString("Editor");
+        //    info.Editor_ID = reader.GetString("Editor_ID");
+        //    info.EditTime = reader.GetDateTime("EditTime");
+        //    info.Deleted = reader.GetInt32("Deleted") > 0;
+        //    info.CurrentLoginIP = reader.GetString("CurrentLoginIP");
+        //    info.CurrentLoginTime = reader.GetDateTime("CurrentLoginTime");
+        //    info.CurrentMacAddress = reader.GetString("CurrentMacAddress");
 
-            return info;
-        }
+        //    return info;
+        //}
 
         /// <summary>
         /// 将实体对象的属性值转化为Hashtable对应的键值

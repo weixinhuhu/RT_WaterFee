@@ -1,20 +1,14 @@
-﻿using System;
+﻿using Aspose.Cells;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-
-using WHC.Pager.Entity;
-using WHC.Framework.Commons;
-using WHC.MVCWebMis.BLL;
-using WHC.MVCWebMis.Entity;
-using WHC.Dictionary.Entity;
-using WHC.Dictionary.BLL;
-using WHC.Framework.ControlUtil;
 using System.Data;
 using System.Data.Common;
 using System.IO;
-using Aspose.Cells;
+using System.Web.Mvc;
+using WHC.Dictionary.BLL;
+using WHC.Dictionary.Entity;
+using WHC.Framework.Commons;
+using WHC.Framework.ControlUtil;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -25,8 +19,8 @@ namespace WHC.MVCWebMis.Controllers
         }
 
         #region 导入Excel数据操作
- 		 
-	    //导入或导出的字段列表   
+
+        //导入或导出的字段列表   
         string columnString = "省份名称";
 
         /// <summary>
@@ -79,11 +73,11 @@ namespace WHC.MVCWebMis.Controllers
                 {
                     bool converted = false;
                     DateTime dtDefault = Convert.ToDateTime("1900-01-01");
-                    DateTime dt;                    
+                    DateTime dt;
                     ProvinceInfo info = new ProvinceInfo();
-                    
-                     info.ProvinceName = dr["省份名称"].ToString();
-  
+
+                    info.ProvinceName = dr["省份名称"].ToString();
+
                     //info.Creator = CurrentUser.ID.ToString();
                     //info.CreateTime = DateTime.Now;
                     //info.Editor = CurrentUser.ID.ToString();
@@ -144,8 +138,8 @@ namespace WHC.MVCWebMis.Controllers
             }
 
             return ToJsonContent(result);
-        } 
-        
+        }
+
         /// <summary>
         /// 根据查询条件导出列表数据
         /// </summary>
@@ -159,9 +153,9 @@ namespace WHC.MVCWebMis.Controllers
 
             if (!string.IsNullOrWhiteSpace(CustomedCondition))
             {
-            	//如果为自定义的json参数列表，那么可以使用字典反序列化获取参数，然后处理
+                //如果为自定义的json参数列表，那么可以使用字典反序列化获取参数，然后处理
                 //Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(CustomedCondition);
-                
+
                 //如果是条件的自定义，可以使用Find查找
                 list = baseBLL.Find(CustomedCondition);
             }
@@ -169,7 +163,7 @@ namespace WHC.MVCWebMis.Controllers
             {
                 list = baseBLL.Find(where);
             }
-            
+
             #endregion
 
             #region 把列表转换为DataTable
@@ -230,17 +224,17 @@ namespace WHC.MVCWebMis.Controllers
             string parentPath = Directory.GetParent(realPath).FullName;
             DirectoryUtil.AssertDirExist(parentPath);
 
-            workbook.Save(realPath, Aspose.Cells.SaveFormat.Excel97To2003); 
+            workbook.Save(realPath, Aspose.Cells.SaveFormat.Excel97To2003);
 
             #endregion
 
             //返回生成后的文件路径，让客户端根据地址下载
             return Content(filePath);
         }
-        
+
         #endregion
-		
-	    /// <summary>
+
+        /// <summary>
         /// 获取所有的省份
         /// </summary>
         /// <returns></returns>

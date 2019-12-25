@@ -1,10 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Web.Script.Serialization;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -26,19 +23,19 @@ namespace WHC.MVCWebMis.Controllers
         /// </summary>
         [DataMember]
         public string menuname { get; set; }
-                  
+
         /// <summary>
         /// 图标样式
         /// </summary>
         [DataMember]
         public string icon { get; set; }
-      
+
         /// <summary>
         /// url地址
         /// </summary>
         [DataMember(EmitDefaultValue = false)]
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string url  { get; set; }
+        public string url { get; set; }
 
         /// <summary>
         /// 子节点集合
@@ -46,11 +43,11 @@ namespace WHC.MVCWebMis.Controllers
         [DataMember(EmitDefaultValue = false)]
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public List<MenuData> menus { get; set; }
-        
+
         /// <summary>
         /// 默认构造函数
         /// </summary>
-        public MenuData() 
+        public MenuData()
         {
             this.menus = new List<MenuData>();
             this.icon = "icon-view";
@@ -59,7 +56,7 @@ namespace WHC.MVCWebMis.Controllers
         /// <summary>
         /// 常用构造函数
         /// </summary>
-        public MenuData(string menuid, string menuname, string icon = "icon-view", string url=null)
+        public MenuData(string menuid, string menuname, string icon = "icon-view", string url = null)
             : this()
         {
             this.menuid = menuid;

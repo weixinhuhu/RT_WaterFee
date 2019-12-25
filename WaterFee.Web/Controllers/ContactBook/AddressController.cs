@@ -1,24 +1,15 @@
-using System;
-using System.IO;
-using System.Data;
-using System.Data.Common;
-using System.Text;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Data;
-using System.IO;
 using Aspose.Cells;
-
-using Newtonsoft.Json;
-using WHC.Pager.Entity;
-using WHC.Framework.Commons;
-using WHC.Framework.ControlUtil;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.IO;
+using System.Web.Mvc;
 using WHC.ContactBook.BLL;
 using WHC.ContactBook.Entity;
+using WHC.Framework.Commons;
+using WHC.Framework.ControlUtil;
+using WHC.Pager.Entity;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -87,7 +78,7 @@ namespace WHC.MVCWebMis.Controllers
                     DateTime dt;
                     AddressInfo info = new AddressInfo();
 
-                    info.AddressType = EnumHelper.GetInstance<AddressType>( dr["通讯录类型"].ToString());
+                    info.AddressType = EnumHelper.GetInstance<AddressType>(dr["通讯录类型"].ToString());
                     info.Name = dr["姓名"].ToString();
                     info.Sex = dr["性别"].ToString();
                     converted = DateTime.TryParse(dr["出生日期"].ToString(), out dt);
@@ -116,9 +107,9 @@ namespace WHC.MVCWebMis.Controllers
                     info.Dept_ID = dr["所属部门"].ToString();
                     info.Company_ID = dr["所属公司"].ToString();
 
-                    info.Creator = CurrentUser.ID.ToString();
+                    info.Creator = Session["UserID"].ToString();
                     info.CreateTime = DateTime.Now;
-                    info.Editor = CurrentUser.ID.ToString();
+                    info.Editor = Session["UserID"].ToString();
                     info.EditTime = DateTime.Now;
 
                     list.Add(info);
@@ -318,7 +309,7 @@ namespace WHC.MVCWebMis.Controllers
         {
             //检查用户是否有权限，否则抛出MyDenyAccessException异常
             base.CheckAuthorized(AuthorizeKey.ListKey);
-                        
+
             List<AddressInfo> list = new List<AddressInfo>();
             AddressType type = (addressType == "public") ? AddressType.公共 : AddressType.个人;
 
@@ -359,7 +350,7 @@ namespace WHC.MVCWebMis.Controllers
                         string groupName = CustomedCondition;
                         list = BLLFactory<Address>.Instance.FindByGroupName(CurrentUser.ID.ToString(), groupName, pagerInfo);
                     }
-                } 
+                }
                 #endregion
             }
             else

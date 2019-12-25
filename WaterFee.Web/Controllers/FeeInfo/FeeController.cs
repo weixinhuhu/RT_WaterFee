@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using WHC.Attachment.BLL;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
 using WHC.MVCWebMis.Controllers;
@@ -134,60 +130,6 @@ namespace WHC.WaterFeeWeb.Controllers
         }
 
         /// <summary>
-        /// 获取未收财务
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult GetAccDebt()
-        {
-            var key = Request["key"];
-
-            //string where = GetPagerCondition();
-            PagerInfo pagerInfo = GetPagerInfo();
-
-            var where = " 1=1 ";
-
-            if (key.IsNotNullOrEmpty())
-            {
-                where += " and IntCustNo in (select IntNo from ArcCustomerInfo where IntNo like '%{0}%' or NvcName like '%{0}%' or NvcAddr like '%{0}%' or NvcVillage like '%{0}%' or VcMobile like '%{0}%' or VcTelNo like '%{0}%' )".FormatWith(key);
-            }
-
-            var list = baseBLL.FindWithPager(where, pagerInfo);
-
-            if (list.Count > 0)
-            {
-                var ids = string.Join(",", list.Select(n => n.IntCustNo).ToArray());
-                where = " IntNo in ({0}) ".FormatWith(ids);
-                pagerInfo.CurrenetPageIndex = 1;
-                var customerList = BLLFactory<Core.DALSQL.ArcCustomerInfo>.Instance.FindWithPager(where, pagerInfo);
-                if (customerList.Count > 0)
-                {
-                    foreach (var item in list)
-                    {
-                        item.ArcCustomerInfo = customerList.Where(n => n.IntNo == item.IntCustNo).FirstOrDefault();
-                    }
-                }
-                foreach (var item in list)
-                {
-                    string ret = null;
-                    var ds = QueryBill(item.IntCustNo, out ret);
-                    if (ret == "0")
-                    {
-                        var row = ds.Tables[1].Select("费用编号=" + item.IntFeeID);
-                        if (row.Count() > 0)
-                        {
-                            item.MonPenalty = row[0]["违约金"].ToString().ToDecimalOrZero();
-                        }
-                    }
-                }
-                list = list.OrderBy(n => n.IntFeeID).ToList();
-            }
-
-            var result = new { total = pagerInfo.RecordCount, rows = list };
-
-            return ToJsonContentDate(result);
-        }
-
-        /// <summary>
         /// 查看扣费记录
         /// </summary>
         /// <returns></returns>       
@@ -222,7 +164,7 @@ namespace WHC.WaterFeeWeb.Controllers
         public ActionResult GetPaymentNoticeList_Server()
         {
             var endcode = Session["IntEndCode"] ?? "0";
-            var CustNo = Request["WHC_IntCustNo"]??"";
+            var CustNo = Request["WHC_IntCustNo"] ?? "";
             var NvcName = Request["WHC_NvcName"] ?? "";
             var NvcAddr = Request["WHC_NvcAddr"] ?? "";
             var VcMobile = Request["WHC_VcMobile"] ?? "";
@@ -238,81 +180,18 @@ namespace WHC.WaterFeeWeb.Controllers
             return ToJsonContentDate(result);
         }
 
-
         //柜台冲正
         public ActionResult CounterReverse()
         {
             return View();
         }
 
-        /// <summary>
-        /// 柜台冲正
-        /// </summary>
-        /// <param name="custNo"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public ActionResult CounterReverse(string custNo)
-        {
-            CommonResult result = new CommonResult();
-            try
-            {
-                var sFlowNo = Request["flowNo"];
-                var totalMoney = Request["totalMoney"];
-
-                //CREATEPROCEDURE[dbo].up_BillWithdraw
-                //@iCustNo INTEGER,  --< !--客户编号-- >
-                //@sFlowNo  VARCHAR(32),--< !--流水号-- >
-                //@NumTotal NUMERIC(9, 2),--< !--销账总额-- >
-                //@sUserID  VARCHAR(8),--< !--用户编号-- >
-                //@sReturn  VARCHAR(MAX)OUTPUT-- < !--0:成功，其它为错误描述-- >
-
-                lock (objLock)
-                {
-                    //System.Threading.Thread.Sleep(30000); 
-                    List<SqlParameter> param = new List<SqlParameter>();
-                    param.Add(new SqlParameter("@iCustNo", SqlDbType.Int) { Value = custNo });
-                    param.Add(new SqlParameter("@sUserID", SqlDbType.VarChar, 4) { Value = UserInfo.ID });
-                    param.Add(new SqlParameter("@sFlowNo", SqlDbType.VarChar, 32) { Value = sFlowNo });
-                    param.Add(new SqlParameter("@NumTotal", SqlDbType.Decimal) { Value = totalMoney });
-                    param.Add(new SqlParameter("@sReturn", SqlDbType.VarChar, 256) { Direction = ParameterDirection.Output });
-
-                    BLLFactory<Core.BLL.AccPayment>.Instance.ExecStoreProc("up_BillWithdraw", param);
-                    if (param[param.Count - 1].Value.ToString() == "0")
-                    {
-                        result.Success = true;
-                    }
-                    else
-                    {
-                        result.ErrorMessage = "冲正失败!错误如下:" + param[param.Count - 1].Value;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                result.ErrorMessage = "冲正失败!错误如下:" + ex.Message;
-            }
-            return ToJsonContent(result);
-        }
-
-        //柜台冲正数据
-        public ActionResult CounterReverseData()
-        {
-            return new AccPaymentController().CounterReverseData();
-        }
-
         //存取预存款
         public ActionResult PayGetMoney()
-        {
-            InitSignalrScript();
+        {        
             return View();
         }
-        private void InitSignalrScript()
-        {
-            var signalrUrl = DBLib.Common.ConfigHelper.GetConfigString("SignalrUrl");
-            var commandTimeout = DBLib.Common.ConfigHelper.GetConfigString("CommandTimeout");
-            ViewBag.SignalrScript = string.Format(@"<script src=""{0}/signalr/hubs""></script><script>var signalrUrl = ""{0}"";var CommandTimeout={1}*1000;</script>", signalrUrl, commandTimeout);
 
-        }
         /// <summary>
         /// 存取款
         /// </summary>
@@ -326,7 +205,7 @@ namespace WHC.WaterFeeWeb.Controllers
                 var endcode = Session["EndCode"] ?? "0";
                 var payMoney = Request["payMoney"] ?? "0";
                 var sRemark = "";
-                var iUserID = CurrentUser.ID;
+                var iUserID = Session["UserID"].ToString().ToInt();
                 var sReceiptNo = "";
                 DbServiceReference.ServiceDbClient DbServer = new DbServiceReference.ServiceDbClient();
                 var flag = DbServer.Account_DepositOperate(endcode.ToString().ToInt32(), custNo.ToInt32(), payMoney.ToDouble(), sRemark, iUserID, sReceiptNo);
@@ -348,18 +227,7 @@ namespace WHC.WaterFeeWeb.Controllers
             }
             return ToJsonContentDate(result);
         }
-
-        public DataSet QueryBill(object custNo, out string result)
-        {
-            List<SqlParameter> param = new List<SqlParameter>();
-            param.Add(new SqlParameter("@iCustNo", SqlDbType.Int) { Value = custNo });
-            param.Add(new SqlParameter("@sReturn", SqlDbType.VarChar, 256) { Direction = ParameterDirection.Output });
-
-            var ds = BLLFactory<Core.BLL.AccPayment>.Instance.ExecStoreProcToDataSet("up_BillQry", param);
-            result = param[param.Count - 1].Value.ToString();
-            return ds;
-        }
-
+     
         //结清欠款销户
         public ActionResult CloseAccount()
         {
@@ -376,7 +244,7 @@ namespace WHC.WaterFeeWeb.Controllers
             {
                 var rs = new DbServiceReference.ServiceDbClient().Account_GetBillByCustNo(endcode.ToInt32(), intcustno.ToInt32());
                 if (rs.IsSuccess)
-                {                  
+                {
                     if (rs.Tbl1.Rows.Count > 0)
                     {
                         result.Data1 = Newtonsoft.Json.JsonConvert.SerializeObject(rs.Tbl1);
@@ -388,7 +256,7 @@ namespace WHC.WaterFeeWeb.Controllers
                     }
                     else
                     {
-                        result.ErrorMessage = "未查询到用户号为：【"+custNo+"】 的用户档案";
+                        result.ErrorMessage = "未查询到用户号为：【" + custNo + "】 的用户档案";
                     }
                 }
                 else
@@ -417,14 +285,14 @@ namespace WHC.WaterFeeWeb.Controllers
                 var endcode = Session["EndCode"].ToString() ?? "0";
                 var intcustno = custNo ?? "0";
                 var flag = new DbServiceReference.ServiceDbClient().ArcCloseAccount(endcode.ToInt32(), intcustno.ToInt32());
-                
+
                 if (flag == "0")
                 {
-                    result.Success = true;                 
+                    result.Success = true;
                 }
                 else
                 {
-                    result.ErrorMessage = "操作失败! "+ flag;
+                    result.ErrorMessage = "操作失败! " + flag;
                 }
             }
             catch (Exception ex)
@@ -517,10 +385,10 @@ namespace WHC.WaterFeeWeb.Controllers
         /// <returns></returns>
         public ActionResult PrintTicketDetail(int IntFeeID)
         {
-            var endcode = Session["IntEndCode"] ?? "0";         
+            var endcode = Session["EndCode"] ?? "0";
             var DtStart = Request["WHC_DtStart"] ?? DateTime.Now.ToString();
-            var Dtend = Request["WHC_DtEnd"] ?? DateTime.Now.ToString(); ;         
-            var custinfo = new DbServiceReference.Customer();           
+            var Dtend = Request["WHC_DtEnd"] ?? DateTime.Now.ToString(); ;
+            var custinfo = new DbServiceReference.Customer();
             var dt = new DbServiceReference.ServiceDbClient().Account_GetPaymentDetail(endcode.ToString().ToInt(), IntFeeID, DtStart.ToDateTime(), Dtend.ToDateTime(), custinfo);
             if (dt.Rows.Count > 0)
             {
@@ -529,7 +397,7 @@ namespace WHC.WaterFeeWeb.Controllers
                 ViewBag.VcRoomNum = dt.Rows[0]["VcRoomNum"].ToString();
                 ViewBag.NvcVillage = dt.Rows[0]["NvcVillage"].ToString();
                 ViewBag.NvcAddr = dt.Rows[0]["NvcAddr"].ToString();
-                ViewBag.IntYearMon = dt.Rows[0]["IntYearMon"].ToString();               
+                ViewBag.IntYearMon = dt.Rows[0]["IntYearMon"].ToString();
                 ViewBag.DteFee = dt.Rows[0]["DteFee"].ToString();
                 var MonFee = dt.Rows[0]["MonFee"].ToString().ToDouble();
                 ViewBag.MonFee = MonFee.ToString("#0.00");

@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
-
-using WHC.Pager.Entity;
-using WHC.Framework.Commons;
+using WHC.Framework.ControlUtil;
 using WHC.Security.BLL;
 using WHC.Security.Entity;
-using WHC.MVCWebMis.Entity;
-using WHC.Framework.ControlUtil;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -27,7 +20,7 @@ namespace WHC.MVCWebMis.Controllers
             EasyTreeData topNode = new EasyTreeData("-1", "所有记录", "icon-house");
             treeList.Add(topNode);
 
-            EasyTreeData companyNode = new EasyTreeData( "-2","所属公司", "");
+            EasyTreeData companyNode = new EasyTreeData("-2", "所属公司", "");
             treeList.Add(companyNode);
 
             List<OUInfo> companyList = new List<OUInfo>();

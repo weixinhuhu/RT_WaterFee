@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Web;
 using System.Web.Optimization;
 
 namespace WHC.MVCWebMis
@@ -82,7 +81,7 @@ namespace WHC.MVCWebMis
             //添加对ckeditor的支持
             //jqueryExtend.Include("~/Content/JQueryTools/ckeditor/ckeditor.js", 
             //    "~/Content/JQueryTools/ckeditor/adapters/jquery.js");
-                            
+
 
             //其他一些辅助脚本和样式
             //1、图表JS文件应用

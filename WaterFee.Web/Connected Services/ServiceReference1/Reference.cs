@@ -23,13 +23,13 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int EndCodeField;
+        private string CompanyNameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string DeptNameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string FullNameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IDField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string IdentityField;
@@ -38,13 +38,19 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
         private string InfoField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IntComIDField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IntDeptIDField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IntIDField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private bool IsDeletedField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private bool IsExpireField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int PIDField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string PasswordField;
@@ -63,14 +69,27 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int EndCode {
+        public string CompanyName {
             get {
-                return this.EndCodeField;
+                return this.CompanyNameField;
             }
             set {
-                if ((this.EndCodeField.Equals(value) != true)) {
-                    this.EndCodeField = value;
-                    this.RaisePropertyChanged("EndCode");
+                if ((object.ReferenceEquals(this.CompanyNameField, value) != true)) {
+                    this.CompanyNameField = value;
+                    this.RaisePropertyChanged("CompanyName");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string DeptName {
+            get {
+                return this.DeptNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DeptNameField, value) != true)) {
+                    this.DeptNameField = value;
+                    this.RaisePropertyChanged("DeptName");
                 }
             }
         }
@@ -84,19 +103,6 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
                 if ((object.ReferenceEquals(this.FullNameField, value) != true)) {
                     this.FullNameField = value;
                     this.RaisePropertyChanged("FullName");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int ID {
-            get {
-                return this.IDField;
-            }
-            set {
-                if ((this.IDField.Equals(value) != true)) {
-                    this.IDField = value;
-                    this.RaisePropertyChanged("ID");
                 }
             }
         }
@@ -128,6 +134,45 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IntComID {
+            get {
+                return this.IntComIDField;
+            }
+            set {
+                if ((this.IntComIDField.Equals(value) != true)) {
+                    this.IntComIDField = value;
+                    this.RaisePropertyChanged("IntComID");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IntDeptID {
+            get {
+                return this.IntDeptIDField;
+            }
+            set {
+                if ((this.IntDeptIDField.Equals(value) != true)) {
+                    this.IntDeptIDField = value;
+                    this.RaisePropertyChanged("IntDeptID");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IntID {
+            get {
+                return this.IntIDField;
+            }
+            set {
+                if ((this.IntIDField.Equals(value) != true)) {
+                    this.IntIDField = value;
+                    this.RaisePropertyChanged("IntID");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public bool IsDeleted {
             get {
                 return this.IsDeletedField;
@@ -149,19 +194,6 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
                 if ((this.IsExpireField.Equals(value) != true)) {
                     this.IsExpireField = value;
                     this.RaisePropertyChanged("IsExpire");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int PID {
-            get {
-                return this.PIDField;
-            }
-            set {
-                if ((this.PIDField.Equals(value) != true)) {
-                    this.PIDField = value;
-                    this.RaisePropertyChanged("PID");
                 }
             }
         }
@@ -1964,6 +1996,18 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Login_CheckUser", ReplyAction="http://tempuri.org/IAuthority/Sys_Login_CheckUserResponse")]
         System.Threading.Tasks.Task<WHC.WaterFeeWeb.ServiceReference1.LogonUser> Sys_Login_CheckUserAsync(string sUserID, string sPass, string sUserIP, string sUserMAC);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Login_GetMenuByUserID", ReplyAction="http://tempuri.org/IAuthority/Sys_Login_GetMenuByUserIDResponse")]
+        string Sys_Login_GetMenuByUserID(int iUserID, string sSysTypeID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Login_GetMenuByUserID", ReplyAction="http://tempuri.org/IAuthority/Sys_Login_GetMenuByUserIDResponse")]
+        System.Threading.Tasks.Task<string> Sys_Login_GetMenuByUserIDAsync(int iUserID, string sSysTypeID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Login_ChangePass", ReplyAction="http://tempuri.org/IAuthority/Sys_Login_ChangePassResponse")]
+        string Sys_Login_ChangePass(int iUserID, string sOldPass, string sNewPass);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Login_ChangePass", ReplyAction="http://tempuri.org/IAuthority/Sys_Login_ChangePassResponse")]
+        System.Threading.Tasks.Task<string> Sys_Login_ChangePassAsync(int iUserID, string sOldPass, string sNewPass);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthority/Sys_Menu_GetTree", ReplyAction="http://tempuri.org/IAuthority/Sys_Menu_GetTreeResponse")]
         WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[] Sys_Menu_GetTree(int iDeleted, int iVisible);
         
@@ -2118,6 +2162,22 @@ namespace WHC.WaterFeeWeb.ServiceReference1 {
         
         public System.Threading.Tasks.Task<WHC.WaterFeeWeb.ServiceReference1.LogonUser> Sys_Login_CheckUserAsync(string sUserID, string sPass, string sUserIP, string sUserMAC) {
             return base.Channel.Sys_Login_CheckUserAsync(sUserID, sPass, sUserIP, sUserMAC);
+        }
+        
+        public string Sys_Login_GetMenuByUserID(int iUserID, string sSysTypeID) {
+            return base.Channel.Sys_Login_GetMenuByUserID(iUserID, sSysTypeID);
+        }
+        
+        public System.Threading.Tasks.Task<string> Sys_Login_GetMenuByUserIDAsync(int iUserID, string sSysTypeID) {
+            return base.Channel.Sys_Login_GetMenuByUserIDAsync(iUserID, sSysTypeID);
+        }
+        
+        public string Sys_Login_ChangePass(int iUserID, string sOldPass, string sNewPass) {
+            return base.Channel.Sys_Login_ChangePass(iUserID, sOldPass, sNewPass);
+        }
+        
+        public System.Threading.Tasks.Task<string> Sys_Login_ChangePassAsync(int iUserID, string sOldPass, string sNewPass) {
+            return base.Channel.Sys_Login_ChangePassAsync(iUserID, sOldPass, sNewPass);
         }
         
         public WHC.WaterFeeWeb.ServiceReference1.EasyTreeData[] Sys_Menu_GetTree(int iDeleted, int iVisible) {

@@ -1,28 +1,24 @@
 using System;
-using System.Web;
 using System.Collections.Generic;
-using System.Collections;
-using System.Configuration;
-
-using WHC.Security.Entity;
-using WHC.Security.BLL;
-using WHC.Framework.Commons;
+using System.Web;
 using WHC.Framework.ControlUtil;
+using WHC.Security.BLL;
+using WHC.Security.Entity;
 
 namespace WHC.MVCWebMis
 {
-	/// <summary>
+    /// <summary>
     /// 权限控制类
-	/// </summary>
-	public class Permission
-	{		
-		/// <summary>
-		/// 判断当前用户是否拥有某功能点的权限
-		/// </summary>
-		/// <param name="functionId"></param>
-		/// <returns></returns>
-		public static bool HasFunction(string functionId)
-		{
+    /// </summary>
+    public class Permission
+    {
+        /// <summary>
+        /// 判断当前用户是否拥有某功能点的权限
+        /// </summary>
+        /// <param name="functionId"></param>
+        /// <returns></returns>
+        public static bool HasFunction(string functionId)
+        {
             bool hasFunction = false;
 
             UserInfo CurrentUser = HttpContext.Current.Session["UserInfo"] as UserInfo;
@@ -46,7 +42,7 @@ namespace WHC.MVCWebMis
                 }
             }
             return hasFunction;
-		}
+        }
 
         /// <summary>
         /// 判断是否为系统管理员
@@ -82,7 +78,7 @@ namespace WHC.MVCWebMis
             }
             return blnIsAdmin;
         }
-	}
+    }
 
     public class TempPermit
     {

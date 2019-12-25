@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Windows.Forms;
-
-using NVelocity;
+﻿using NVelocity;
 using NVelocity.App;
-using NVelocity.Runtime;
 using NVelocity.Exception;
+using NVelocity.Runtime;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using WHC.Framework.Commons;
 
 namespace WHC.MVCWebMis.Common
@@ -146,7 +143,7 @@ namespace WHC.MVCWebMis.Common
         /// <returns></returns>
         public string ExecuteString()
         {
-            InitContext();    
+            InitContext();
             System.IO.StringWriter writer = new System.IO.StringWriter();
             template.Merge(context, writer);
             return writer.GetStringBuilder().ToString();

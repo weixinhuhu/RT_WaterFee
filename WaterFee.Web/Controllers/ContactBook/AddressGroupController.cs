@@ -1,21 +1,15 @@
+using Aspose.Cells;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Text;
-using System.Linq;
-using System.Web;
+using System.IO;
 using System.Web.Mvc;
-using System.Collections;
-using System.Collections.Generic;
-using Aspose.Cells;
-
-using Newtonsoft.Json;
-using WHC.Pager.Entity;
-using WHC.Framework.Commons;
-using WHC.Framework.ControlUtil;
 using WHC.ContactBook.BLL;
 using WHC.ContactBook.Entity;
+using WHC.Framework.Commons;
+using WHC.Framework.ControlUtil;
+using WHC.Pager.Entity;
 using WHC.Security.BLL;
 
 namespace WHC.MVCWebMis.Controllers
@@ -275,7 +269,7 @@ namespace WHC.MVCWebMis.Controllers
             //留给子类对参数对象进行修改
             info.Editor = CurrentUser.ID.ToString();
             info.EditTime = DateTime.Now;
-        } 
+        }
         #endregion
 
         /// <summary>
@@ -314,7 +308,7 @@ namespace WHC.MVCWebMis.Controllers
             string where = GetPagerCondition();
             PagerInfo pagerInfo = GetPagerInfo();
             List<AddressGroupInfo> list = baseBLL.FindWithPager(where, pagerInfo);
-            foreach(AddressGroupInfo info in list)
+            foreach (AddressGroupInfo info in list)
             {
                 info.PID = BLLFactory<AddressGroup>.Instance.GetFieldValue(info.PID, "Name");
                 info.Data1 = info.AddressType.ToString();
@@ -371,7 +365,7 @@ namespace WHC.MVCWebMis.Controllers
                 }
             }
 
-            AddressType type = (addressType=="public") ? AddressType.公共 : AddressType.个人;
+            AddressType type = (addressType == "public") ? AddressType.公共 : AddressType.个人;
 
             List<AddressGroupNodeInfo> groupList = new List<AddressGroupNodeInfo>();
             if (type == AddressType.个人)
@@ -385,7 +379,7 @@ namespace WHC.MVCWebMis.Controllers
 
             List<EasyTreeData> treeList = new List<EasyTreeData>();
             foreach (AddressGroupNodeInfo nodeInfo in groupList)
-            {          
+            {
                 bool check = groupIdList.Contains(nodeInfo.ID);
                 EasyTreeData pNode = new EasyTreeData(nodeInfo.ID, nodeInfo.Name, "");
                 pNode.Checked = check;

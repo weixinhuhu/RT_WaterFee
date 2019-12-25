@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WHC.MVCWebMis.Common
 {
@@ -39,9 +35,9 @@ namespace WHC.MVCWebMis.Common
             int[] validateNums = new int[length];
             string validateNumberStr = "";
             //生成起始序列值
-            int seekSeek = unchecked((int) DateTime.Now.Ticks);
+            int seekSeek = unchecked((int)DateTime.Now.Ticks);
             Random seekRand = new Random(seekSeek);
-            int beginSeek = (int) seekRand.Next(0, Int32.MaxValue - length*10000);
+            int beginSeek = (int)seekRand.Next(0, Int32.MaxValue - length * 10000);
             int[] seeks = new int[length];
             for (int i = 0; i < length; i++)
             {
@@ -52,7 +48,7 @@ namespace WHC.MVCWebMis.Common
             for (int i = 0; i < length; i++)
             {
                 Random rand = new Random(seeks[i]);
-                int pownum = 1*(int) Math.Pow(10, length);
+                int pownum = 1 * (int)Math.Pow(10, length);
                 randMembers[i] = rand.Next(pownum, Int32.MaxValue);
             }
             //抽取随机数字
@@ -80,7 +76,7 @@ namespace WHC.MVCWebMis.Common
         /// <param name="validateNum">验证码</param>
         public byte[] CreateValidateGraphic(string validateCode)
         {
-            Bitmap image = new Bitmap((int) Math.Ceiling(validateCode.Length*15.0), 25);
+            Bitmap image = new Bitmap((int)Math.Ceiling(validateCode.Length * 15.0), 25);
             Graphics g = Graphics.FromImage(image);
             try
             {
@@ -130,7 +126,7 @@ namespace WHC.MVCWebMis.Common
         /// <returns></returns>
         public static int GetImageWidth(int validateNumLength)
         {
-            return (int) (validateNumLength*12.0);
+            return (int)(validateNumLength * 12.0);
         }
 
         /// <summary>

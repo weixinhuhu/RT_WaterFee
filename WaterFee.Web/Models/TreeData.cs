@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 
 namespace WHC.MVCWebMis.Controllers
 {
@@ -42,17 +40,17 @@ namespace WHC.MVCWebMis.Controllers
         /// </summary>
         [DataMember]
         public List<TreeData> children { get; set; }
-        
+
         /// <summary>
         /// 是否展开
         /// </summary>
         [DataMember]
-        public bool open  { get; set; }
+        public bool open { get; set; }
 
         /// <summary>
         /// 默认构造函数
         /// </summary>
-        public TreeData() 
+        public TreeData()
         {
             this.children = new List<TreeData>();
             this.open = true;

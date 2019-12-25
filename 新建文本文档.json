@@ -1,0 +1,127 @@
+[
+  {
+    "menuid": "dae9ee62-2283-4fe0-a3f2-e39618e5cfcc",
+    "menuname": "收费系统",
+    "icon": "icon-view",
+    "url": "javascript:",
+    "menus": [
+      {
+        "menuid": "b2cb7329-01eb-4a63-8937-a34c44f0de6d",
+        "menuname": "收费",
+        "icon": "icon-view",
+        "url": "#",
+        "menus": [
+          {
+            "menuid": "ba139dc5-a63d-409d-a183-a8fce71d0675",
+            "menuname": "柜台收费",
+            "icon": "icon-view",
+            "url": "/Fee/CounterPay",
+            "menus": []
+          },
+          {
+            "menuid": "9806f77b-7c67-4ec8-b2a5-676205eaae97",
+            "menuname": "存取预存款",
+            "icon": "icon-view",
+            "url": "/Fee/PayGetMoney",
+            "menus": []
+          },
+          {
+            "menuid": "03964b9f-36d0-4886-aca3-c8778aa3cdf3",
+            "menuname": "当日收费终结对账",
+            "icon": "icon-view",
+            "url": "/Fee/TodayBalance",
+            "menus": []
+          },
+          {
+            "menuid": "ab983220-ba7b-43c5-89a7-18e422678720",
+            "menuname": "结清欠款销户",
+            "icon": "icon-view",
+            "url": "/Fee/CloseAccount",
+            "menus": []
+          },
+          {
+            "menuid": "8295093a-818e-483f-8807-762bbbd7ae53",
+            "menuname": "催缴通知单",
+            "icon": "icon-view",
+            "url": "/Fee/PaymentNotice",
+            "menus": []
+          },
+          {
+            "menuid": "77736e02-1691-4dc6-b174-79703cf5b5de",
+            "menuname": "扣费打印",
+            "icon": "icon-view",
+            "url": "/Fee/PrintTicket",
+            "menus": []
+          }
+        ]
+      },
+      {
+        "menuid": "80c6b8fd-0d34-4741-8ec9-869c5b60e26c",
+        "menuname": "价格档案",
+        "icon": "icon-view",
+        "url": "#",
+        "menus": [
+          {
+            "menuid": "242d42e3-d752-47fb-b8e2-07b90209ce0d",
+            "menuname": "价格设置",
+            "icon": "icon-view",
+            "url": "/PriceProperty/Setting",
+            "menus": []
+          }
+        ]
+      },
+      {
+        "menuid": "91358ecb-effd-4bd8-a338-1b976930c55f",
+        "menuname": "算费",
+        "icon": "icon-view",
+        "url": "#",
+        "menus": [
+          {
+            "menuid": "deeca236-e8f6-4296-9686-2ff842023cef",
+            "menuname": "预存款销账",
+            "icon": "icon-view",
+            "url": "/CountFee/DepositAccount",
+            "menus": []
+          }
+        ]
+      },
+      {
+        "menuid": "7c20f1e5-723f-4f26-ad3f-2362ad277c38",
+        "menuname": "采集数据",
+        "icon": "icon-view",
+        "url": "#",
+        "menus": [
+          {
+            "menuid": "211bbc57-5b85-4fc2-843f-2687373ddaf3",
+            "menuname": "抄表数据查询",
+            "icon": "icon-view",
+            "url": "/ArcMeterReading/List",
+            "menus": []
+          }
+        ]
+      },
+      {
+        "menuid": "7bd65b6f-daba-48a5-a040-aebe62ac807c",
+        "menuname": "终端管理",
+        "icon": "icon-view",
+        "url": "#",
+        "menus": []
+      },
+      {
+        "menuid": "445ce133-fe34-47da-bef9-f796d50fe81d",
+        "menuname": "权限管理",
+        "icon": "icon-view",
+        "url": "#",
+        "menus": [
+          {
+            "menuid": "26d29b7d-3d45-415c-bc2e-62b5db443b6b",
+            "menuname": "菜单管理",
+            "icon": "icon-view",
+            "url": "/Menu/Index",
+            "menus": []
+          }
+        ]
+      }
+    ]
+  }
+]

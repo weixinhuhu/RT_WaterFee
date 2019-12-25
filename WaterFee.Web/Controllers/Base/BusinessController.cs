@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Data;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 using System.Collections.Generic;
-
+using System.Data;
+using System.Web.Mvc;
+using WHC.Attachment.BLL;
 using WHC.Framework.Commons;
 using WHC.Framework.ControlUtil;
-using WHC.Pager.Entity;
 using WHC.MVCWebMis.Entity;
-using WHC.Security.Entity;
+using WHC.Pager.Entity;
 using WHC.Security.BLL;
-using WHC.Attachment.BLL;
+using WHC.Security.Entity;
 
 namespace WHC.MVCWebMis.Controllers
 {

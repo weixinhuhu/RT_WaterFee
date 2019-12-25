@@ -14,7 +14,6 @@
 
     <!--常用的一些组件业务脚本函数,放置此处方便脚本提示-->
     <script src="~/Scripts/ComponentUtil.js"></script>
-
     <script type="text/javascript">
 
         //初始化公司
@@ -22,7 +21,7 @@
             $('#txtCompany_ID').combotree({
                 url: '/User/GetMyDeptTreeLevel2Json_Server',
                 required: true,
-            });
+            })
         }
 
         //根据用户角色初始化功能树
@@ -34,9 +33,9 @@
                 data: json,
                 onClick: function (node, checked) {
                     console.log(node);
-                    if (checked) { //得到父节点   
+                    if (checked) { //得到父节点
                         console.log(node);
-                        var node1 = $('#treeFunctionView').tree('getParent', node.target);                      
+                        var node1 = $('#treeFunctionView').tree('getParent', node.target);
                         //选中父节点
                         $('#treeFunctionView').tree('check', node1.target);
                     }
@@ -50,7 +49,7 @@
             $("#loading").show();
             $('#treeRole').tree({
                 url: '/Role/GetMyRoleTreeJson_Server',
-                onClick: function (node) {                 
+                onClick: function (node) {
                     loadData(node.id);
                 }
             });
@@ -74,13 +73,14 @@
                         var data1 = JSON.parse(json.Data1);
                         var data2 = JSON.parse(json.Data2);
                         var data3 = JSON.parse(json.Data3);
-
                         $("#txtID").val(data1.IntID);
                         $("#txtName").val(data1.NvcName);
                         $("#txtNote").val(data1.NvcNote);
                         $("#txtHandNo").val(data1.NvcHandNo);
                         $("#txtSortCode").val(data1.NvcSortCode);
+                        var isAdmin = '@Session["Company_ID"]'==1?$('#txtCompany_ID').combotree('enable'): $('#txtCompany_ID').combotree('disable');
                         $('#txtCompany_ID').combotree('setValue', data1.NvcComID);
+
                         //可操作功能树
                         initTreeFunction(data2)
                         //角色的用户列表
@@ -115,9 +115,9 @@
             }
             var functionList = new Array();
             var nodes = $('#treeFunctionView').tree('getChecked');
-            for (var i = 0; i < nodes.length; i++) {                
-                    functionList.push(nodes[i].id);             
-            }        
+            for (var i = 0; i < nodes.length; i++) {
+                    functionList.push(nodes[i].id);
+            }
             $.ajax({
                 type: 'POST',
                 url: '/Role/Sys_Role_MenuSave_Server',
@@ -203,12 +203,12 @@
 
         //删除用户
         function deleteUser() {
-            var removeList = userIdlist;         
+            var removeList = userIdlist;
             $('#lbxUsers option:selected').each(function (i, selected) {
-                var removeid = $(selected).val();           
+                var removeid = $(selected).val();
                 removeList = $.grep(removeList, function (value) {
                     return value != removeid;
-                });         
+                });
             });
             var url = "/Role/Sys_Role_UserSave_Server";
             $.ajax({

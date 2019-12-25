@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 
 namespace WHC
 {
@@ -25,12 +23,12 @@ namespace WHC
         /// </summary>
         [DataMember]
         public string text { get; set; }
-        
+
         /// <summary>
         /// 是否展开
         /// </summary>
         [DataMember]
-        public string state  { get; set; }
+        public string state { get; set; }
 
         /// <summary>
         /// 图标样式
@@ -39,7 +37,7 @@ namespace WHC
         public string iconCls { get; set; }
 
         [JsonProperty(PropertyName = "checked", NullValueHandling = NullValueHandling.Ignore)]
-        [DataMember(Name="checked")]
+        [DataMember(Name = "checked")]
         public bool? Checked { get; set; }
 
 
@@ -48,11 +46,11 @@ namespace WHC
         /// </summary>
         [DataMember]
         public List<EasyTreeData> children { get; set; }
-        
+
         /// <summary>
         /// 默认构造函数
         /// </summary>
-        public EasyTreeData() 
+        public EasyTreeData()
         {
             this.children = new List<EasyTreeData>();
             this.state = "open";

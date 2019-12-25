@@ -16,6 +16,18 @@
   <wsdl:message name="IAuthority_Sys_Login_CheckUser_OutputMessage">
     <wsdl:part name="parameters" element="tns:Sys_Login_CheckUserResponse" />
   </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Login_GetMenuByUserID_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Login_GetMenuByUserID" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Login_GetMenuByUserID_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Login_GetMenuByUserIDResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Login_ChangePass_InputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Login_ChangePass" />
+  </wsdl:message>
+  <wsdl:message name="IAuthority_Sys_Login_ChangePass_OutputMessage">
+    <wsdl:part name="parameters" element="tns:Sys_Login_ChangePassResponse" />
+  </wsdl:message>
   <wsdl:message name="IAuthority_Sys_Menu_GetTree_InputMessage">
     <wsdl:part name="parameters" element="tns:Sys_Menu_GetTree" />
   </wsdl:message>
@@ -141,6 +153,14 @@
       <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Login_CheckUser" message="tns:IAuthority_Sys_Login_CheckUser_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Login_CheckUserResponse" message="tns:IAuthority_Sys_Login_CheckUser_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="Sys_Login_GetMenuByUserID">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Login_GetMenuByUserID" message="tns:IAuthority_Sys_Login_GetMenuByUserID_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Login_GetMenuByUserIDResponse" message="tns:IAuthority_Sys_Login_GetMenuByUserID_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Login_ChangePass">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Login_ChangePass" message="tns:IAuthority_Sys_Login_ChangePass_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Login_ChangePassResponse" message="tns:IAuthority_Sys_Login_ChangePass_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="Sys_Menu_GetTree">
       <wsdl:input wsaw:Action="http://tempuri.org/IAuthority/Sys_Menu_GetTree" message="tns:IAuthority_Sys_Menu_GetTree_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IAuthority/Sys_Menu_GetTreeResponse" message="tns:IAuthority_Sys_Menu_GetTree_OutputMessage" />
@@ -226,6 +246,24 @@
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="Sys_Login_CheckUser">
       <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Login_CheckUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Login_GetMenuByUserID">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Login_GetMenuByUserID" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sys_Login_ChangePass">
+      <soap:operation soapAction="http://tempuri.org/IAuthority/Sys_Login_ChangePass" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

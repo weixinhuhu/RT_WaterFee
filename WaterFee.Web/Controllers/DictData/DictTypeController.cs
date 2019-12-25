@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using WHC.Dictionary.BLL;
 using WHC.Dictionary.Entity;
@@ -15,7 +13,7 @@ namespace WHC.MVCWebMis.Controllers
     /// <summary>
     /// 数据字典大类的控制器
     /// </summary>
-    public class DictTypeController :  BusinessController<DictType, DictTypeInfo>
+    public class DictTypeController : BusinessController<DictType, DictTypeInfo>
     {
         #region 写入数据前修改部分属性
         protected override void OnBeforeInsert(DictTypeInfo info)
